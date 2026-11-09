@@ -1,0 +1,31 @@
+{
+  "width": 5,
+  "height": 7,
+  "columns": 1,
+  "hero_id": 15,
+  "tiles": [
+    {"id": 0, "key": "grass", "fr": "Herbe", "en": "Grass"},
+    {"id": 1, "key": "scattered_grass", "fr": "Herbe clairsemée", "en": "Scattered grass"},
+    {"id": 2, "key": "castle_left", "fr": "Château, partie gauche", "en": "Castle, left side"},
+    {"id": 3, "key": "castle_right", "fr": "Château, partie droite", "en": "Castle, right side"},
+    {"id": 4, "key": "village", "fr": "Village", "en": "Village"},
+    {"id": 5, "key": "ruins", "fr": "Ruines", "en": "Ruins"},
+    {"id": 6, "key": "graveyard", "fr": "Cimetière", "en": "Graveyard"},
+    {"id": 7, "key": "forest_guardian", "fr": "Gardien de la forêt", "en": "Forest guardian"},
+    {"id": 8, "key": "black_tower", "fr": "Tour noire", "en": "Black tower"},
+    {"id": 9, "key": "mountain", "fr": "Montagne (bloquante)", "en": "Mountain (blocked)"},
+    {"id": 10, "key": "tree", "fr": "Arbre (bloquant)", "en": "Tree (blocked)"},
+    {"id": 11, "key": "forest", "fr": "Forêt (bloquante)", "en": "Forest (blocked)"},
+    {"id": 12, "key": "graveyard_rocks", "fr": "Roches du cimetière", "en": "Graveyard rocks"},
+    {"id": 13, "key": "sand", "fr": "Sable (bloquant)", "en": "Sand (blocked)"},
+    {"id": 14, "key": "water", "fr": "Eau (bloquante)", "en": "Water (blocked)"},
+    {"id": 15, "key": "hero", "fr": "Héros", "en": "Hero"},
+    {"id": 16, "key": "slime", "fr": "Slime", "en": "Slime"},
+    {"id": 17, "key": "ghost", "fr": "Fantôme", "en": "Ghost"},
+    {"id": 18, "key": "skeleton", "fr": "Squelette", "en": "Skeleton"},
+    {"id": 19, "key": "spider", "fr": "Araignée", "en": "Spider"},
+    {"id": 20, "key": "bandit", "fr": "Bandit", "en": "Bandit"},
+    {"id": 21, "key": "demon", "fr": "Démon", "en": "Demon"},
+    {"id": 22, "key": "sorcerer", "fr": "Sorcier", "en": "Sorcerer"}
+  ]
+}

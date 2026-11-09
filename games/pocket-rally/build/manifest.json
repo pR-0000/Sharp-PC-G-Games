@@ -1,0 +1,37 @@
+{
+  "name": "Pocket Rally",
+  "version": "0.1.0",
+  "target": "PC-G801 / PC-G805",
+  "origin": "0100",
+  "entry": "0100",
+  "world_pixels": [
+    192,
+    128
+  ],
+  "visible_pixels": [
+    100,
+    28
+  ],
+  "levels": 2,
+  "graphics": "pixel framebuffer, 7x7 cars, 4x4 tilemapper, two-axis pixel scroll, native-digit HUD",
+  "programs": {
+    "rally_FR": {
+      "bytes": 5783,
+      "last_address": "1796",
+      "user_command": "USER17E2",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "6810d18be95e32d2f1eed471edc9f4fbd290ec6801669758b8222b697a65ab24",
+      "sha256_hex": "5c25199ec55f9e097fe6589757defb78c08b7454d34b97da7839e5d605484a71"
+    },
+    "rally_EN": {
+      "bytes": 5762,
+      "last_address": "1781",
+      "user_command": "USER17E2",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "99a73b07809280e5d2711fe160d30816f3b64436f1057c6002d3b759976acfe9",
+      "sha256_hex": "8f32d9477ee740e8bb2cb28ddf69c597f0b866835530a1e363cc0912672ebb80"
+    }
+  }
+}

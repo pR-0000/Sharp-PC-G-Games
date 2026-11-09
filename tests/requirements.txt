@@ -1,0 +1,2 @@
+# Optional CPU verification only; not needed to assemble or transfer.
+z80==1.2.0

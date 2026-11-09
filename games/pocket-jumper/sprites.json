@@ -1,0 +1,248 @@
+{
+  "cell_width": 12,
+  "cell_height": 12,
+  "frames": [
+    {
+      "id": 0,
+      "name": "tile_air",
+      "fr": "Air",
+      "en": "Air",
+      "x": 0,
+      "y": 0,
+      "width": 8,
+      "height": 8
+    },
+    {
+      "id": 1,
+      "name": "tile_soil",
+      "fr": "Sol",
+      "en": "Ground",
+      "x": 0,
+      "y": 12,
+      "width": 8,
+      "height": 8
+    },
+    {
+      "id": 2,
+      "name": "tile_brick",
+      "fr": "Brique cassable",
+      "en": "Breakable brick",
+      "x": 0,
+      "y": 24,
+      "width": 8,
+      "height": 8
+    },
+    {
+      "id": 3,
+      "name": "tile_bonus",
+      "fr": "Bloc bonus",
+      "en": "Bonus block",
+      "x": 0,
+      "y": 36,
+      "width": 8,
+      "height": 8
+    },
+    {
+      "id": 4,
+      "name": "tile_coin",
+      "fr": "Piece",
+      "en": "Coin",
+      "x": 0,
+      "y": 48,
+      "width": 8,
+      "height": 8
+    },
+    {
+      "id": 5,
+      "name": "tile_spike",
+      "fr": "Pointes",
+      "en": "Spikes",
+      "x": 0,
+      "y": 60,
+      "width": 8,
+      "height": 8
+    },
+    {
+      "id": 6,
+      "name": "tile_flag",
+      "fr": "Arrivee",
+      "en": "Goal flag",
+      "x": 0,
+      "y": 72,
+      "width": 8,
+      "height": 8
+    },
+    {
+      "id": 7,
+      "name": "tile_checkpoint",
+      "fr": "Point de reprise",
+      "en": "Checkpoint",
+      "x": 0,
+      "y": 84,
+      "width": 8,
+      "height": 8
+    },
+    {
+      "id": 8,
+      "name": "tile_used",
+      "fr": "Bloc utilise",
+      "en": "Used block",
+      "x": 0,
+      "y": 96,
+      "width": 8,
+      "height": 8
+    },
+    {
+      "id": 9,
+      "name": "hero_a",
+      "fr": "Heros - pas A",
+      "en": "Hero - step A",
+      "x": 0,
+      "y": 108,
+      "width": 12,
+      "height": 12
+    },
+    {
+      "id": 10,
+      "name": "hero_b",
+      "fr": "Heros - pas B",
+      "en": "Hero - step B",
+      "x": 0,
+      "y": 120,
+      "width": 12,
+      "height": 12
+    },
+    {
+      "id": 11,
+      "name": "enemy",
+      "fr": "Ennemi",
+      "en": "Enemy",
+      "x": 0,
+      "y": 132,
+      "width": 10,
+      "height": 8
+    },
+    {
+      "id": 12,
+      "name": "cloud",
+      "fr": "Nuage",
+      "en": "Cloud",
+      "x": 0,
+      "y": 144,
+      "width": 12,
+      "height": 6
+    },
+    {
+      "id": 13,
+      "name": "heart_icon",
+      "fr": "Coeur du panneau",
+      "en": "HUD heart",
+      "x": 0,
+      "y": 156,
+      "width": 5,
+      "height": 7
+    },
+    {
+      "id": 14,
+      "name": "coin_icon",
+      "fr": "Piece du panneau",
+      "en": "HUD coin",
+      "x": 0,
+      "y": 168,
+      "width": 5,
+      "height": 7
+    }
+  ],
+  "level_palette": [
+    {
+      "id": 0,
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "fr": "Air",
+      "en": "Air"
+    },
+    {
+      "id": 1,
+      "rgb": [
+        150,
+        90,
+        40
+      ],
+      "fr": "Sol",
+      "en": "Ground"
+    },
+    {
+      "id": 2,
+      "rgb": [
+        190,
+        60,
+        45
+      ],
+      "fr": "Brique cassable",
+      "en": "Breakable brick"
+    },
+    {
+      "id": 3,
+      "rgb": [
+        255,
+        200,
+        0
+      ],
+      "fr": "Bloc bonus",
+      "en": "Bonus block"
+    },
+    {
+      "id": 4,
+      "rgb": [
+        255,
+        255,
+        0
+      ],
+      "fr": "Piece",
+      "en": "Coin"
+    },
+    {
+      "id": 5,
+      "rgb": [
+        255,
+        0,
+        0
+      ],
+      "fr": "Pointes",
+      "en": "Spikes"
+    },
+    {
+      "id": 6,
+      "rgb": [
+        0,
+        180,
+        0
+      ],
+      "fr": "Arrivee",
+      "en": "Goal flag"
+    },
+    {
+      "id": 7,
+      "rgb": [
+        0,
+        100,
+        255
+      ],
+      "fr": "Point de reprise",
+      "en": "Checkpoint"
+    },
+    {
+      "id": 8,
+      "rgb": [
+        128,
+        128,
+        128
+      ],
+      "fr": "Bloc utilise",
+      "en": "Used block"
+    }
+  ]
+}

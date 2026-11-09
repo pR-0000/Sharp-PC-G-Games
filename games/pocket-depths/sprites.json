@@ -1,0 +1,43 @@
+{
+  "width": 7,
+  "height": 63,
+  "tile_width": 7,
+  "tile_height": 9,
+  "tiles": [
+    {
+      "id": 0,
+      "fr": "Garde",
+      "en": "Guard"
+    },
+    {
+      "id": 1,
+      "fr": "Monstre cornu",
+      "en": "Horned monster"
+    },
+    {
+      "id": 2,
+      "fr": "Munitions",
+      "en": "Ammo"
+    },
+    {
+      "id": 3,
+      "fr": "Soin",
+      "en": "Healing"
+    },
+    {
+      "id": 4,
+      "fr": "Cle",
+      "en": "Key"
+    },
+    {
+      "id": 5,
+      "fr": "Balise A",
+      "en": "Beacon A"
+    },
+    {
+      "id": 6,
+      "fr": "Balise B",
+      "en": "Beacon B"
+    }
+  ]
+}

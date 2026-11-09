@@ -1,0 +1,60 @@
+{
+  "name": "Pocket Depths",
+  "version": "0.2.2",
+  "origin": "0100",
+  "entry": "0100",
+  "target": "Full: PC-G805; Lite: PC-G801/G805",
+  "ray_count": 40,
+  "visible_cells": 7,
+  "hud": "Sharp ROM digits plus heart and bullet glyphs",
+  "programs": {
+    "depths_FR": {
+      "bytes": 6295,
+      "target": "PC-G805",
+      "lite": false,
+      "random_chunks": true,
+      "last_address": "1996",
+      "user_command": "USER19FF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "01596c298dff91c80b30b04275a8d5f1ea2451a5e642c4b5549a6f66034d0129",
+      "sha256_hex": "a5bcfdc3ea3dcec03f2ba890ae0f97aa7f23dcb9ba4ef842f229d6fa51a710db"
+    },
+    "depths_EN": {
+      "bytes": 6286,
+      "target": "PC-G805",
+      "lite": false,
+      "random_chunks": true,
+      "last_address": "198D",
+      "user_command": "USER19FF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "7aa60e9b8f29f77a07968644748abd5f94f9731356566691dfc61297d41788d8",
+      "sha256_hex": "9274b10fb6c3d19a4ce694e53a416ed9cfd6c87cfd2129dba9e1f2a1bc432036"
+    },
+    "depths_lite_FR": {
+      "bytes": 5818,
+      "target": "PC-G801/G805",
+      "lite": true,
+      "random_chunks": false,
+      "last_address": "17B9",
+      "user_command": "USER17E2",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "e197a5fcc9116a020edb6a6694d9b6225d3a27b5a1a3945ff79083ed61d97461",
+      "sha256_hex": "1e2dd080b0eea50595c408ddae5baa3210283e30aec08db24634c9101e29b5b0"
+    },
+    "depths_lite_EN": {
+      "bytes": 5805,
+      "target": "PC-G801/G805",
+      "lite": true,
+      "random_chunks": false,
+      "last_address": "17AC",
+      "user_command": "USER17E2",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "136ab47f15b49d90e62cb67ffc50c1adfbf87b95ac9cd9ae3c59b277b79ac86d",
+      "sha256_hex": "9506e4ec904f5dc8cd910b6ea55499e322da0448b4388157cfe6a3c27fcf54d7"
+    }
+  }
+}

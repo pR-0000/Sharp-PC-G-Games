@@ -1,0 +1,83 @@
+; All mutable state is inside the BIN/HEX and included in USER reservation.
+cursor_xy: dw 0x0101
+saved_return_sp: dw 0
+key_last: db 0
+menu_jump_ptr: dw 0
+menu_entry_ptr: dw 0
+menu_vertical_mode: db 0
+menu_cancel_ptr: dw 0
+max_cursor_options: db 0
+previous_option: db 0
+current_option: db 0
+rng_seed: db 0
+encounter_cooldown: db 0
+player_save_record:
+chunk_x: db 0
+chunk_y: db 0
+player_x: db 0
+player_y: db 0
+player_level: db 0
+player_hp_cur: db 0
+player_atk_bonus: db 0
+player_def_bonus: db 0
+inventory_potions: db 0
+inventory_smokes: db 0
+event_flags: db 0
+player_exp: dw 0
+player_gold: dw 0
+player_save_record_end:
+PLAYER_SAVE_BYTES EQU player_save_record_end-player_save_record
+moved: db 0
+target_chunk_x: db 0
+target_chunk_y: db 0
+target_player_x: db 0
+target_player_y: db 0
+world_event_param: db 0
+world_event_mask: db 0
+save_magic: db 0
+save_chunk_x: db 0
+save_chunk_y: db 0
+save_player_x: db 0
+save_player_y: db 0
+save_player_level: db 0
+save_player_hp_cur: db 0
+save_player_atk_bonus: db 0
+save_player_def_bonus: db 0
+save_inventory_potions: db 0
+save_inventory_smokes: db 0
+save_event_flags: db 0
+save_player_exp: dw 0
+save_player_gold: dw 0
+save_record_end:
+    ASSERT save_record_end-save_chunk_x = PLAYER_SAVE_BYTES
+player_hp_max: db 0
+player_atk: db 0
+player_def: db 0
+player_flee: db 0
+transient_start:
+battle_enemy_tile: db 0
+battle_enemy_hp_max: db 0
+battle_enemy_atk: db 0
+battle_enemy_def: db 0
+battle_enemy_exp: db 0
+battle_enemy_gold: db 0
+battle_enemy_name_ptr: dw 0
+battle_enemy_hp_cur: db 0
+battle_event_flag_mask: db 0
+battle_outcome: db 0
+typing_word_ptr: dw 0
+typing_word_len: db 0
+typing_index: db 0
+typing_timeout: db 0
+typing_bonus_limit: db 0
+typing_result: db 0
+typing_tick_div: db 0
+typing_word_x: db 0
+last_player_damage: db 0
+last_enemy_damage: db 0
+level_up_flag: db 0
+last_player_bonus: db 0
+transient_end:
+draw_row: db 0
+draw_col: db 0
+row_buffer: ds 120,0

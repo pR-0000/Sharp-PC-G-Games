@@ -1,0 +1,13 @@
+* text=auto
+*.asm text eol=lf
+*.inc text eol=lf
+*.py text eol=lf
+*.pyw text eol=lf
+*.md text eol=lf
+# Preserve release HEX bytes so manifest hashes stay valid after checkout.
+*.hex -text
+*.cmd text eol=crlf
+*.bin binary
+*.bmp binary
+*.png binary
+*.gif binary

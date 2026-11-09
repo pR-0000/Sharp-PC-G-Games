@@ -1,0 +1,20 @@
+{
+  "source": "Canon X-07 Quest",
+  "date": "2026-11-06",
+  "files": {
+    "quest.z80": "89a03967279e34b824a6cb8e09af3dab2fe7fa41f82f872015974e7a6b95ef51",
+    "movement.inc": "de06caa4acb3f268d9f18eaaecf44eedf1623d7a1d8b971ad3c8e58e7e071bab",
+    "events.inc": "a244faef3ecb4182a4d1c0b2eede15efc6fa01b68c900e227075fb58619fc732",
+    "progression.inc": "146bf48ecd92641a154e0693d1e1d02af9e43d06b19d90749cd6cab6e601deae",
+    "typing.inc": "d31c49a2a863f5cbe65c642190a7a83cab3138fadfb782be69c47eb08fd35d5a",
+    "battle.inc": "a7c62010e3e93c725925c5a96c747946016b3fadf1ba0274d35d4b70b044f7e1",
+    "menu.inc": "99bba6004bf56f8145c11dbad073c96fcad735304bf11f0bd5415d2476444eda",
+    "system.inc": "3c1afaed399945a32fc974328329e1a94fd5e56015946d65071ccf7a8387c460",
+    "data.inc": "0635b95aac456d53496f6c316c76b630f9a8839586785978d38fda6c3ad1653e",
+    "stats.inc": "92f724f1d29c62c1cf08977576cc701f1f9091da685c22bae437a5e5e7ee7c30",
+    "map_packed.inc": "55023b3c69759193ea863aeb8e39f85ff1055252bed78d6028eaa018b930665a"
+  },
+  "originals_modified": false,
+  "repository": "https://github.com/pR-0000/Canon_X-07_RPG",
+  "url": "https://github.com/pR-0000/Canon_X-07_RPG"
+}

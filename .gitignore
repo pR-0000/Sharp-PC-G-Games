@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+.venv/
+.DS_Store
+Thumbs.db
+*.lst
+*.sym
+**/cpu_validation.json
+.local/
+**/*validation*.json
+**/typing_adjustment_*.json
+deliverables/
+rom-dumps/
+ROM dumps/
+**/hardware_reports.json
+**/captures.json
+**/timing_comparison.json
+games/*/docs/capture_*.json
+games/*/docs/depths_door_*.json
+games/quest/TIMING_PATCH*.md
+games/quest/build/quest_0_1_4_or_0_1_5_typing_patch.hex

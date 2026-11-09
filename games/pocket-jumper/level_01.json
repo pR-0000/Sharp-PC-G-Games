@@ -1,0 +1,38 @@
+{
+  "name_fr": "La route des nuages",
+  "name_en": "Cloud Road",
+  "player_start": [
+    16,
+    28
+  ],
+  "enemies": [
+    {
+      "x": 192,
+      "y": 32,
+      "min_x": 184,
+      "max_x": 206,
+      "direction": 1
+    },
+    {
+      "x": 320,
+      "y": 32,
+      "min_x": 304,
+      "max_x": 330,
+      "direction": 1
+    },
+    {
+      "x": 400,
+      "y": 32,
+      "min_x": 392,
+      "max_x": 410,
+      "direction": 1
+    },
+    {
+      "x": 680,
+      "y": 32,
+      "min_x": 664,
+      "max_x": 686,
+      "direction": 1
+    }
+  ]
+}
