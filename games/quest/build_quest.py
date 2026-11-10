@@ -3,7 +3,7 @@ from pathlib import Path
 import hashlib,importlib.util,json,os,shutil,subprocess,sys
 HERE=Path(__file__).resolve().parent
 ASSEMBLY=HERE.parents[1]
-sys.path.insert(0,str(ASSEMBLY/'tools'))
+sys.path.insert(0,str(ASSEMBLY/'lib'))
 from build import intel_hex,read_symbols
 from cli_i18n import Parser,pick
 from tiles_tool import read_bmp,write_inc,write_preview,write_map,TileError

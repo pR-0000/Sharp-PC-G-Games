@@ -11,7 +11,7 @@ import sys
 
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
-sys.path.insert(0,str(ROOT/"tools"))
+sys.path.insert(0,str(ROOT/"lib"))
 from build import intel_hex,read_symbols
 from cli_i18n import Parser,pick
 from level_chunks import CHUNKS, ORIGINS, ITEMS, ACTORS, DEFAULT_SEED, level_map, validate

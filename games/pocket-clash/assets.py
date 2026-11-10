@@ -2,7 +2,7 @@
 from pathlib import Path
 import json,sys
 HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1]
-sys.path.insert(0,str(ROOT/'tools'))
+sys.path.insert(0,str(ROOT/'lib'))
 from bitmap import read_bmp,write_bmp,write_png
 NAMES=('NOVA','VOLT','ROK','LYNX')
 POSES=('idle','run','jump','attack','hurt','guard')

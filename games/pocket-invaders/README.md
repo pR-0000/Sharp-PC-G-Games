@@ -55,8 +55,6 @@ Sur G80X, le clavier renvoie une touche à la fois : le tir automatique permet d
 
 ```text
 python games/pocket-invaders/build_invaders.py --lang fr --assembler "chemin/vers/sjasmplus.exe"
-python games/pocket-invaders/check_invaders.py --lang fr
-python tools/play_invaders.py --lang fr --emulator "chemin/vers/g800.exe"
 ```
 
 La construction génère les deux cibles ; `--target g850` ou `--target g80x` limite la cible. Le lanceur accepte `--model PC-G850`. Les fichiers G850 sont dans `build/g850/`.
@@ -120,8 +118,6 @@ On G80X the keyboard reports one key at a time: automatic fire lets you keep mov
 
 ```text
 python games/pocket-invaders/build_invaders.py --lang en --assembler "path/to/sjasmplus.exe"
-python games/pocket-invaders/check_invaders.py --lang en
-python tools/play_invaders.py --lang en --emulator "path/to/g800.exe"
 ```
 
 The build generates both targets; `--target g850` or `--target g80x` selects one. The launcher accepts `--model PC-G850`. G850 files are in `build/g850/`.

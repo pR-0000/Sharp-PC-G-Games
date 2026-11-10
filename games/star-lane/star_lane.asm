@@ -1,6 +1,6 @@
 ; STAR LANE - shared G801/G805/G850 lane shooter.
 ; Copyright (c) 2026 P.RAIMBAULT. MIT licence.
-; Assemble with SjASMPlus via ../../tools/build.py.
+; Assemble with SjASMPlus via build_star.py.
 ; MON -> USER<see build manifest> -> R -> upload -> G100.
 ; Up/Down or W/S (Z also up), P pause, R restart, Q/BREAK quit.
 ; All RAM, including buffers, is emitted into the BIN/HEX reservation.

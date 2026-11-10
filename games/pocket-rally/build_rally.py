@@ -3,7 +3,7 @@ from pathlib import Path
 import os,shutil,sys
 from assets import generate
 HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1]
-sys.path.insert(0,str(ROOT/'tools'))
+sys.path.insert(0,str(ROOT/'lib'))
 from build_variants import build_variants
 from cli_i18n import Parser
 

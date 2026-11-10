@@ -4,7 +4,7 @@ import json,sys,unicodedata
 
 HERE=Path(__file__).resolve().parent
 GAME=HERE.parents[1]
-sys.path.insert(0,str(GAME.parents[1]/'tools'))
+sys.path.insert(0,str(GAME.parents[1]/'lib'))
 from bitmap import read_bmp,write_bmp,write_png
 
 

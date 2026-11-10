@@ -68,7 +68,6 @@ Sur G801/G805, le héros de 12 × 12 points et les ennemis de 10 × 8 se placent
 
 ```text
 python games/pocket-jumper/build_jumper.py --lang fr --assembler "chemin/vers/sjasmplus.exe"
-python tools/play_jumper.py --lang fr --model PC-G850 --emulator "chemin/vers/g800.exe"
 ```
 
 ### Niveau G850 et sources communes
@@ -181,7 +180,6 @@ On G801/G805, the 12 × 12 hero and 10 × 8 enemies are positioned at individual
 
 ```text
 python games/pocket-jumper/build_jumper.py --lang en --assembler "path/to/sjasmplus.exe"
-python tools/play_jumper.py --lang en --model PC-G850 --emulator "path/to/g800.exe"
 ```
 
 ### Editable BMP graphics and level

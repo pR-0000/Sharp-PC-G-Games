@@ -67,7 +67,6 @@ Python 3.10+ standard et [SjASMPlus](https://github.com/z00m128/sjasmplus) suffi
 
 ```text
 python games/quest/build_quest.py --lang fr --assembler "sjasmplus.exe"
-python tools/play_quest.py --lang fr --model PC-G850 --emulator "g800.exe"
 ```
 
 Ajouter `--target g80x` ou `--target g850` à la construction pour limiter la cible. G80X : `build/` ; G850 : `build/g850/`. Le lanceur utilise les IOCS simulés sans ROM et choisit 4 MHz pour G80X, 8 MHz pour G850. g800 s’installe séparément.
@@ -143,7 +142,6 @@ Standard Python 3.10+ and [SjASMPlus](https://github.com/z00m128/sjasmplus) buil
 
 ```text
 python games/quest/build_quest.py --lang en --assembler "sjasmplus.exe"
-python tools/play_quest.py --lang en --model PC-G850 --emulator "g800.exe"
 ```
 
 Add `--target g80x` or `--target g850` to build a single target. G80X uses `build/`; G850 uses `build/g850/`. The launcher uses simulated IOCS without a ROM, selecting 4 MHz for G80X and 8 MHz for G850. Install g800 separately.

@@ -105,8 +105,6 @@ Depuis la racine de la collection :
 ```text
 python games/pocket-rally/build_rally.py --lang fr --assembler "chemin/vers/sjasmplus.exe"
 python games/pocket-rally/build_rally.py --lang fr --target g850 --assembler "chemin/vers/sjasmplus.exe"
-python tools/play_rally.py --lang fr --emulator "chemin/vers/g800.exe"
-python tools/play_rally.py --lang fr --model PC-G850 --emulator "chemin/vers/g800.exe"
 ```
 
 Python standard et SjASMPlus suffisent pour construire les deux langues. g800 s’installe séparément ; aucune ROM n’est nécessaire à son mode IOCS simulés.
@@ -234,8 +232,6 @@ From the collection root:
 ```text
 python games/pocket-rally/build_rally.py --lang en --assembler "path/to/sjasmplus.exe"
 python games/pocket-rally/build_rally.py --lang en --target g850 --assembler "path/to/sjasmplus.exe"
-python tools/play_rally.py --lang en --emulator "path/to/g800.exe"
-python tools/play_rally.py --lang en --model PC-G850 --emulator "path/to/g800.exe"
 ```
 
 Standard Python and SjASMPlus build both languages. Install g800 separately; its simulated IOCS mode needs no ROM.

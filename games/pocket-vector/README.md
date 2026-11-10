@@ -137,16 +137,12 @@ Pour construire ou lancer la version 32 Ko, ajouter **`--target g80x-32k`** aux 
 g800 s’installe séparément. Aucun dump ROM n’est requis avec ses IOCS simulés :
 
 ```text
-python tools/play_vector.py --lang fr --emulator "chemin/vers/g800.exe"
 python games/pocket-vector/build_vector.py --lang fr --assembler "chemin/vers/sjasmplus.exe"
-python games/pocket-vector/check_vector.py --lang fr
 ```
 
-Le lanceur utilise le profil **PC-G850 à 8 MHz**, comme référence de simulation. Le comportement du prototype avance par images, donc sa vitesse dépend de la cadence de la machine. Les contrôles CPU demandent `z80==1.2.0`. Les captures Windows facultatives demandent aussi Pillow : `python tools/capture_vector.py --lang fr --emulator "g800.exe" --animation`.
+
 
 Sources : `physics.asm` pour les règles, `collisions.asm` pour les normales de contact et les impulsions, `cup.asm` pour les manches et classements, `start.asm` pour l’orbite, l’arrivée et le compte à rebours, `floor.asm` pour la projection, `render.asm` pour l’affichage, `keyboard.asm` pour le clavier simultané. `assets.py` prépare les cartes compressées par références LZ et les tables ; `graphics.py` importe les BMP. La décompression restitue les cartes complètes avant la course. La construction impose une fin de programme à **7000h au maximum**, pour garder une marge sous les espaces système et la pile. Les définitions matérielles sont dans [sharp_pc_g850.inc](../../include/sharp_pc_g850.inc).
-
-Voir l’[étude technique](../../designs/pocket-vector/README.md#francais) et les [références G-KART / niveaux de gris](../../designs/pocket-vector/RESEARCH.md#francais). Code et graphismes originaux : **MIT, © 2026 P.RAIMBAULT**. Aucun code ni graphisme G-KART, F-Zero ou QL-Zero n’est inclus.
 
 ---
 
@@ -277,13 +273,9 @@ Add **`--target g80x-32k`** to build or launch the 32 KiB profile. `--target g85
 Install g800 separately; its simulated IOCS need no Sharp ROM:
 
 ```text
-python tools/play_vector.py --lang en --emulator "path/to/g800.exe"
 python games/pocket-vector/build_vector.py --lang en --assembler "path/to/sjasmplus.exe"
-python games/pocket-vector/check_vector.py --lang en
 ```
 
-The launcher uses **PC-G850 at 8 MHz** as a simulation reference. Prototype gameplay advances per frame, so its speed depends on the machine’s frame rate. CPU checks require `z80==1.2.0`. Optional Windows captures also require Pillow: `python tools/capture_vector.py --lang en --emulator "g800.exe" --animation`.
+
 
 Sources: `physics.asm` for rules, `collisions.asm` for contact normals and impulses, `cup.asm` for rounds and standings, `start.asm` for orbit, arrival and countdown, `floor.asm` for projection, `render.asm` for display, and `keyboard.asm` for simultaneous input. `assets.py` prepares LZ back-reference compressed maps and tables; `graphics.py` imports BMPs. Maps are fully restored before racing. Building enforces a **7000h maximum program end** to leave room below system workspaces and the stack. Hardware definitions are in [sharp_pc_g850.inc](../../include/sharp_pc_g850.inc).
-
-See the [technical study](../../designs/pocket-vector/README.md#english) and [G-KART / greyscale research](../../designs/pocket-vector/RESEARCH.md#english). Original code and graphics: **MIT, © 2026 P.RAIMBAULT**. No G-KART, F-Zero or QL-Zero code or artwork is included.

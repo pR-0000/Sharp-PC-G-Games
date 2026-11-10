@@ -2,7 +2,7 @@
 from pathlib import Path
 import sys
 HERE=Path(__file__).resolve().parent
-sys.path.insert(0,str(HERE.parents[3]/'tools'))
+sys.path.insert(0,str(HERE.parents[3]/'lib'))
 from bitmap import read_bmp,write_png
 
 

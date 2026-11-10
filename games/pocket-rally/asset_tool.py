@@ -2,7 +2,7 @@
 from pathlib import Path
 import sys
 from assets import HERE,ROOT,ROUTES,PATTERNS,car_patterns,generate,track
-sys.path.insert(0,str(ROOT/'tools'))
+sys.path.insert(0,str(ROOT/'lib'))
 from cli_i18n import Parser,pick
 from bitmap import write_bmp
 

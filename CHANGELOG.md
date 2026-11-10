@@ -1,14 +1,20 @@
 # Versions / Releases
 
+## 0.9.1
+
+FR : dépôt recentré sur les jeux, leurs fichiers de chargement, leurs graphismes et leurs sources. Études préparatoires, exemples, tests et outils de capture retirés de la distribution publique. Guides simplifiés ; construction des sources conservée. Les programmes distribués sont inchangés.
+
+EN: repository focused on games, loadable files, artwork and sources. Preliminary studies, examples, tests and capture utilities removed from public distribution. Simplified guides retain source-build instructions. Distributed programs are unchanged.
+
 ## 0.9.0
 
 FR : galerie animée G850 pour Pocket Vector, Pocket Clash, Pocket Jumper, Pocket Rally et Pocket Depths 2. GIF du LCD émulé intégrés au catalogue et aux guides FR/EN ; outil de capture reproductible avec comparaison des pixels au rendu Z80.
 
 EN: animated G850 gallery for Pocket Vector, Pocket Clash, Pocket Jumper, Pocket Rally and Pocket Depths 2. Emulated-LCD GIFs embedded in the FR/EN catalogue and guides; reproducible capture tool compares pixels against the Z80 renderer.
 
-FR : distribution Intel HEX privilégiée sous l’extension `.ihx`. Binaires, manifestes et outils uniformisés dans `build/g80x/`, `build/g80x-32k/` ou `build/g850/` pour chaque jeu ; exemple graphique dans `examples/build/g80x/`. Catalogue bilingue simplifié, liens et galerie G80X/G850 actualisés.
 
-EN: Intel HEX distribution now uses `.ihx`. Binaries, manifests and tools consistently use each game’s `build/g80x/`, `build/g80x-32k/` or `build/g850/`; the graphics example uses `examples/build/g80x/`. Simplified bilingual catalogue, updated links and G80X/G850 gallery.
+
+
 
 FR : Pocket Vector et Pocket Clash disponibles pour G801/G805 avec 32 Kio. Moteurs et BMP partagés, fichiers FR/EN séparés `g80x_32k`, pilotes quatre lignes/sept bits. Vector conserve ses trois courses, sa coupe, sa physique et un vaisseau 23 × 11 ; sol en 2 × 2, HUD natif et minimap 16 × 8. Clash conserve quatre combattants, trois arènes et coupe avec une vue 120 × 21 et treize échelles. Guides, lanceurs, captures g800 et contrôles CPU dédiés. Binaires G850 inchangés.
 

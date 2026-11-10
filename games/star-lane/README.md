@@ -45,12 +45,9 @@ Les règles sont communes aux deux profils. `star_lane.asm` gère jeu/rendu, `co
 
 ```text
 python games/star-lane/build_star.py --lang fr --assembler "sjasmplus.exe"
-python games/star-lane/check_star.py --lang fr
-python games/star-lane/check_g850.py --lang fr
-python tools/play_star.py --lang fr --model PC-G850 --emulator "g800.exe"
 ```
 
-Construction : Python 3.10+ et SjASMPlus. Vérifications CPU : `tests/requirements.txt`. Simulation : g800 installé séparément, sans ROM Sharp. `--target g80x` ou `--target g850` limite la construction ; omettre `--model PC-G850` dans le lanceur pour le profil G805.
+
 
 ---
 
@@ -97,9 +94,4 @@ Both profiles share their rules: `star_lane.asm` handles game/rendering, `combat
 
 ```text
 python games/star-lane/build_star.py --lang en --assembler "sjasmplus.exe"
-python games/star-lane/check_star.py --lang en
-python games/star-lane/check_g850.py --lang en
-python tools/play_star.py --lang en --model PC-G850 --emulator "g800.exe"
 ```
-
-Build requirements: Python 3.10+ and SjASMPlus. CPU checks: `tests/requirements.txt`. Simulation: separately installed g800, no Sharp ROM needed. Use `--target g80x` or `--target g850` to build one target; omit `--model PC-G850` in the launcher to use G805.

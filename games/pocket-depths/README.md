@@ -64,12 +64,9 @@ Les niveaux de 16 × 16 assemblent quatre modules de 7 × 7 : salle à colonnes,
 
 ```text
 python games/pocket-depths/build_depths.py --lang fr --assembler "sjasmplus.exe"
-python games/pocket-depths/check_depths.py --lang fr
-python games/pocket-depths/check_g850.py --lang fr
-python tools/play_depths.py --lang fr --model PC-G850 --emulator "g800.exe"
 ```
 
-Python 3.10+ et SjASMPlus suffisent pour construire les **six binaires FR/EN**. `--target g80x` ou `--target g850` limite la cible. Vérifications CPU : `tests/requirements.txt`. g800 s’installe séparément et fonctionne ici sans ROM ; `--lite` lance le profil G801, `--model PC-G805` la complète. Les sources et les règles sont communes aux éditions.
+
 
 ---
 
@@ -135,9 +132,4 @@ Each 16 × 16 level combines four 7 × 7 modules: pillared hall, corridor crossi
 
 ```text
 python games/pocket-depths/build_depths.py --lang en --assembler "sjasmplus.exe"
-python games/pocket-depths/check_depths.py --lang en
-python games/pocket-depths/check_g850.py --lang en
-python tools/play_depths.py --lang en --model PC-G850 --emulator "g800.exe"
 ```
-
-Python 3.10+ and SjASMPlus build all **six FR/EN binaries**. Use `--target g80x` or `--target g850` to select one family. CPU checks use `tests/requirements.txt`. g800 is installed separately and needs no ROM here; `--lite` selects G801, `--model PC-G805` Full. Sources and rules are shared across editions.

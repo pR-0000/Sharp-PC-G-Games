@@ -60,7 +60,6 @@ In **Sharp PC-G Link**, select the actual model, then choose a file under **Asse
 - Pocket Depths (**select PC-G805**): `games/pocket-depths/build/g80x/depths_FR.ihx` or `depths_EN.ihx`.
 - Pocket Depths Lite (**G801/G805**, `USER17E2`): `games/pocket-depths/build/g80x/depths_lite_FR.ihx` or `depths_lite_EN.ihx`.
 - Pocket Depths 2 (**G801/G805**, `USER13FF`): `games/pocket-depths-2/build/g80x/depths2_FR.ihx` or `depths2_EN.ihx`.
-- Glyph test: `examples/build/g80x/glyph_demo_FR.ihx` or `glyph_demo_EN.ihx`.
 
 Click **Send ASM** after preparing the Sharp with `R`. Once reception finishes on the Sharp, enter:
 
@@ -79,10 +78,7 @@ Use **`CALL &H100`** in BASIC RUN mode after reserving USER memory and receiving
 - **“Bytes sent”** reports PC transmission without file acknowledgement from the Sharp. Check reception and execution on the device. CTS can be active even outside receive mode.
 - **I/O DEVICE ERROR / ERROR 10**: check receive mode, matching serial format, RS/CS, wiring and FTDI inversions. Assembly games use **MON → R**, rather than **TEXT → Sio → Load** or BASIC `LOAD`.
 - If **FRE shows about 64 KB on an 8 KB G801**, back up anything recoverable, perform **RESET** and answer **Y** to **MEMORY CLEAR O.K. ?**. This clears memory; use it for inconsistent memory state. Recheck serial settings afterward.
-- The **glyph test** and Star Lane help check loading and graphics calls before a larger program.
 
 ## BASIC examples
 
 For listings under `examples/basic/` (Sharp-PC-G-Link), use **Send BASIC**, receive with **TEXT → Sio → Load**, view them in **TEXT → Edit**, then convert using **TEXT → Basic → Basic←text**, before **RUN**. Conversion replaces existing BASIC code. This differs from the machine-code game loading procedure above.
-
-References: [readrom, serial settings and monitor commands](https://github.com/fu-sen/readrom), [z88dk SIO sender](https://github.com/z88dk/z88dk/blob/master/examples/g800/send.py). USER reservations above come from this collection's binaries, not the readrom program.

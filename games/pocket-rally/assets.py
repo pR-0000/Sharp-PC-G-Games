@@ -3,7 +3,7 @@ from pathlib import Path
 from math import sin,cos,pi,hypot
 import sys,json
 HERE=Path(__file__).resolve().parent
-ROOT=HERE.parents[1];sys.path.insert(0,str(ROOT/'tools'))
+ROOT=HERE.parents[1];sys.path.insert(0,str(ROOT/'lib'))
 from bitmap import read_bmp,write_bmp
 W,H=48,32
 ROUTES=(

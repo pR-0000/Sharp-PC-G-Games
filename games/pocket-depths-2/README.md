@@ -76,21 +76,10 @@ Chaque rayon calcule ses deux premières distances aux frontières, compare `sid
 
 Les angles des rayons suivent `atan(cameraX)` sur un champ horizontal voisin de 90°. La correction par le cosinus de l'écart donne une distance perpendiculaire et évite l'effet de lentille. La hauteur est calculée par division entière : `min(28,15360/distanceQ8.8)` sur G80X (focale de 60 points), `min(40,18432/distanceQ8.8)` sur G850 (focale de 72 points). Les coordonnées de texture suivent l'intersection avec le mur. Les sprites sont transformés dans le repère de la caméra, triés du plus loin au plus proche et découpés par le tampon de profondeur des murs. Les collisions testent les quatre coins d'une petite boîte et glissent sur les axes. La ligne de vue des tirs utilise aussi un DDA vers le centre de la cible.
 
-| Fichier | Rôle |
-|---|---|
-| [depths2.asm](depths2.asm) | Commandes, déplacement, combat, objets et état |
-| [raycaster.asm](raycaster.asm) | DDA, entiers, transformation et projection |
-| [render.asm](render.asm) | Murs, textures, sprites et tampon graphique |
-| [interface.asm](interface.asm) | Textes FR/EN, chiffres Sharp et dégâts |
-| [assets.py](assets.py) | Niveau, motifs et constantes mathématiques |
-| [check_depths2.py](check_depths2.py) | Scénarios CPU et références indépendantes |
-
 Depuis la racine de la collection :
 
 ```text
 python games/pocket-depths-2/build_depths2.py --lang fr --assembler "chemin/vers/sjasmplus.exe"
-python games/pocket-depths-2/check_depths2.py --lang fr
-python tools/play_depths2.py --lang fr --model PC-G850 --emulator "chemin/vers/g800.exe"
 ```
 
 Construction : Python standard et SjASMPlus. Vérification CPU : `z80==1.2.0`. Captures : Pillow et Windows. g800 est installé séparément ; `--model PC-G805` sélectionne son autre profil. Aucune ROM n'est nécessaire pour cet aperçu ni incluse dans le projet.
@@ -173,23 +162,12 @@ Every ray computes its initial grid-boundary distances, compares `sideX` and `si
 
 Ray offsets follow `atan(cameraX)` over an approximately 90° horizontal field of view. Cosine correction yields perpendicular depth and avoids fisheye distortion. Height uses integer division `min(28,15360/distanceQ8.8)` with a 60-pixel focal length. Texture coordinates follow the wall intersection. Camera-space billboards are sorted far to near and clipped against wall depth. Four-corner collision checks allow axis sliding. Shooting line of sight also uses a DDA aimed at the target centre.
 
-| File | Purpose |
-|---|---|
-| [depths2.asm](depths2.asm) | Input, movement, combat, items and state |
-| [raycaster.asm](raycaster.asm) | DDA, integer math, transforms and projection |
-| [render.asm](render.asm) | Walls, textures, sprites and pixel buffer |
-| [interface.asm](interface.asm) | FR/EN text, Sharp digits and damage feedback |
-| [assets.py](assets.py) | Level, patterns and math constants |
-| [check_depths2.py](check_depths2.py) | CPU scenarios and independent references |
-
 From the collection root:
 
 ```text
 python games/pocket-depths-2/build_depths2.py --lang en --assembler "path/to/sjasmplus.exe"
-python games/pocket-depths-2/check_depths2.py --lang en
-python tools/play_depths2.py --lang en --model PC-G850 --emulator "path/to/g800.exe"
 ```
 
-Building requires standard Python and SjASMPlus. CPU verification requires `z80==1.2.0`; captures use Pillow and Windows. g800 is installed separately; `--model PC-G805` selects that profile. No ROM is needed for this preview or included in the project.
+Building requires standard Python and SjASMPlus. No Sharp ROM is included.
 
 © 2026 P.RAIMBAULT — [MIT](../../LICENSE.txt). Original graphics and level; no Wolfenstein/Doom code or assets are incorporated.

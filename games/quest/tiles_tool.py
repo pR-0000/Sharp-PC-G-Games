@@ -10,7 +10,7 @@ import unicodedata
 import zlib
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE.parents[1] / "tools"))
+sys.path.insert(0, str(HERE.parents[1] / "lib"))
 from cli_i18n import Parser, pick
 
 

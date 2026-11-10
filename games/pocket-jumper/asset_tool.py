@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 import assets
 from assets import HERE,ROOT,BLACK,WHITE,COLOURS,TILES,WIDTH,HEIGHT
-sys.path.insert(0,str(ROOT/'tools'))
+sys.path.insert(0,str(ROOT/'lib'))
 from bitmap import read_bmp,write_bmp
 from cli_i18n import Parser,pick
 

@@ -46,9 +46,7 @@ Le programme tient sous la limite G801 de 5 859 octets, sans extension RAM. Il u
 
 Pour g800 installé séparément :
 
-```text
-python tools/play_runner.py --lang fr --emulator "chemin/vers/g800.exe"
-```
+
 
 Le lanceur accepte `--model PC-G850` ; la construction accepte `--target g850` ou `--target g80x` (défaut : les deux). Le profil par défaut est PC-G805 ; `--model PC-G801` sélectionne l'autre cible. Aucun dump ROM n'est nécessaire pour cet aperçu.
 
@@ -82,23 +80,13 @@ Cette première version reprend ces mécaniques avec des niveaux originaux ; ell
 
 ### Sources et vérifications
 
-| Fichier | Rôle |
-|---|---|
-| [runner.asm](runner.asm) | Entrées, gravité, creusement, temporisation, or, vies et progression |
-| [guards.asm](guards.asm) | Recherche de chemins par parcours en largeur et gardes piégés |
-| [render.asm](render.asm) | Caméra verticale et composition des motifs |
-| [interface.asm](interface.asm) | Textes FR/EN et chiffres natifs |
-| [assets.py](assets.py) | Trois niveaux, compression RLE et sprites originaux |
-| [check_runner.py](check_runner.py) | Exécution des binaires Z80 et références indépendantes |
-
 Depuis la racine de la collection :
 
 ```text
 python games/pocket-runner/build_runner.py --lang fr --assembler "chemin/vers/sjasmplus.exe"
-python games/pocket-runner/check_runner.py --lang fr
 ```
 
-Construction : Python standard et SjASMPlus. Vérifications : `z80==1.2.0`. Pour reproduire les captures sous Windows : `python tools/capture_runner.py --lang fr --emulator "chemin/vers/g800.exe"`, avec Pillow et z80. Aucun assembleur, émulateur ou ROM n'est redistribué.
+
 
 Le tampon graphique de 480 octets sert aussi de deux tableaux de 240 octets pour l'IA, puis est entièrement redessiné avant son envoi au LCD. Aucun espace de travail du firmware n'est emprunté. Les périodes sont de trois étapes pour le joueur et sept pour les gardes, avec un délai de base et le coût des IOCS..
 
@@ -150,9 +138,7 @@ The program fits the 5,859-byte G801 budget without RAM expansion. It uses commo
 
 For a separately installed g800:
 
-```text
-python tools/play_runner.py --lang en --emulator "path/to/g800.exe"
-```
+
 
 Use `--model PC-G850` for G850. Building supports `--target g850` or `--target g80x` (default: both). PC-G805 is the default profile; `--model PC-G801` selects the other target. No ROM dump is needed for this preview.
 
@@ -186,23 +172,13 @@ This initial version implements those mechanics using original levels rather tha
 
 ### Sources and verification
 
-| File | Purpose |
-|---|---|
-| [runner.asm](runner.asm) | Input, gravity, digging, timing, gold, lives and progression |
-| [guards.asm](guards.asm) | Breadth-first pathfinding and trapped guards |
-| [render.asm](render.asm) | Vertical camera and pattern composition |
-| [interface.asm](interface.asm) | FR/EN text and native digits |
-| [assets.py](assets.py) | Three levels, RLE compression and original sprites |
-| [check_runner.py](check_runner.py) | Z80 binary execution and independent references |
-
 From the collection root:
 
 ```text
 python games/pocket-runner/build_runner.py --lang en --assembler "path/to/sjasmplus.exe"
-python games/pocket-runner/check_runner.py --lang en
 ```
 
-Building requires standard Python and SjASMPlus; tests require `z80==1.2.0`. Reproduce Windows captures with `python tools/capture_runner.py --lang en --emulator "path/to/g800.exe"`, with Pillow and z80 installed. No assembler, emulator or ROM is redistributed.
+
 
 The 480-byte graphics buffer doubles as two 240-byte AI work arrays, then is fully rebuilt before LCD upload. No firmware workspace is borrowed. Player/guard periods are three/seven world ticks, with a base delay plus IOCS overhead.
 

@@ -1,6 +1,5 @@
 """FR/EN: original monochrome G850 assets and fixed-point projection tables."""
 from pathlib import Path
-import importlib.util
 import json
 import hashlib
 import math
@@ -8,16 +7,14 @@ import sys
 
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
-sys.path.insert(0,str(ROOT/'tools'))
+sys.path.insert(0,str(ROOT/'lib'))
 from bitmap import write_bmp
 from graphics import load_frames,packed_sprite,mirrored,DIRECTIONS
 
 
 def reference():
-    path=ROOT/'designs/pocket-vector/reference.py'
-    spec=importlib.util.spec_from_file_location('vector_reference',path)
-    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
-    return module
+    import projection
+    return projection
 
 
 def path_nodes(ref,control=None):

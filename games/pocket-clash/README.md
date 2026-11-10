@@ -106,11 +106,9 @@ Depuis la racine, avec Python 3.10+ et SjASMPlus :
 
 ```text
 python games/pocket-clash/build_clash.py --lang fr --assembler "sjasmplus.exe"
-python games/pocket-clash/check_clash.py --lang fr
-python tools/play_clash.py --lang fr --emulator "g800.exe"
 ```
 
-La construction ne demande aucune bibliothèque d’image. Les contrôles CPU utilisent `tests/requirements.txt`. g800 s’installe séparément ; le lanceur utilise ses IOCS simulés sans ROM Sharp.
+
 
 Inspiration de conception : Super Smash Bros. et [Super Smash Bros. Open de Hayleia](https://tiplanet.org/forum/archives_voir.php?id=110486), notamment son principe de caméra avec zoom. Code Z80, routine de mise à l’échelle et graphismes de Pocket Clash originaux. © 2026 P.RAIMBAULT, [MIT](../../LICENSE.txt).
 
@@ -216,10 +214,8 @@ From the repository root, with Python 3.10+ and SjASMPlus:
 
 ```text
 python games/pocket-clash/build_clash.py --lang en --assembler "sjasmplus.exe"
-python games/pocket-clash/check_clash.py --lang en
-python tools/play_clash.py --lang en --emulator "g800.exe"
 ```
 
-Building requires no image library. CPU checks use `tests/requirements.txt`. Install g800 separately; the launcher uses its simulated IOCS without a Sharp ROM.
+
 
 Design inspiration: Super Smash Bros. and [Hayleia’s Super Smash Bros. Open](https://tiplanet.org/forum/archives_voir.php?id=110486), particularly its zoom-camera concept. Pocket Clash’s Z80 code, scaling routine and graphics are original. © 2026 P.RAIMBAULT, [MIT](../../LICENSE.txt).

@@ -3,7 +3,7 @@ from pathlib import Path
 import json,sys
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
-sys.path.insert(0,str(ROOT/'tools'))
+sys.path.insert(0,str(ROOT/'lib'))
 from bitmap import read_bmp,write_bmp
 WIDTH,HEIGHT=96,6
 BLACK,WHITE=(0,0,0),(255,255,255)

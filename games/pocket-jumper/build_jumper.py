@@ -4,7 +4,7 @@ import hashlib,json,os,shutil,subprocess,sys
 from assets import generate
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
-sys.path.insert(0,str(ROOT/'tools'))
+sys.path.insert(0,str(ROOT/'lib'))
 from build import intel_hex,read_symbols
 from cli_i18n import Parser
 def main():

@@ -1,6 +1,6 @@
 # Sharp PC-G Games
 
-Collection **0.9.0** · [Français](#francais) · [English](#english)
+Collection **0.9.1** · [Français](#francais) · [English](#english)
 
 <a id="francais"></a>
 
@@ -110,15 +110,9 @@ Utiliser une interface série Sharp compatible et [Sharp PC-G Link](https://gith
 
 Charger un autre jeu remplace le code et son état à 0100h. En cas d’erreur ou de retour immédiat de `R`, revérifier **TEXT → Sio → Format**. [Chargement et dépannage](docs/LOADING.md) · [Lancement BASIC](docs/BASIC_CALL.md).
 
-### Modifier et construire
+### Sources
 
-Installer Python 3.10+ et [SjASMPlus](https://github.com/z00m128/sjasmplus). Depuis la racine du dépôt :
-
-```text
-python tools/build_all.py --lang fr --assembler "sjasmplus.exe"
-```
-
-La construction produit les deux langues pour toutes les cibles disponibles. Chaque `manifest.json` indique les tailles, commandes USER et empreintes SHA-256 des fichiers de sa cible. [Guide développeur](docs/DEVELOPMENT.md).
+Chaque jeu contient ses sources assembleur et ses graphismes modifiables. Pour jouer, seul le fichier `.ihx` est nécessaire. Le [guide développeur](docs/DEVELOPMENT.md) explique comment reconstruire un jeu modifié.
 
 © 2026 P.RAIMBAULT. Jeux et outils originaux : [MIT](LICENSE.txt), [traduction française](LICENSE_FR.txt). Voir la [notice de Quest](games/quest/NOTICE.md) pour les éléments hérités. Aucune ROM Sharp ni exécutable tiers inclus. Projet indépendant, sans affiliation à Sharp.
 
@@ -232,14 +226,8 @@ Use a compatible Sharp serial adapter and [Sharp PC-G Link](https://github.com/p
 
 Loading another game replaces the code and its state at 0100h. If reception fails or `R` returns immediately, recheck **TEXT → Sio → Format**. [Loading and troubleshooting](docs/LOADING_EN.md) · [BASIC launch](docs/BASIC_CALL_EN.md).
 
-### Modify and build
+### Sources
 
-Install Python 3.10+ and [SjASMPlus](https://github.com/z00m128/sjasmplus). From the repository root:
-
-```text
-python tools/build_all.py --lang en --assembler "sjasmplus.exe"
-```
-
-Builds both languages for all available targets. `manifest.json` records sizes, USER commands and SHA-256 hashes beside each target’s files. [Developer guide](docs/DEVELOPMENT_EN.md).
+Each game includes its assembly source and editable graphics. Playing requires only its `.ihx` file. See the [developer guide](docs/DEVELOPMENT_EN.md) to rebuild a modified game.
 
 © 2026 P.RAIMBAULT. Original games and tools: [MIT](LICENSE.txt). See [Quest’s notice](games/quest/NOTICE_EN.md) for inherited material. No Sharp ROM or third-party executable is included. Independent project, unaffiliated with Sharp.

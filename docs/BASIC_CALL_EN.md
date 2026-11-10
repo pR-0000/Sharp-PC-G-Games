@@ -17,8 +17,6 @@ A short BASIC launcher also works when enough BASIC RAM remains:
 20 END
 ```
 
-[Transfer example](../examples/run_machine_code.bas). Prefer the direct command when Quest nearly fills an 8 KB G801. USER must reserve code, state and buffers.
-
 Machine code must keep a valid caller stack and return with RET. Pocket Depths also preserves BC, DE, HL, IX and IY. MON's G100 and BASIC's CALL &H100 use the same entry point; exiting returns to the caller used.
 
 Reference: [fu-sen PC-E200/G CALL documentation](https://github.com/fu-sen/SHARP-POCKET-COMPUTER-BASIC/blob/master/CALL.txt). Use each game's manifest for its entry address.

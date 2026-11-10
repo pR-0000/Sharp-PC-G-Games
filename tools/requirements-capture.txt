@@ -1,2 +1,0 @@
-# Optional Windows documentation screenshots only / captures facultatives
-Pillow>=10
