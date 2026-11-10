@@ -1,7 +1,12 @@
 ; POCKET RUNNER - original Lode Runner-inspired game for Sharp PC-G.
 ; FR/EN: plateformes, echelles, cordes, or, pieges / platforms, ladders,
 ; ropes, gold and traps. (c) 2026 P.RAIMBAULT, MIT.
-    INCLUDE "sharp-pc-g8xx.inc"
+    INCLUDE "game_platform.inc"
+    IF TARGET_G850
+    INCLUDE "targets/g850/config.inc"
+    ELSE
+    INCLUDE "targets/g80x/config.inc"
+    ENDIF
     ORG 0x100
 PLAYER_PERIOD EQU 3
 GUARD_PERIOD  EQU 7
@@ -34,11 +39,16 @@ main_loop:
     ld a,(paused)
     or a
     jr nz,main_loop
+    IF TARGET_G850
+    ld a,(photo_frozen)
+    or a
+    jr nz,main_loop
+    ENDIF
     call world_step
     ld a,(phase)
     cp 1
     call z,draw_game
-    ld bc,3000
+    ld bc,RUN_FRAME_DELAY
 main_delay:
     dec bc
     ld a,b
@@ -85,6 +95,15 @@ handle_normal:
     ret z
     jp new_game
 handle_restart:
+    IF TARGET_G850
+    cp PCG_KEY_F
+    jr nz,photo_key_done
+    ld a,(photo_frozen)
+    xor 1
+    ld (photo_frozen),a
+    ret
+photo_key_done:
+    ENDIF
     ld a,(phase)
     cp 1
     ret nz
@@ -94,6 +113,11 @@ handle_restart:
     ld a,(paused)
     or a
     ret nz
+    IF TARGET_G850
+    ld a,(photo_frozen)
+    or a
+    ret nz
+    ENDIF
     ld a,b
     cp PCG_KEY_R
     jp z,lose_life
@@ -122,6 +146,9 @@ toggle_pause:
     jp message
 new_game:
     xor a
+    IF TARGET_G850
+    ld (photo_frozen),a
+    ENDIF
     ld (level_index),a
     ld (paused),a
     ld hl,0
@@ -600,7 +627,7 @@ lose_life:
     INCLUDE "guards.asm"
     INCLUDE "render.asm"
     INCLUDE "interface.asm"
-    INCLUDE "../../lib/pcg801_runtime.asm"
+    INCLUDE "game_runtime.asm"
     INCLUDE "generated.inc"
 data_start:
 phase:          db 0
@@ -646,8 +673,15 @@ gold_positions: ds 8,0
 guards:         ds 9,0
 holes:          ds 8,0
 world:          ds 240,0
-frame_buffer:   ds 480,0
+frame_buffer:   ds PCG_FRAME_BYTES,0
+    IF TARGET_G850
+photo_frozen: db 0
+    ENDIF
 ai_dist         EQU frame_buffer
 ai_queue        EQU frame_buffer+240
 program_end:
+    IF TARGET_G850
+    ASSERT program_end <= 0x7000
+    ELSE
     ASSERT program_end <= 0x17e3
+    ENDIF

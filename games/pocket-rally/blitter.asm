@@ -23,13 +23,13 @@ sprite_positive_y:
     or a
     ret nz
     ld a,l
-    cp 28
+    cp RALLY_HEIGHT
     ret nc
     ld b,0
 sprite_y_divide:
-    cp 7
+    cp PCG_GLYPH_HEIGHT
     jr c,sprite_y_ready
-    sub 7
+    sub PCG_GLYPH_HEIGHT
     inc b
     jr sprite_y_divide
 sprite_y_ready:
@@ -46,7 +46,7 @@ sprite_next_column:
     or a
     jp nz,sprite_column_done
     ld a,l
-    cp 100
+    cp RALLY_WIDTH
     jp nc,sprite_column_done
     push hl
     ld a,(sprite_band)
@@ -87,29 +87,36 @@ sprite_shift_loop:
 sprite_bits_ready:
     pop hl
     ld a,e
-    and 127
+    and PCG_GLYPH_MASK
     or (hl)
     ld (hl),a
     ld a,(sprite_band)
-    cp 3
+    cp RALLY_PAGES-1
     jr nc,sprite_column_done
     push de
-    ld de,120
+    ld de,PCG_ROW_COLUMNS
     add hl,de
     pop de
+    IF !TARGET_G850
     rlc e
+    ENDIF
     ld a,d
+    IF !TARGET_G850
     rla
-    and 127
+    ENDIF
+    and PCG_GLYPH_MASK
     or (hl)
     ld (hl),a
     ld a,(sprite_band)
-    cp 2
+    cp RALLY_PAGES-2
     jr nc,sprite_column_done
     push de
-    ld de,120
+    ld de,PCG_ROW_COLUMNS
     add hl,de
     pop de
+    IF TARGET_G850
+    ld a,c
+    ELSE
     ld a,d
     rlca
     rlca
@@ -119,7 +126,8 @@ sprite_bits_ready:
     add a,a
     add a,a
     or b
-    and 127
+    and PCG_GLYPH_MASK
+    ENDIF
     or (hl)
     ld (hl),a
 sprite_column_done:

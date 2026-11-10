@@ -1,44 +1,56 @@
-# Star Lane
+# Star Lane — 0.2.0
 
-[Français](#francais) · [English](#english)
+[Français](#francais) · [English](#english) · [Collection](../../README.md)
 
 <a id="francais"></a>
 
 ## Français
 
-[Collection](../../README.md#francais)
+Shoot’em up à couloirs pour **PC-G801 / PC-G805 / PC-G850**. Détruire les astéroïdes et les pirates, éviter leurs tirs et enchaîner les étoiles pour augmenter son score. Trois couloirs sur G80X ; **cinq sur G850**, avec un espace de jeu de 144 × 40 pixels et un panneau en haut.
 
-Déplacer le vaisseau entre trois couloirs, éviter les astéroïdes et ramasser les étoiles. Trois vies ; chaque avancée vaut un point, chaque étoile 25 points. Le score est plafonné à 9999. Les graphismes sont des motifs logiciels de 5 × 7 pixels.
+![Star Lane — PC-G850, LCD g800](docs/star_lane_g850_fr_g800.png)
 
-![Star Lane dans g800](docs/star_lane_g800.png)
+### Télécharger et charger
 
-### Chargement
+| Machine | Français | English | Réservation |
+|---|---|---|---|
+| PC-G801 / PC-G805 | [IHX FR](../../games/star-lane/build/g80x/star_lane_FR.ihx) | [IHX EN](../../games/star-lane/build/g80x/star_lane_EN.ihx) | `USER09FF` |
+| PC-G850 | [IHX FR](build/g850/star_lane_g850_FR.ihx) | [IHX EN](build/g850/star_lane_g850_EN.ihx) | `USER0BFF` |
 
-Fichiers : [français](../../build/star_lane_FR.hex), [anglais](../../build/star_lane_EN.hex), ou leurs variantes BIN. Régler la liaison en 4800 / 8N1 / RS/CS, puis depuis BASIC :
+Avec [Sharp PC-G Link](https://github.com/pR-0000/Sharp-PC-G-Link), choisir le modèle exact et les mêmes paramètres dans **TEXT → Sio → Format** : **4800 / 8N1 / RS/CS / CR LF / EOF 1A** conseillés. Sauvegarder les programmes à conserver. Depuis BASIC RUN : **MON**, la commande **USER** du tableau, puis **R**. Envoyer le fichier IHX avec **Envoyer ASM**, attendre la fin sur le Sharp, puis saisir **G100**. Après chargement, **CALL &H100** fonctionne également depuis BASIC. [Guide détaillé](../../docs/LOADING.md).
 
-```text
-MON
-USER05FF
-R
-```
-
-Envoyer avec **Assembleur → Envoyer ASM** dans Sharp PC-G Link, attendre la réception, puis `G100`. Origine et entrée BIN : 0100h. [Guide complet](../../docs/LOADING.md).
+### Commandes et règles
 
 | Touche | Action |
 |---|---|
-| ENTER / ESPACE | Démarrer, rejouer |
-| ↑ / ↓, W ou Z / S | Changer de couloir |
+| ENTRÉE / ESPACE au titre | Commencer ou rejouer |
+| ↑ / ↓ ou W / S, Z | Changer de couloir ; Z monte aussi |
+| ESPACE | Tirer ; un projectile à la fois |
+| F | Activer/désactiver le tir automatique |
+| X | Bouclier temporaire, consommant une charge |
 | P | Pause / reprise |
+| TAB | Gel photo sans texte au milieu de l’écran / reprise |
 | R | Nouvelle partie |
-| Q / BREAK | Retour au moniteur |
+| Q / BREAK | Revenir à l’appelant |
 
-Relâcher entre deux déplacements. Trois vies et une courte invulnérabilité après une collision. Pendant la pause, P, R et les sorties restent actifs.
+Relâcher les touches entre les actions. Le tir automatique reste actif pendant les déplacements. Le bouclier protège des collisions ; ses trois charges se récupèrent avec les cellules d’énergie, figurées par un petit boîtier. Une charge ne s’active pas si le bouclier est déjà déployé.
 
-### Sources
+Un astéroïde rapporte **10 points**. Un pirate demande **deux tirs**, change d’apparence au premier impact et rapporte **50 points** à sa destruction. Les pirates tirent vers le joueur. Les étoiles donnent **25 × le multiplicateur**, qui augmente jusqu’à **×4** et retombe à ×1 après un dégât. Le panneau affiche score, secteur, multiplicateur, charges de bouclier et vies. Trois vies ; score plafonné à 9999.
 
-`star_lane.asm` utilise `include/sharp_pc_g801.inc` et `lib/pcg801_runtime.asm`. Les deux langues sont construites par `python tools/build_all.py --lang fr` depuis la racine, avec SjASMPlus dans PATH ou l'option `--assembler`. La constante `STEP_POLLS`, 48 par défaut, règle le nombre de lectures clavier par avancée : l'augmenter ralentit le jeu.
+Tous les 64 pas, le secteur augmente et le défilement accélère, jusqu’au secteur 9. À partir du secteur 3, certaines vagues occupent deux couloirs dangereux ; une voie praticable reste disponible. Après un dégât, le vaisseau clignote pendant un court délai de protection.
 
-Taille FR : 1195 octets ; EN : 1192 octets, état et buffers compris. La pile du moniteur est conservée et la sortie se fait par RET. Licence MIT, © 2026 P.RAIMBAULT.
+### Sources et simulation
+
+Les règles sont communes aux deux profils. `star_lane.asm` gère jeu/rendu, `combat.asm` les tirs et vagues. Motifs dans le source : 5 × 7 sur G80X, 6 × 8 sur G850. `STEP_POLLS` ajuste la cadence de base ; le profil G850 tient compte de son horloge plus rapide. Les manifestes donnent tailles, adresses et empreintes exactes.
+
+```text
+python games/star-lane/build_star.py --lang fr --assembler "sjasmplus.exe"
+python games/star-lane/check_star.py --lang fr
+python games/star-lane/check_g850.py --lang fr
+python tools/play_star.py --lang fr --model PC-G850 --emulator "g800.exe"
+```
+
+Construction : Python 3.10+ et SjASMPlus. Vérifications CPU : `tests/requirements.txt`. Simulation : g800 installé séparément, sans ROM Sharp. `--target g80x` ou `--target g850` limite la construction ; omettre `--model PC-G850` dans le lanceur pour le profil G805.
 
 ---
 
@@ -46,36 +58,48 @@ Taille FR : 1195 octets ; EN : 1192 octets, état et buffers compris. La pile du
 
 ## English
 
-[Collection](../../README.md#english)
+Lane shoot’em up for **PC-G801 / PC-G805 / PC-G850**. Destroy asteroids and pirates, dodge their shots and chain stars to build your score. Three lanes on G80X; **five on G850**, using a 144 × 40 playfield below the top HUD.
 
-Move a ship between three lanes, avoid asteroids and collect stars. Three lives; each world step adds one point and each star adds 25. Score is capped at 9999. Graphics use custom software 5 × 7 patterns.
+![Star Lane — PC-G850, g800 LCD](docs/star_lane_g850_en_g800.png)
 
-![Star Lane in g800](docs/star_lane_g800.png)
+### Download and load
 
-### Loading
+| Machine | French | English | Reservation |
+|---|---|---|---|
+| PC-G801 / PC-G805 | [FR IHX](../../games/star-lane/build/g80x/star_lane_FR.ihx) | [EN IHX](../../games/star-lane/build/g80x/star_lane_EN.ihx) | `USER09FF` |
+| PC-G850 | [FR IHX](build/g850/star_lane_g850_FR.ihx) | [EN IHX](build/g850/star_lane_g850_EN.ihx) | `USER0BFF` |
 
-Files: [French](../../build/star_lane_FR.hex), [English](../../build/star_lane_EN.hex), or matching BIN files. Set 4800 / 8N1 / RS/CS, then enter from BASIC:
+Use [Sharp PC-G Link](https://github.com/pR-0000/Sharp-PC-G-Link), select the actual model and match **TEXT → Sio → Format** on both sides: **4800 / 8N1 / RS/CS / CR LF / EOF 1A** recommended. Back up programs you want to keep. From BASIC RUN: **MON**, the table’s **USER** command, then **R**. Send the IHX file with **Send ASM**, wait for reception to finish on the Sharp, then enter **G100**. **CALL &H100** also works from BASIC after loading. [Detailed guide](../../docs/LOADING_EN.md).
 
-```text
-MON
-USER05FF
-R
-```
-
-Use **Assembly → Send ASM** in Sharp PC-G Link, wait for reception to finish, then enter `G100`. BIN origin and entry are 0100h. [Full guide](../../docs/LOADING_EN.md).
+### Controls and rules
 
 | Key | Action |
 |---|---|
-| ENTER / SPACE | Start, replay |
-| ↑ / ↓, W or Z / S | Change lane |
+| ENTER / SPACE on title | Start / retry |
+| ↑ / ↓ or W / S, Z | Change lane; Z also moves up |
+| SPACE | Fire; one projectile at a time |
+| F | Toggle autofire |
+| X | Temporary shield, using one charge |
 | P | Pause / resume |
+| TAB | Clean photo freeze / resume |
 | R | New game |
-| Q / BREAK | Return to monitor |
+| Q / BREAK | Return to caller |
 
-Release between moves. A hit grants brief invulnerability. P, R and exit keys remain active during pause.
+Release keys between actions. Autofire stays active while changing lanes. The shield protects against collisions; energy cells, shown as small boxes, replenish its maximum of three charges. An active shield cannot consume another charge.
 
-### Sources
+Asteroids award **10 points**. Pirates take **two hits**, change appearance after the first and award **50 points** when destroyed. Pirates shoot toward the player. Stars award **25 × the multiplier**, which rises to **×4** and resets after taking damage. The HUD shows score, sector, multiplier, shield charges and lives. Three lives; score capped at 9999.
 
-`star_lane.asm` uses `include/sharp_pc_g801.inc` and `lib/pcg801_runtime.asm`. Build both languages from the repository root with `python tools/build_all.py --lang en`, using SjASMPlus in PATH or `--assembler`. `STEP_POLLS`, default 48, sets keyboard scans per world step; increase it to slow the game. Physical-device timing remains to be checked.
+Every 64 steps the sector increases and scrolling speeds up, capped at sector 9. From sector 3 some waves block two lanes, always leaving a safe route. After a hit the ship blinks during a short protection period.
 
-FR size: 1195 bytes; EN: 1192 bytes, including state and buffers. The game retains the monitor stack and exits with RET. MIT license, © 2026 P.RAIMBAULT.
+### Sources and simulation
+
+Both profiles share their rules: `star_lane.asm` handles game/rendering, `combat.asm` shots and waves. Source patterns use 5 × 7 columns on G80X or 6 × 8 on G850. `STEP_POLLS` sets base pace; the G850 profile accounts for its faster clock. Manifests provide exact sizes, addresses and hashes.
+
+```text
+python games/star-lane/build_star.py --lang en --assembler "sjasmplus.exe"
+python games/star-lane/check_star.py --lang en
+python games/star-lane/check_g850.py --lang en
+python tools/play_star.py --lang en --model PC-G850 --emulator "g800.exe"
+```
+
+Build requirements: Python 3.10+ and SjASMPlus. CPU checks: `tests/requirements.txt`. Simulation: separately installed g800, no Sharp ROM needed. Use `--target g80x` or `--target g850` to build one target; omit `--model PC-G850` in the launcher to use G805.

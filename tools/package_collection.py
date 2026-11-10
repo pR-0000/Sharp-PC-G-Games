@@ -14,7 +14,7 @@ def included(path, root=ROOT):
     name = path.name.casefold()
     return (not any(part.casefold() in {p.casefold() for p in EXCLUDED} for part in relative.parts)
             and path.suffix.casefold() not in {".pyc", ".pyo", ".lst", ".sym", ".exe", ".log"}
-            and name not in {"sharp_pc_g_link.ini", "sharp_pc_g_link.ini.tmp", "hardware_reports.json", "captures.json", "timing_comparison.json", "timing_patch.md", "timing_patch_en.md", "quest_0_1_4_or_0_1_5_typing_patch.hex"}
+            and name not in {"sharp_pc_g_link.ini", "sharp_pc_g_link.ini.tmp", "hardware_reports.json", "captures.json", "timing_comparison.json", "timing_patch.md", "timing_patch_en.md", "quest_0_1_4_or_0_1_5_typing_patch.ihx"}
             and not (path.suffix.casefold() == ".json" and ("validation" in name or name.startswith("typing_adjustment_")
                     or "docs" in relative.parts and (name.startswith("capture_") or name.startswith("depths_door_")))))
 

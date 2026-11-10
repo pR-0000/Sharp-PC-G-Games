@@ -10,12 +10,22 @@ camera_divide:
     jr camera_divide
 camera_follow:
     ld a,b
+    IF TARGET_G850
+    sub 2
+    jr nc,camera_positive
+    xor a
+camera_positive:
+    cp 8
+    jr c,camera_store
+    ld a,7
+    ELSE
     or a
     jr z,camera_store
     dec a
     cp 9
     jr c,camera_store
     ld a,8
+    ENDIF
 camera_store:
     ld (camera_y),a
     ld b,a
@@ -27,12 +37,12 @@ camera_store:
     ld (draw_cell),a
     ld hl,frame_buffer
     ld de,frame_buffer+1
-    ld bc,479
+    ld bc,PCG_FRAME_BYTES-1
     ld (hl),0
     ldir
     xor a
     ld (draw_row),a
-    ld de,frame_buffer
+    ld de,frame_buffer+RUN_VIEW_START*PCG_ROW_COLUMNS+RUN_VIEW_X
 map_row:
     ld a,20
     ld (draw_column),a
@@ -42,7 +52,7 @@ map_cell:
     call tile
     call pattern_address
     pop de
-    ld bc,5
+    ld bc,RUN_TILE_WIDTH
     ldir
     ld hl,draw_cell
     inc (hl)
@@ -50,13 +60,13 @@ map_cell:
     dec (hl)
     jr nz,map_cell
     ex de,hl
-    ld de,20
+    ld de,PCG_ROW_COLUMNS-20*RUN_TILE_WIDTH
     add hl,de
     ex de,hl
     ld hl,draw_row
     inc (hl)
     ld a,(hl)
-    cp 4
+    cp RUN_VIEW_ROWS
     jr nz,map_row
     ld a,(gold_flags)
     ld b,a
@@ -95,7 +105,7 @@ draw_guard_pattern:
     djnz draw_guard
     ld a,(player_pos)
     call tile
-    cp 4
+    cp 4                       ; rope tile ID, independent of viewport height
     ld a,11
     jr z,draw_player_pattern
     ld a,(player_frame)
@@ -104,17 +114,17 @@ draw_player_pattern:
     call pattern_address
     ld a,(player_pos)
     call stamp
-    ld hl,frame_buffer
-    ld de,0
-    ld b,120
+    ld hl,frame_buffer+RUN_VIEW_START*PCG_ROW_COLUMNS
+    ld de,RUN_VIEW_START*256
+    ld b,PCG_ROW_COLUMNS
 upload:
     call pcg_pattern
     inc d
     ld a,d
-    cp 4
+    cp RUN_VIEW_START+RUN_VIEW_ROWS
     jp z,hud
     push de
-    ld de,120
+    ld de,PCG_ROW_COLUMNS
     add hl,de
     pop de
     jr upload
@@ -125,7 +135,13 @@ pattern_address:
     ld h,0
     add hl,hl
     add hl,hl
+    IF TARGET_G850
+    add hl,hl
+    or a
+    sbc hl,de
+    ELSE
     add hl,de
+    ENDIF
     ld de,patterns
     add hl,de
     ret
@@ -157,7 +173,7 @@ stamp_position:
     ld a,b
     sub e
     ret c
-    cp 4
+    cp RUN_VIEW_ROWS
     ret nc
     add a,a
     ld e,a
@@ -172,11 +188,17 @@ stamp_position:
     add hl,hl
     add hl,hl
     ld b,0
+    IF TARGET_G850
+    add hl,hl
+    or a
+    sbc hl,bc
+    ELSE
     add hl,bc
+    ENDIF
     add hl,de
     ex de,hl
     ld hl,(stamp_source)
-    ld b,5
+    ld b,RUN_TILE_WIDTH
 stamp_column:
     ld a,(stamp_mode)
     or a

@@ -1,0 +1,33 @@
+{
+  "name": "Star Lane",
+  "version": "0.2.0",
+  "visible_pixels": [
+    120,
+    28
+  ],
+  "lanes": 3,
+  "frame_bytes": 480,
+  "target": "PC-G801 / PC-G805",
+  "origin": "0100",
+  "entry": "0100",
+  "programs": {
+    "star_lane_FR": {
+      "bytes": 2101,
+      "last_address": "0934",
+      "user_command": "USER09FF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "cacbcd4806ef7a3c0d9463bcfb110c7b5ed22bccca7d6636c21fc2d516e65722",
+      "sha256_ihx": "f0d07792001fd07e3d7ba32655bbc2b223951a98e6ec6f89e1d7a3521084b9ae"
+    },
+    "star_lane_EN": {
+      "bytes": 2102,
+      "last_address": "0935",
+      "user_command": "USER09FF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "30271704a29347ef61ece74d481a039c25bcd473855a782c63156105764d5109",
+      "sha256_ihx": "57aa1f8c2ef458c66165b6710aa5bf6457a1be60e9330af505e28d9cf2f216da"
+    }
+  }
+}

@@ -58,8 +58,11 @@ battle_show_objects_menu:
 	ld hl,menu_objects
 	jp menu_vertical
 
+    IF TARGET_G850
+    INCLUDE "targets/g850/battle.asm"
+    ELSE
 battle_draw_scene:
-    call pcg_clear
+    call quest_clear
     ld hl,msg_hero
     ld de,0x0101
     ld (cursor_xy),de
@@ -113,6 +116,8 @@ battle_show_message:
 	ld (cursor_xy),de
 	call quest_puts
 	jp quest_wait_confirm
+
+    ENDIF
 
 battle_patch_object_menu_counts:
 	ld a,(inventory_potions)
@@ -456,7 +461,7 @@ battle_victory:
 	cp EVENT_FLAG_BOSS_TOWER
 	ret nz
 	call game_autosave
-	call pcg_clear
+	call quest_clear
 	ld hl,msg_fin
 	ld d,10
 	ld e,2

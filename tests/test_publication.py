@@ -15,14 +15,14 @@ class PublicationTests(unittest.TestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory()
         self.root=Path(self.temp.name)
-        self.build=self.root/'build'
-        self.build.mkdir()
+        self.build=self.root/'games/sample/build/g850'
+        self.build.mkdir(parents=True)
         (self.build/'sample.bin').write_bytes(b'\xc9')
-        (self.build/'sample.hex').write_text(':01010000C935\n:00000001FF\n',encoding='ascii')
+        (self.build/'sample.ihx').write_text(':01010000C935\n:00000001FF\n',encoding='ascii')
         self.spec={'origin':'0100','programs':{'sample':{
             'bytes':1,'last_address':'0100','user_command':'USER01FF',
             'sha256_bin':hashlib.sha256((self.build/'sample.bin').read_bytes()).hexdigest(),
-            'sha256_hex':hashlib.sha256((self.build/'sample.hex').read_bytes()).hexdigest()}}}
+            'sha256_ihx':hashlib.sha256((self.build/'sample.ihx').read_bytes()).hexdigest()}}}
         (self.build/'manifest.json').write_text(json.dumps(self.spec),encoding='utf-8')
         (self.root/'README.md').write_text(
             '<a id="francais"></a>\n\n[English](#english)\n\n<a id="english"></a>\n',encoding='utf-8')
@@ -51,6 +51,18 @@ class PublicationTests(unittest.TestCase):
         (self.build/'sample.bin').write_bytes(b'\x00')
         with self.assertRaisesRegex(ValueError,'changed program'):check_collection(self.root,included)
 
+    def test_g850_rejects_user_reservation_above_firmware_safe_limit(self):
+        self.spec['target']='PC-G850'
+        for reservation in ('USER6CFF','USER76E2','USER76FF','USER77FF','USER7FFF'):
+            self.spec['programs']['sample']['user_command']=reservation
+            (self.build/'manifest.json').write_text(json.dumps(self.spec),encoding='utf-8')
+            with self.subTest(reservation=reservation):
+                if int(reservation[4:],16)<=0x76E2:
+                    self.assertEqual(check_collection(self.root,included)['programs'],1)
+                else:
+                    with self.assertRaisesRegex(ValueError,'G850 USER reservation'):
+                        check_collection(self.root,included)
+
     def test_broken_link_anchor_and_unlisted_binary_are_rejected(self):
         readme=self.root/'README.md'
         original=readme.read_text(encoding='utf-8')
@@ -60,6 +72,16 @@ class PublicationTests(unittest.TestCase):
         readme.write_text(original,encoding='utf-8')
         (self.build/'unlisted.bin').write_bytes(b'\xc9')
         with self.assertRaisesRegex(ValueError,'missing from manifests'):check_collection(self.root,included)
+
+    def test_legacy_hex_and_mixed_target_folders_are_rejected(self):
+        legacy=self.build/'sample.hex'
+        legacy.write_bytes((self.build/'sample.ihx').read_bytes())
+        with self.assertRaisesRegex(ValueError,'Use .ihx'):check_collection(self.root,included)
+        legacy.unlink()
+        original=self.build/'manifest.json'
+        mixed=self.build.parent/'manifest.json'
+        original.rename(mixed)
+        with self.assertRaisesRegex(ValueError,'grouped by machine'):check_collection(self.root,included)
 
 
 if __name__=='__main__':unittest.main()

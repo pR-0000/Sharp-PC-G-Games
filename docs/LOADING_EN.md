@@ -4,6 +4,8 @@
 
 This procedure targets **PC-G801 and PC-G805**. Sharing a connector does not establish ROM compatibility on other models.
 
+**Pocket Vector and Pocket Clash on a 32 KiB G80X:** use the `g80x_32k` files with **USER6BFF** / **USER59FF**, respectively. On an expanded G801, enable **32 KiB RAM expansion (G80X)** in PC-G Link. [Loading and memory limits](G80X_32K.md#english).
+
 ## PC and interface
 
 Use a Sharp PC-G compatible serial interface with **RTS/CTS** and matching signal polarity. Do not directly connect a positive/negative-voltage RS-232 cable. For an FTDI interface configured for these machines, TXD/RXD/RTS#/CTS# inversion must already be programmed in EEPROM; the application does not program it.
@@ -36,19 +38,29 @@ USER17E2
 R
 ```
 
-This reserves Quest's memory for either language. Use `USER05FF` for Star Lane, `USER01FF` for the glyph test or **`USER19FF` for Pocket Depths on G805** instead. Monitor numbers are hexadecimal.
+This reserves Quest's memory for either language. Use `USER09FF` for Star Lane, `USER01FF` for the glyph test or **`USER19FF` for Pocket Depths on G805** instead. Monitor numbers are hexadecimal.
 
 In **Sharp PC-G Link**, select the actual model, then choose a file under **Assembly → Browse**:
 
-- Quest: `games/quest/build/quest_FR.hex` or `quest_EN.hex`.
-- Star Lane: `build/star_lane_FR.hex` or `star_lane_EN.hex`.
-- Pocket Rally (**G801/G805**, `USER17E2`) : `games/pocket-rally/build/rally_FR.hex` / `rally_EN.hex`.
-- Pocket Jumper (**G801/G805**, `USER14FF`) : `games/pocket-jumper/build/jumper_FR.hex` / `jumper_EN.hex`.
-- Pocket Runner (**G801/G805**, `USER0FFF`): `games/pocket-runner/build/runner_FR.hex` or `runner_EN.hex`.
-- Pocket Depths (**select PC-G805**): `games/pocket-depths/build/depths_FR.hex` or `depths_EN.hex`.
-- Pocket Depths Lite (**G801/G805**, `USER17E2`): `games/pocket-depths/build/depths_lite_FR.hex` or `depths_lite_EN.hex`.
-- Pocket Depths 2 (**G801/G805**, `USER13FF`): `games/pocket-depths-2/build/depths2_FR.hex` or `depths2_EN.hex`.
-- Glyph test: `build/glyph_demo_FR.hex` or `glyph_demo_EN.hex`.
+- Quest (**G801/G805**): `games/quest/build/g80x/quest_FR.ihx` or `quest_EN.ihx`.
+- Quest (**PC-G850**, `USER1FFF`) : `games/quest/build/g850/quest_g850_FR.ihx` / `quest_g850_EN.ihx`.
+- Pocket Invaders (**PC-G850**, `USER0DFF`) : `games/pocket-invaders/build/g850/invaders_g850_FR.ihx` / `invaders_g850_EN.ihx`.
+- Pocket Runner (**PC-G850**, `USER11FF`) : `games/pocket-runner/build/g850/runner_g850_FR.ihx` / `runner_g850_EN.ihx`.
+- Pocket Rally (**PC-G850**, `USER19FF`): `games/pocket-rally/build/g850/rally_g850_FR.ihx` / `rally_g850_EN.ihx`.
+- Pocket Clash (**PC-G850**, `USER55FF`): `games/pocket-clash/build/g850/clash_g850_FR.ihx` / `clash_g850_EN.ihx`.
+- Pocket Vector (**PC-G850**, `USER6DFF`): `games/pocket-vector/build/g850/vector_FR.ihx` or `vector_EN.ihx`.
+- Pocket Jumper (**PC-G850**, `USER19FF`) : `games/pocket-jumper/build/g850/jumper_g850_FR.ihx` / `jumper_g850_EN.ihx`.
+- Pocket Depths 2 (**PC-G850**, `USER16FF`) : `games/pocket-depths-2/build/g850/depths2_g850_FR.ihx` / `depths2_g850_EN.ihx`.
+- Star Lane (**PC-G850**, `USER0BFF`) : `games/star-lane/build/g850/star_lane_g850_FR.ihx` / `star_lane_g850_EN.ihx`.
+- Pocket Depths (**PC-G850**, `USER1EFF`) : `games/pocket-depths/build/g850/depths_g850_FR.ihx` / `depths_g850_EN.ihx`.
+- Star Lane: `games/star-lane/build/g80x/star_lane_FR.ihx` or `star_lane_EN.ihx`.
+- Pocket Rally (**G801/G805**, `USER17E2`) : `games/pocket-rally/build/g80x/rally_FR.ihx` / `rally_EN.ihx`.
+- Pocket Jumper (**G801/G805**, `USER14FF`) : `games/pocket-jumper/build/g80x/jumper_FR.ihx` / `jumper_EN.ihx`.
+- Pocket Runner (**G801/G805**, `USER0FFF`): `games/pocket-runner/build/g80x/runner_FR.ihx` or `runner_EN.ihx`.
+- Pocket Depths (**select PC-G805**): `games/pocket-depths/build/g80x/depths_FR.ihx` or `depths_EN.ihx`.
+- Pocket Depths Lite (**G801/G805**, `USER17E2`): `games/pocket-depths/build/g80x/depths_lite_FR.ihx` or `depths_lite_EN.ihx`.
+- Pocket Depths 2 (**G801/G805**, `USER13FF`): `games/pocket-depths-2/build/g80x/depths2_FR.ihx` or `depths2_EN.ihx`.
+- Glyph test: `examples/build/g80x/glyph_demo_FR.ihx` or `glyph_demo_EN.ihx`.
 
 Click **Send ASM** after preparing the Sharp with `R`. Once reception finishes on the Sharp, enter:
 

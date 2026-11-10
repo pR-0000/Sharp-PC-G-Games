@@ -1,6 +1,17 @@
 """FR/EN: tiny uncompressed BMP reader/writer, standard Python only."""
 from pathlib import Path
 import struct
+import zlib
+
+def write_png(path,width,height,pixels):
+    """RGB tuples, no smoothing or external image library / sans dependance."""
+    if len(pixels)!=width*height:raise ValueError('PNG dimensions')
+    def chunk(kind,payload):
+        return struct.pack('>I',len(payload))+kind+payload+struct.pack('>I',zlib.crc32(kind+payload))
+    rgb=bytes(channel for pixel in pixels for channel in pixel)
+    rows=b''.join(b'\0'+rgb[y*width*3:(y+1)*width*3] for y in range(height))
+    Path(path).write_bytes(b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',width,height,8,2,0,0,0))+
+                          chunk(b'IDAT',zlib.compress(rows))+chunk(b'IEND',b''))
 
 def write_bmp(path,width,height,pixels):
     if len(pixels)!=width*height:raise ValueError('Dimensions BMP / BMP dimensions')

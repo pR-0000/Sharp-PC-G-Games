@@ -1,0 +1,6 @@
+; Original 5x7 tiles, four rows and right sidebar.
+RUN_TILE_WIDTH EQU 5
+RUN_VIEW_ROWS EQU 4
+RUN_VIEW_START EQU 0
+RUN_VIEW_X EQU 0
+RUN_FRAME_DELAY EQU 3000

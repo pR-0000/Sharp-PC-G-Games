@@ -1,0 +1,67 @@
+{
+  "tracks": [
+    {
+      "name_fr": "VOIE CELESTE",
+      "name_en": "SKYWAY",
+      "visual_sha256": "ffdc74ec3a3f655a64000ed21b3c609118c5b77725d8492c32b364f573b874de",
+      "road_sha256": "1565b51d50515788c8518cedfa38bdbb866652c50bf29a804ecf205a4cb29b5c",
+      "path_sha256": "aefd7c71c762b1edee1a13f0888ccfeef5793b34758e00c7d2d1c8d3c3df98b8",
+      "sky_sha256": "72daf092b9ecc0ef61bf10912360caad57462e04200159b25b92d7f6d7864f0c",
+      "packed_visual_bytes": 1111,
+      "packed_road_bytes": 611
+    },
+    {
+      "name_fr": "PORT ION",
+      "name_en": "ION PORT",
+      "visual_sha256": "18580aaae15d0d75f8e67b9f1ab6eda615948de9b2050148b8b3bcd476bee8a8",
+      "road_sha256": "c3ef01aec0dbc9a1508c1f977f7abcf3073228da972925463cdbfe9909ab88b3",
+      "path_sha256": "ac2cb7035070d1eb2fa8e5cc2af70daa32e6729395348de54ae47cd3c9165433",
+      "sky_sha256": "beb7626c6961b115b75f7966abeb1037c33f2c272425a427058c78300764ef8e",
+      "packed_visual_bytes": 1268,
+      "packed_road_bytes": 668
+    },
+    {
+      "name_fr": "ANNEAU NOVA",
+      "name_en": "NOVA RING",
+      "visual_sha256": "2ed0707b9dfe53ace03b67844191032b3ce1dd1db8e203b7c6ef00235a1763d6",
+      "road_sha256": "f52e6edbd58f00a09aac04b7eefbbea5617c1ba12812d6760ea9951a3aecf121",
+      "path_sha256": "4288550e363c48d3e9efcff24b982c5cc251532b378ffdf1f1f624d6636e0771",
+      "sky_sha256": "7e2bfa57fd04636a2c8fd3362ab66f7410461bec122b3644d93520a19b22691f",
+      "packed_visual_bytes": 1272,
+      "packed_road_bytes": 699
+    }
+  ],
+  "sprites": {
+    "player_north": "138ffae2b5d30aab454f981f2ee8a15075700e9d2b059fe3bcda141f511ffa42",
+    "player_north_west": "0d4b419b4b131de79454dd6e3bb3eef8158902ddfb60d2f919dcbde451a26c3c",
+    "player_west": "d41291ebf4fe772442975a0bc577de72638fb08e5bd6907171b7ff0a2c0d25fe",
+    "player_west_south": "f87c2d5156a185b5c584968057847ee23d7bea4ec6d58288e70540d6df87a303",
+    "player_south": "9e40367d7e6e3aac7867190f7af2924b78faf9e2992b16e97d6cac1631f716ec",
+    "player_east_south": "6ca1bac4a3368d15879a9d355b9d737699fc8fdc92b75a0611872a1f0b0aadff",
+    "player_east": "4ba5d65cb0492b2a585e4967c4306de5b0769839cf1d95142d3d1d2949959a99",
+    "player_north_east": "386c8808280aec9b3a679c274e519d78e4e2134f195ef2e8efa3df53c86a924e",
+    "rival_a_03": "24e7da1da4036cd52f05c78d124251472df7af411b01e966266c2e276aa4ffc5",
+    "rival_a_05": "9776533cf26210500f71f56ed4139f36b28369a11befa476819c72ca80b4a596",
+    "rival_a_07": "d2fa705c5a9b18a9fb64721366d1d1f17f40ff04992818e80dcbdacf11850f5b",
+    "rival_a_09": "5249645fc8bd006b07acdfaa2157468c53666d5e06730b8d9838fc44e6686333",
+    "rival_a_11": "c04cbe474a671f04b45ab7123c560b00a9c2628b1dfc392ccb4950708703d830",
+    "rival_a_15": "d721830e47b889c4fd3cc39525050149c26cbd381c4b6568ea92ae43f495d4d5",
+    "rival_b_03": "cdaee0fc26831ea26d10d392c02c92a2eb5747fef5b3686f4dd7a93d29215b32",
+    "rival_b_05": "b8f3d53820993e0ccaf1413b8196870ff4b7a1e465a76e2dc9c0d74bc995dbcc",
+    "rival_b_07": "7561ecace7744f71fc264922b00e7a0e0ea76428446a3d5f60f64bb87f64e910",
+    "rival_b_09": "d62666ddff98456ab8776bf92398a9ec9eebb5c384d50cbefe3ccce5c9a78c07",
+    "rival_b_11": "fbf5d4a7eef5744146c30da4ce833fb14e884816fc88fd1d89e8ee5cd083de64",
+    "rival_b_15": "901ac23c4033fdd98d3f6c556b624207d7702bd8089293c17af54860ba76c56e",
+    "exhaust_0": "55deb9c03b0b8bfad7a52621bf20cf919bfd64473233ddd55b301e2216914ca5",
+    "exhaust_1": "d3907678b9e2f49de5ac920171442397508dd0b8b8bde1aa9be71c9c9264138b"
+  },
+  "sprite_storage": {
+    "format": "2bpp, low pair first",
+    "source_pixel_bytes": 2580,
+    "packed_bytes": 570,
+    "mirrored": [
+      "player_east_south",
+      "player_east"
+    ]
+  }
+}

@@ -364,15 +364,15 @@ project_height:
     jr z,project_near
     ld b,h
     ld c,l
-    ld hl,15360
+    ld hl,PROJECTION_SCALE
     xor a
 height_loop:
     or a
     sbc hl,bc
     ret c
     inc a
-    cp 28
+    cp VIEW_H
     jr c,height_loop
 project_near:
-    ld a,28
+    ld a,VIEW_H
     ret

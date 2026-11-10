@@ -2,7 +2,19 @@
 ; FR: PC-G805, ecran 24x4, chiffres ROM et icones coeur/balle.
 ; EN: PC-G805, 24x4 display, ROM digits and heart/bullet icons.
 ; MIT, Copyright (c) 2026 P.RAIMBAULT.
-    INCLUDE "sharp_pc_g801.inc"
+    INCLUDE "game_platform.inc"
+    IF TARGET_G850
+VIEW_ROWS EQU 5
+HALF_RAYS EQU 24
+VIEW_WIDTH EQU 144
+HUD_ROW EQU 5
+    ELSE
+VIEW_ROWS EQU 4
+HALF_RAYS EQU 20
+VIEW_WIDTH EQU 120
+HUD_ROW EQU 3
+    ENDIF
+RAY_COUNT EQU HALF_RAYS*2
     IFNDEF BUILD_LANG_EN
 BUILD_LANG_EN EQU 0
     ENDIF
@@ -63,12 +75,37 @@ main_loop:
 .other:
     ld a,(input_key)
     cp PCG_KEY_RETURN
-    jr z,main_new
+    jr z,main_continue
     cp PCG_KEY_SPACE
-    jr z,main_new
+    jr z,main_continue
     cp PCG_KEY_R
     jp nz,main_loop
 main_new:
+    IF !BUILD_LITE
+    ld a,(campaign_seed)
+    ld (level_seed),a
+    ENDIF
+    ld a,1
+    ld (deck),a
+    jr main_floor
+main_continue:
+    ld a,(phase)
+    cp 4
+    jr nz,main_new
+    ld a,(deck)
+    cp 3
+    jr nc,main_new
+    inc a
+    ld (deck),a
+    IF !BUILD_LITE
+    ld a,(level_seed)
+    inc a
+    jr nz,.seed
+    inc a
+.seed:
+    ld (level_seed),a
+    ENDIF
+main_floor:
     call new_game
     call render
     jp main_loop
@@ -136,6 +173,16 @@ new_game:
     ld de,enemies
     ld bc,20
     ldir
+    ld ix,enemies
+    ld b,4
+.tougher:
+    ld a,(deck)
+    dec a
+    add a,(ix+3)
+    ld (ix+3),a
+    ld de,5
+    add ix,de
+    djnz .tougher
     ld a,4
     ld (player_x),a
     ld a,13
@@ -147,6 +194,7 @@ new_game:
     ld (turn_counter),a
     ld (kills),a
     ld (hurt_flash),a
+    ld (guarding),a
     ld (frames),a
     ld (frames+1),a
     ld a,100
@@ -210,6 +258,12 @@ next_index:
     ret
 
 handle_key:
+    push af
+    xor a
+    ld (guarding),a
+    pop af
+    cp PCG_KEY_X
+    jr z,.guard
     ld a,(input_key)
     cp PCG_KEY_LEFT
     jr z,.left
@@ -241,6 +295,10 @@ handle_key:
     cp PCG_KEY_SEMICOLON
     jr z,.strafe_right
     xor a
+    ret
+.guard:
+    ld a,1
+    ld (guarding),a
     ret
 .left:
     ld a,(direction)
@@ -310,15 +368,15 @@ try_player_move:
     jr z,.exit
     call is_solid
     or a
-    jr nz,.blocked
+    jp nz,.blocked
     jr .commit
 .exit:
     ld a,(switches)
     cp 3
-    jr nz,.blocked
+    jp nz,.blocked
     ld a,(key_owned)
     or a
-    jr z,.blocked
+    jp z,.blocked
     ld a,4
     ld (phase),a
 .commit:
@@ -371,6 +429,21 @@ try_player_move:
     or 2
 .switch_store:
     ld (switches),a
+    ; Beacons are one-use field supply stations.
+    ld a,(ammo)
+    add a,6
+    cp 100
+    jr c,.supply
+    ld a,99
+.supply:
+    ld (ammo),a
+    ld a,(health)
+    cp 85
+    jr c,.boost
+    ld a,85
+.boost:
+    add a,15
+    ld (health),a
 .consume:
     ld a,(player_index)
     call map_address
@@ -581,7 +654,7 @@ shoot:
     ld a,e
     ld (candidate_depth),a
     call project_x
-    cp 120
+    cp VIEW_WIDTH
     jr nc,.next
     call depth_at_x
     ld b,a
@@ -619,7 +692,13 @@ shoot:
 .store:
     ld (ix+3),a
     or a
-    jr nz,.shot_done
+    jr z,.kill
+    ld (ix+4),0                ; every hit interrupts the current warning
+    ld a,(weapon)
+    cp 2
+    call z,knockback
+    jr .shot_done
+.kill:
     ld hl,kills
     inc (hl)
 .shot_done:
@@ -651,7 +730,7 @@ enemy_los:
     jr z,.vertical
     ld a,(player_y)
     cp (ix+1)
-    jr nz,.blocked
+    jp nz,.blocked
     ld a,(player_x)
     cp (ix+0)
     ld b,1
@@ -684,7 +763,7 @@ enemy_los:
     call map_get
     call is_solid
     or a
-    jr nz,.blocked
+    jp nz,.blocked
     dec d
     jr nz,.step
 .blocked:
@@ -724,6 +803,11 @@ enemies_tick:
     jr z,.hurt
     ld b,6
 .hurt:
+    ld a,(guarding)
+    or a
+    jr z,.unguarded
+    srl b
+.unguarded:
     ld a,(health)
     sub b
     jr nc,.hp
@@ -793,17 +877,17 @@ enemy_try_step:
     ld c,a
     ld a,(player_index)
     cp c
-    jr z,.blocked
+    jp z,.blocked
     ld a,c
     ld (candidate_index),a
     call map_get
     call is_solid
     or a
-    jr nz,.blocked
+    jp nz,.blocked
     ld a,(candidate_index)
     call enemy_at
     or a
-    jr nz,.blocked
+    jp nz,.blocked
     ld a,(next_x)
     ld (ix+0),a
     ld a,(next_y)
@@ -814,14 +898,32 @@ enemy_try_step:
     xor a
     ret
 
+; Knock a surviving shotgun target one cell away, respecting walls/actors.
+knockback:
+    ld a,(direction)
+    call direction_delta
+    ld a,(ix+0)
+    add a,d
+    ld (next_x),a
+    ld a,(ix+1)
+    add a,e
+    ld (next_y),a
+    jp enemy_try_step
+
     INCLUDE "level.asm"
     INCLUDE "render.asm"
     INCLUDE "interface.asm"
-    INCLUDE "../../lib/pcg801_runtime.asm"
+    INCLUDE "../../lib/game_runtime.asm"
 directions: db 0,255,1,0,0,1,255,0
+    IF TARGET_G850
+    INCLUDE "targets/g850/generated.inc"
+    ELSE
     INCLUDE "generated.inc"
+    ENDIF
 
 data_start:
+deck: db 1
+guarding: db 0
 phase: db 0
 help_previous: db 0
 key_last: db 0
@@ -852,6 +954,7 @@ hit_kind: db 0
 transform_base: dw 0
 hurt_flash: db 0
     IF !BUILD_LITE
+campaign_seed: db 22
 level_seed: db 22
 random_state: db 0
 entropy: db 0
@@ -875,8 +978,9 @@ sprite_row: dw 0
 sprite_visible: db 0
 world: ds 256,0
 enemies: ds 20,0
-ray_depths: ds 40,0
-screen_buffer: ds 480,0
+ray_depths: ds RAY_COUNT,0
+frame_buffer:
+screen_buffer: ds PCG_FRAME_BYTES,0
 program_end:
     IF BUILD_LITE
     ASSERT program_end <= $17E3

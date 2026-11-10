@@ -1,0 +1,33 @@
+{
+  "name": "Pocket Vector",
+  "version": "0.7.0",
+  "target": "PC-G850",
+  "tracks": 3,
+  "engine": "Q8.8 scanline floorcaster, 64 headings, 2x1 floor, native sprites/HUD",
+  "origin": "0100",
+  "entry": "0100",
+  "active_pixels": [
+    144,
+    48
+  ],
+  "programs": {
+    "vector_FR": {
+      "bytes": 27904,
+      "last_address": "6DFF",
+      "user_command": "USER6DFF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "b367e5636b9197d85b9a2c42dfced1e9b012ac12a9c655295e471e2e0397a668",
+      "sha256_ihx": "3c6a9a53f65e1aa1ef748229c88ce757ec8c4579c79b4f819bcd47c1b4eb7f39"
+    },
+    "vector_EN": {
+      "bytes": 27904,
+      "last_address": "6DFF",
+      "user_command": "USER6DFF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "9def053d6fd1cf5a5c0194695fc3d1368a7957be7a8ffdd223d1f99fb69866f2",
+      "sha256_ihx": "fc020c65ef7b24e342bf2040c12b0a7593213bf268ab36cc5c264868449947bb"
+    }
+  }
+}

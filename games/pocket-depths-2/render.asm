@@ -1,8 +1,8 @@
-; FR: rasterisation dans 480 octets. EN: rasterisation into 480 bytes.
+; FR/EN: shared rasterizer, viewport and band geometry selected per target.
 render:
     ld hl,frame_buffer
     ld de,frame_buffer+1
-    ld bc,479
+    ld bc,PCG_FRAME_BYTES-1
     ld (hl),0
     ldir
     xor a
@@ -44,7 +44,7 @@ render_nonzero:
     call project_height
     ld (wall_height),a
     ld b,a
-    ld a,28
+    ld a,VIEW_H
     sub b
     srl a
     ld (wall_top),a
@@ -75,7 +75,7 @@ wall_scan:
     cp b
     jr z,wall_dark
     ld a,b
-    cp 13
+    cp VIEW_H/2-1
     jr z,wall_dark
     ld a,(hit_u)
     and 127
@@ -111,7 +111,7 @@ wall_door:
     cp 44
     jr nc,wall_next
     ld a,b
-    cp 13
+    cp VIEW_H/2-1
     jr nz,wall_next
 wall_dark:
     ld a,(draw_x)
@@ -129,10 +129,10 @@ wall_done:
     ld a,(draw_x)
     ld e,a
     ld d,0
-    ld hl,frame_buffer
+    ld hl,frame_buffer+VIEW_PAGE*PCG_ROW_COLUMNS
     add hl,de
-    ld b,4
-    ld de,118
+    ld b,VIEW_H/PCG_GLYPH_HEIGHT
+    ld de,PCG_ROW_COLUMNS-2
 wall_clone:
     ld a,(hl)
     inc hl
@@ -144,19 +144,22 @@ wall_clone:
     ld hl,ray_index
     inc (hl)
     ld a,(hl)
-    cp 40
+    cp RAY_COUNT
     jp nz,render_ray
     call render_actors
     ; Minimal weapon silhouette and reticle, without covering native HUD.
-    ld bc,0x0d3b
+    ld bc,(VIEW_H/2-1)*256+VIEW_W/2-1
     call plot
-    ld bc,0x0d3d
+    ld bc,(VIEW_H/2-1)*256+VIEW_W/2+1
     call plot
-    ld bc,0x0c3c
+    ld bc,(VIEW_H/2-2)*256+VIEW_W/2
     call plot
-    ld bc,0x0e3c
+    ld bc,(VIEW_H/2)*256+VIEW_W/2
     call plot
-    ld b,24
+    IF TARGET_G850
+    call draw_weapon
+    ELSE
+    ld b,VIEW_H-4
 weapon_loop:
     push bc
     ld c,58
@@ -168,20 +171,21 @@ weapon_loop:
     pop bc
     inc b
     ld a,b
-    cp 28
+    cp VIEW_H
     jr nz,weapon_loop
+    ENDIF
     ld hl,frame_buffer
     ld de,0
-    ld b,120
+    ld b,PCG_ROW_COLUMNS
 blit_loop:
     call pcg_pattern
     ld a,d
     inc a
-    cp 4
+    cp PCG_LCD_ROWS
     jr z,blit_done
     ld d,a
     push de
-    ld de,120
+    ld de,PCG_ROW_COLUMNS
     add hl,de
     pop de
     jr blit_loop
@@ -191,17 +195,17 @@ blit_done:
 ; B=y, C=x. All callers clip. Preserves IX/IY only.
 plot:
     ld a,c
-    cp 120
+    cp VIEW_W
     ret nc
     ld a,b
-    cp 28
+    cp VIEW_H
     ret nc
-    ld hl,frame_buffer
-    ld de,120
+    ld hl,frame_buffer+VIEW_PAGE*PCG_ROW_COLUMNS
+    ld de,PCG_ROW_COLUMNS
 plot_band:
-    cp 7
+    cp PCG_GLYPH_HEIGHT
     jr c,plot_bit
-    sub 7
+    sub PCG_GLYPH_HEIGHT
     add hl,de
     jr plot_band
 plot_bit:
@@ -221,17 +225,17 @@ plot_bit:
 ; Opaque sprite background: white eyes/inner gaps remain readable.
 erase:
     ld a,c
-    cp 120
+    cp VIEW_W
     ret nc
     ld a,b
-    cp 28
+    cp VIEW_H
     ret nc
-    ld hl,frame_buffer
-    ld de,120
+    ld hl,frame_buffer+VIEW_PAGE*PCG_ROW_COLUMNS
+    ld de,PCG_ROW_COLUMNS
 erase_band:
-    cp 7
+    cp PCG_GLYPH_HEIGHT
     jr c,erase_bit
-    sub 7
+    sub PCG_GLYPH_HEIGHT
     add hl,de
     jr erase_band
 erase_bit:
@@ -388,7 +392,7 @@ draw_actor:
 sprite_monster_size:
     ld (wall_height),a
     ld c,a
-    ld a,28
+    ld a,VIEW_H
     sub b
     srl a
     add a,b
@@ -423,9 +427,14 @@ ratio_shift:
     add hl,hl
     add hl,hl
     add hl,hl
-    ; ratio*15/16 = lateral/forward *60 screen pixels.
+    ; Focal scale: 60 pixels on G80X, 72 on G850 (90-degree FOV).
+    IF TARGET_G850
+    add hl,de
+    add hl,de
+    ELSE
     or a
     sbc hl,de
+    ENDIF
     srl h
     rr l
     srl h
@@ -440,10 +449,19 @@ ratio_shift:
     jr z,actor_right
     neg
 actor_right:
-    add a,60
+    add a,VIEW_W/2
     ld (sprite_x),a
     ld a,(wall_height)
+    IF TARGET_G850
+    ld b,a
     srl a
+    srl a
+    ld c,a
+    ld a,b
+    sub c
+    ELSE
+    srl a
+    ENDIF
     inc a
     ld (sprite_width),a
     srl a
@@ -479,7 +497,7 @@ sprite_column_loop:
     ld a,(sprite_left)
     add a,b
     ld (draw_x),a
-    cp 120
+    cp VIEW_W
     jp nc,sprite_column_next
     ; Occlusion: a sprite column must be in front of its wall ray.
     ld l,a

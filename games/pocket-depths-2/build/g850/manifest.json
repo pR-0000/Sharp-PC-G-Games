@@ -1,0 +1,33 @@
+{
+  "name": "Pocket Depths 2",
+  "version": "0.2.0",
+  "target": "PC-G850",
+  "engine": "runtime fixed-point DDA, Q8.8, 48 rays, 32 movement headings",
+  "origin": "0100",
+  "entry": "0100",
+  "active_pixels": [
+    144,
+    40
+  ],
+  "frame_bytes": 864,
+  "programs": {
+    "depths2_g850_FR": {
+      "bytes": 5397,
+      "last_address": "1614",
+      "user_command": "USER16FF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "a4589fedfb1f20a04450ecc869d72640a29f8cd463ceb836ee18f29aea41285b",
+      "sha256_ihx": "851b44bd500753e12488d928265dd6969d4108de733ece9919961869191f3ce8"
+    },
+    "depths2_g850_EN": {
+      "bytes": 5379,
+      "last_address": "1602",
+      "user_command": "USER16FF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "0df1785ed0e94468f5f707078582a627973ad0f459e12f516ac7379d2819eaad",
+      "sha256_ihx": "1e8dbb0b054950f60a579725845f7bae70a4e7f483d9d95cddf7387e780a9d7d"
+    }
+  }
+}

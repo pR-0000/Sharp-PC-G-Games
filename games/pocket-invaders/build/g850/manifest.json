@@ -1,0 +1,37 @@
+{
+  "name": "Pocket Invaders",
+  "version": "0.3.0",
+  "playfield_pixels": [
+    108,
+    48
+  ],
+  "frame_bytes": 864,
+  "hud": "right, native font",
+  "aliens": 16,
+  "formation_start_y": 3,
+  "initial_invasion_ticks": 1885,
+  "simultaneous_controls": true,
+  "target": "PC-G850",
+  "origin": "0100",
+  "entry": "0100",
+  "programs": {
+    "invaders_g850_FR": {
+      "bytes": 3223,
+      "last_address": "0D96",
+      "user_command": "USER0DFF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "11424b42966683e62c219cc2ea2308e35ff8f4b08c4b9376caacca877c6da76f",
+      "sha256_ihx": "3352e107309f5ac64f72e393555e7910bc2136267dae6ed245e9d3603ba371c6"
+    },
+    "invaders_g850_EN": {
+      "bytes": 3206,
+      "last_address": "0D85",
+      "user_command": "USER0DFF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "92fdd3a41f4828f036b977479065ffb20bde586a18c9e08a8f565a211d6ea50b",
+      "sha256_ihx": "123905f664027411ef0dd25dd34b1c9b39a1efb0b22d970ac143d31e87cfb094"
+    }
+  }
+}

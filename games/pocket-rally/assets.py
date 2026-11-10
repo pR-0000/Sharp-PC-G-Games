@@ -80,6 +80,15 @@ def generate():
         pixels=[(0,0,0) if PATTERNS[cells[(y//4)*W+x//4]][x%4]>>(y%4)&1 else (255,255,255) for y in range(H*4) for x in range(W*4)]
         write_bmp(HERE/f'track_{index+1:02}.bmp',W*4,H*4,pixels)
     columns=[v for tile in PATTERNS for v in tile]
+    lines.append('    IF TARGET_G850')
+    for phase in range(4):
+        emit(f'tile_top_{phase}',[v>>phase for v in columns])
+        emit(f'tile_mid_{phase}',[(v<<(4-phase))&255 for v in columns])
+        if phase>=1:emit(f'tile_bot_{phase}',[(v<<(8-phase))&255 for v in columns])
+    emit('tile_zero',[0]*40)
+    lines.append('tile_phases:')
+    for phase in range(4):lines.append(f'    dw tile_top_{phase},tile_mid_{phase},'+(f'tile_bot_{phase}' if phase>=1 else 'tile_zero'))
+    lines.append('    ELSE')
     for phase in range(4):
         emit(f'tile_top_{phase}',[v>>phase for v in columns])
         emit(f'tile_mid_{phase}',[(v<<(4-phase))&127 for v in columns])
@@ -87,6 +96,7 @@ def generate():
     emit('tile_zero',[0]*40)
     lines.append('tile_phases:')
     for phase in range(4):lines.append(f'    dw tile_top_{phase},tile_mid_{phase},'+(f'tile_bot_{phase}' if phase>=2 else 'tile_zero'))
+    lines.append('    ENDIF')
     emit('car_frames',[v for cols in car_patterns() for v in cols],True)
     outlines=[]
     for cols in car_patterns():
@@ -98,7 +108,7 @@ def generate():
     emit('look_x',[round(12*cos(a*pi/8))&255 for a in range(16)])
     emit('look_y',[round(10*sin(a*pi/8))&255 for a in range(16)])
     lines.extend(('track_maps: dw track_0,track_1','track_gates: dw gates_0,gates_1','track_starts: dw cars_initial_0,cars_initial_1',
-                  'gate_counts: db 8,12','buffer_rows: dw frame_buffer,frame_buffer+120,frame_buffer+240,frame_buffer+360'))
+                  'gate_counts: db 8,12','    IF TARGET_G850','buffer_rows: dw frame_buffer+144,frame_buffer+288,frame_buffer+432,frame_buffer+576,frame_buffer+720','    ELSE','buffer_rows: dw frame_buffer,frame_buffer+120,frame_buffer+240,frame_buffer+360','    ENDIF'))
     (HERE/'generated.inc').write_text('\n'.join(lines)+'\n',encoding='ascii')
     (HERE/'tracks.json').write_text(json.dumps({'tile_size':4,'width':W,'height':H,'palette':[{'id':i,'rgb':c} for i,c in enumerate(PALETTE)],
        'tracks':[{'fr':fr,'en':en,'checkpoints':r} for fr,en,r in zip(('Boucle cotiere','Chicane du port'),('Coast loop','Harbour chicane'),ROUTES)]},indent=2)+'\n',encoding='utf-8')

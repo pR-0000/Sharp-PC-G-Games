@@ -35,8 +35,8 @@ def read_symbols(path: Path) -> dict[str, int]:
 
 
 def main():
-    parser = Parser("Construire le test de motifs et Star Lane en français/anglais.",
-                    "Build the glyph test and Star Lane in French/English.")
+    parser = Parser("Construire l’exemple de motifs en français/anglais.",
+                    "Build the glyph example in French/English.")
     parser.add_argument("--assembler", default=os.environ.get("SJASMPLUS", "sjasmplus"),
                         help=pick(parser.lang, "Exécutable SjASMPlus (ou SJASMPLUS / PATH).", "SjASMPlus executable (or SJASMPLUS / PATH)."))
     args = parser.parse_args()
@@ -44,18 +44,18 @@ def main():
     if not assembler:
         parser.error(pick(args.lang, "SjASMPlus absent : indiquer --assembler ou SJASMPLUS / PATH.",
                          "SjASMPlus not found: use --assembler or SJASMPLUS / PATH."))
-    output = TARGET / "build"
-    output.mkdir(exist_ok=True)
-    manifest = {"origin": "0100", "entry": "0100", "programs": {}}
+    output = TARGET / "examples/build/g80x"
+    output.mkdir(parents=True, exist_ok=True)
+    manifest = {"name": "Glyph demo", "target": "PC-G801 / PC-G805",
+                "origin": "0100", "entry": "0100", "programs": {}}
     for stem, name, language in (
-        ("examples/glyph_demo.asm", "glyph_demo", 1), ("examples/glyph_demo.asm", "glyph_demo_EN", 1),
-        ("examples/glyph_demo.asm", "glyph_demo_FR", 0), ("games/star-lane/star_lane.asm", "star_lane", 1),
-        ("games/star-lane/star_lane.asm", "star_lane_EN", 1), ("games/star-lane/star_lane.asm", "star_lane_FR", 0),
+        ("examples/glyph_demo.asm", "glyph_demo_EN", 1),
+        ("examples/glyph_demo.asm", "glyph_demo_FR", 0),
     ):
         source = TARGET / stem
         base = output / name
         subprocess.run([assembler, "--nologo", "--color=off", "--fullpath=rel",
-                        f"-DBUILD_LANG_EN={language}", f"--inc={(TARGET / 'include').as_posix()}", f"--raw={base.as_posix()}.bin",
+                        f"-DBUILD_LANG_EN={language}", f"--inc={(TARGET / 'include').as_posix()}", f"--inc={(TARGET / 'lib').as_posix()}", f"--raw={base.as_posix()}.bin",
                         f"--sym={base.as_posix()}.sym", f"--lst={base.as_posix()}.lst", source.as_posix()],
                        cwd=ROOT, check=True)
         data = base.with_suffix(".bin").read_bytes()
@@ -63,14 +63,14 @@ def main():
         assert symbols["entry"] == 0x100
         assert symbols["program_end"] == 0x100 + len(data)
         end = symbols["program_end"] - 1
-        assert end < 0x1000
-        base.with_suffix(".hex").write_text(intel_hex(data, 0x100), encoding="ascii")
-        user = end | 0xFF
+        assert end < 0x17E3
+        base.with_suffix(".ihx").write_text(intel_hex(data, 0x100), encoding="ascii")
+        user = min(end | 0xFF, 0x17E2)
         manifest["programs"][name] = {
             "bytes": len(data), "last_address": f"{end:04X}",
             "user_command": f"USER{user:04X}", "run_command": "G100",
             "sha256_bin": hashlib.sha256(data).hexdigest(),
-            "sha256_hex": hashlib.sha256(base.with_suffix('.hex').read_bytes()).hexdigest(),
+            "sha256_ihx": hashlib.sha256(base.with_suffix('.ihx').read_bytes()).hexdigest(),
         }
         unit = pick(args.lang, "octets", "bytes")
         print(f"{name}: {len(data)} {unit}, 0100-{end:04X}, USER{user:04X}, G100")

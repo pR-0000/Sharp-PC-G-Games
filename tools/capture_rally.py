@@ -23,7 +23,7 @@ def main():
             raw=bytearray(machine.cpu.memory[256:machine.sym['program_end']])
             draw,key=machine.sym['draw_game'],machine.sym['pcg_key_scan']
             raw[:9]=bytes((0xcd,draw&255,draw>>8,0xcd,key&255,key>>8,0xc3,3,1))
-            fixture=Path(folder)/'scene.hex';fixture.write_text(intel_hex(raw,256),encoding='ascii')
+            fixture=Path(folder)/'scene.ihx';fixture.write_text(intel_hex(raw,256),encoding='ascii')
             capture(emulator,fixture,path,model='PC-G805')
         m=RallyMachine();m.start();pictures=[]
         for f in range(165):

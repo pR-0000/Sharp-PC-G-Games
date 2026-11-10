@@ -1,0 +1,42 @@
+{
+  "name": "Pocket Vector",
+  "version": "0.7.0",
+  "target": "PC-G801 / PC-G805 (32 KiB)",
+  "tracks": 3,
+  "engine": "shared Q8.8 floorcaster, 2x2 floor, native 7-bit HUD/minimap",
+  "origin": "0100",
+  "entry": "0100",
+  "active_pixels": [
+    120,
+    28
+  ],
+  "programs": {
+    "vector_g80x_32k_FR": {
+      "bytes": 27392,
+      "last_address": "6BFF",
+      "user_command": "USER6BFF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "4076bf8ef779dc301f2056b6169710be296469ae93e80c14ab516c33f44a0a6b",
+      "sha256_ihx": "97edb2320db72541ce9898e1d17e25b630d642f9e00b585030ae1d85890d47e1"
+    },
+    "vector_g80x_32k_EN": {
+      "bytes": 27392,
+      "last_address": "6BFF",
+      "user_command": "USER6BFF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "267205a3eb3c4d34d830ad67a494c47cc266c779f2c161711013d4b9b562a8a1",
+      "sha256_ihx": "31234af01ad07f1364b377bcfaf21fa9907da19e128e5cb42d37ccf2959b8fa1"
+    }
+  },
+  "internal_pixels": [
+    144,
+    48
+  ],
+  "floor_sampling": [
+    2,
+    2
+  ],
+  "required_ram_kib": 32
+}

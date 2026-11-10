@@ -1,6 +1,11 @@
 ; POCKET RALLY - original top-down Z80 racer / course vue de dessus.
 ; (c) 2026 P.RAIMBAULT. MIT. No Tiny CarZ code, tracks or graphics.
-    INCLUDE "sharp-pc-g8xx.inc"
+    INCLUDE "game_platform.inc"
+    IF TARGET_G850
+    INCLUDE "targets/g850/config.inc"
+    ELSE
+    INCLUDE "targets/g80x/config.inc"
+    ENDIF
     ORG 0x100
 CAR_SIZE EQU 11
 entry:
@@ -28,11 +33,16 @@ main_loop:
     ld a,(paused)
     or a
     jr nz,main_loop
+    IF TARGET_G850
+    ld a,(photo_frozen)
+    or a
+    jr nz,main_loop
+    ENDIF
     call world_step
     ld a,(phase)
     cp 1
     call z,draw_game
-    ld bc,800
+    ld bc,RALLY_DELAY
 frame_delay:
     dec bc
     ld a,b
@@ -86,6 +96,17 @@ key_normal:
     ld (track_index),a
     jp title_screen
 key_play:
+    IF TARGET_G850
+    cp PCG_KEY_TAB
+    jr nz,photo_key_done
+    ld a,(photo_frozen)
+    xor 1
+    ld (photo_frozen),a
+    xor a
+    ld (paused),a
+    jp draw_game
+photo_key_done:
+    ENDIF
     cp PCG_KEY_P
     jr z,toggle_pause
     cp PCG_KEY_F
@@ -132,6 +153,9 @@ new_game:
     ldir
     xor a
     ld (paused),a
+    IF TARGET_G850
+    ld (photo_frozen),a
+    ENDIF
     ld (auto_throttle),a
     ld (frame_count),a
     ld (hit_flash),a
@@ -220,7 +244,7 @@ signed_word:
     INCLUDE "render.asm"
     INCLUDE "blitter.asm"
     INCLUDE "interface.asm"
-    INCLUDE "../../lib/pcg801_runtime.asm"
+    INCLUDE "game_runtime.asm"
     INCLUDE "generated.inc"
 data_start:
 phase: db 0
@@ -276,6 +300,13 @@ cars: ds 3*CAR_SIZE,0
 row_cache0: ds 48,0
 row_cache1: ds 48,0
 row_cache2: ds 48,0
-frame_buffer: ds 480,0
+frame_buffer: ds PCG_FRAME_BYTES,0
+    IF TARGET_G850
+photo_frozen: db 0
+    ENDIF
 program_end:
+    IF TARGET_G850
+    ASSERT program_end <= 0x7000
+    ELSE
     ASSERT program_end <= 0x17e3
+    ENDIF

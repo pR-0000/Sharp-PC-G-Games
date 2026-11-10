@@ -64,10 +64,12 @@ def generate():
         [14,31,62,31,14],                   # 10 heart / coeur
         [0x0a,0x24,0x1f,0x24,0x0a],         # 11 hanging / suspendu
     ]
-    out.append('patterns:')
+    out.extend(('    IF TARGET_G850','    INCLUDE "targets/g850/patterns.inc"','    ELSE','patterns:'))
     for sprite in sprites:out.append('    db '+','.join(map(str,sprite)))
-    out.extend(('bit_masks: db 1,2,4,8,16,32,64,128',
-                'screen_rows: dw frame_buffer,frame_buffer+120,frame_buffer+240,frame_buffer+360'))
+    out.extend(('    ENDIF','bit_masks: db 1,2,4,8,16,32,64,128',
+                '    IF TARGET_G850',
+                'screen_rows: dw frame_buffer+146,frame_buffer+290,frame_buffer+434,frame_buffer+578,frame_buffer+722',
+                '    ELSE','screen_rows: dw frame_buffer,frame_buffer+120,frame_buffer+240,frame_buffer+360','    ENDIF'))
     (HERE/'generated.inc').write_text('\n'.join(out)+'\n',encoding='ascii')
 
 if __name__=='__main__':generate()

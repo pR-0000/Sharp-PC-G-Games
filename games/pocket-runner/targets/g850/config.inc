@@ -1,0 +1,6 @@
+; Native 7x8 tiles, five rows, 140x40 viewport, one-row top HUD.
+RUN_TILE_WIDTH EQU 7
+RUN_VIEW_ROWS EQU 5
+RUN_VIEW_START EQU 1
+RUN_VIEW_X EQU 2
+RUN_FRAME_DELAY EQU 6000

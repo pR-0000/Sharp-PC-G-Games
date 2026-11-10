@@ -1,122 +1,126 @@
 # Sharp PC-G Games
 
-Collection **0.8.1** · [Français](#francais) · [English](#english)
+Collection **0.9.0** · [Français](#francais) · [English](#english)
 
 <a id="francais"></a>
 
 ## Français
 
-Des jeux en assembleur Z80 pour **Sharp PC-G801 / PC-G805**, en français et en anglais, avec graphismes personnalisés, sources modifiables et fichiers prêts à charger. Voir les [modèles ciblés et limites mémoire](docs/COMPATIBILITY.md).
+Dix jeux Z80 pour **Sharp PC-G801 / PC-G805 et PC-G850**, en français et en anglais. Fichiers prêts à charger, graphismes modifiables et sources assembleur inclus. Aucun assembleur ni dump ROM n’est nécessaire pour jouer.
 
 ### Les jeux
 
-#### Sharp PC-G80X Quest
+| Jeu et guide | Principe |
+|---|---|
+| [Pocket Vector](games/pocket-vector/README.md#francais) | Course futuriste en perspective : trois circuits, turbo, vrille et coupe. |
+| [Pocket Clash](games/pocket-clash/README.md#francais) | Combat sur plateformes : quatre personnages, trois arènes et classement. |
+| [Sharp PC-G Quest](games/quest/README.md#francais) | RPG avec exploration, équipement, cinq boss et défis de frappe. |
+| [Pocket Jumper](games/pocket-jumper/README.md#francais) | Plateformes au pixel, sauts avec élan et nuages en parallaxe. |
+| [Pocket Depths 2](games/pocket-depths-2/README.md#francais) | FPS à raycaster DDA : murs texturés, portes, clé et sentinelles. |
+| [Pocket Rally](games/pocket-rally/README.md#francais) | Course vue de dessus, deux circuits et défilement au pixel. |
+| [Pocket Runner](games/pocket-runner/README.md#francais) | Trois niveaux : échelles, cordes, or et pièges pour les gardes. |
+| [Pocket Invaders](games/pocket-invaders/README.md#francais) | Arcade : envahisseurs animés, vagues et abris destructibles. |
+| [Pocket Depths](games/pocket-depths/README.md#francais) | FPS à trois étages, trois armes et cartes modulaires ; édition Lite. |
+| [Star Lane](games/star-lane/README.md#francais) | Shoot’em up : pirates, bouclier rechargeable et combos. |
 
-RPG : carte, boutiques, équipement et cinq boss. Les combats intègrent un défi de frappe. Portage de [Canon X-07 Quest](https://github.com/pR-0000/Canon_X-07_RPG).
+Quest est issu de [Canon X-07 Quest](https://github.com/pR-0000/Canon_X-07_RPG).
 
-![Sharp PC-G80X Quest — g800](games/quest/docs/quest_map_g800.png)
+![Pocket Vector — PC-G850, g800 LCD](games/pocket-vector/docs/vector_g850_race_g800.gif)
 
-[FR — HEX](games/quest/build/quest_FR.hex) · [EN — HEX](games/quest/build/quest_EN.hex) · [Guide](games/quest/README.md)
+![Pocket Clash — PC-G850, g800 LCD](games/pocket-clash/docs/clash_g850_battle_g800.gif)
 
-#### Pocket Rally — 0.1.0
+![Pocket Jumper — PC-G850, g800 LCD](games/pocket-jumper/docs/jumper_g850_scroll_g800.gif)
 
-Course vue de dessus : deux circuits, deux adversaires, seize orientations, accélération/freinage et défilement au pixel sur les deux axes. Tilemapper 4 × 4, caméra anticipée et commandes simultanées. Un jeu original pour Sharp inspiré de [Tiny CarZ](https://www.ticalc.org/archives/files/fileinfo/391/39185.html).
+![Pocket Rally — PC-G850, g800 LCD](games/pocket-rally/docs/rally_g850_scroll_g800.gif)
 
-![Pocket Rally — g800](games/pocket-rally/docs/rally_scroll_g800.gif)
+![Pocket Depths 2 — PC-G850, g800 LCD](games/pocket-depths-2/docs/depths2_g850_turn_g800.gif)
 
-[FR — HEX](games/pocket-rally/build/rally_FR.hex) · [EN — HEX](games/pocket-rally/build/rally_EN.hex) · [Guide](games/pocket-rally/README.md)
+[Galerie des captures](docs/DEMONSTRATION.md). Animations et captures montrent uniquement le LCD émulé, sans bordure de fenêtre. La cadence des GIF est indicative.
 
-#### Pocket Jumper — prototype 0.1.1
+### Choisir le bon fichier
 
-Plateformes à défilement au pixel : héros de 12 × 12 points, sauts avec élan et lecture simultanée flèches/ESPACE, pièces, blocs bonus, ennemis à écraser et point de reprise. Un premier niveau original de 768 × 48 points.
+**Privilégier les fichiers `.ihx`** : format Intel HEX avec adresses de chargement et sommes de contrôle. `.hex` est une autre extension du même format ; les `.bin` restent disponibles pour les autres outils. FR/EN indique la langue.
 
-![Pocket Jumper — g800](games/pocket-jumper/docs/jumper_fr_g800.png)
-
-[FR — HEX](games/pocket-jumper/build/jumper_FR.hex) · [EN — HEX](games/pocket-jumper/build/jumper_EN.hex) · [Guide](games/pocket-jumper/README.md)
-
-#### Pocket Runner
-
-Inspiré de Lode Runner : trois niveaux, échelles, cordes, or à ramasser et pièges à creuser pour les gardes.
-
-![Pocket Runner — g800](games/pocket-runner/docs/runner_fr_g800.png)
-
-[FR — HEX](games/pocket-runner/build/runner_FR.hex) · [EN — HEX](games/pocket-runner/build/runner_EN.hex) · [Guide](games/pocket-runner/README.md)
-
-#### Pocket Depths 2
-
-FPS à raycaster DDA Q8.8 calculé sur Z80 : positions fractionnaires, 32 orientations, murs texturés, colonnes, portes, sentinelles, clé et sortie.
-
-![Pocket Depths 2 — g800](games/pocket-depths-2/docs/depths2_hall_g800.png)
-
-[FR — HEX](games/pocket-depths-2/build/depths2_FR.hex) · [EN — HEX](games/pocket-depths-2/build/depths2_EN.hex) · [Guide](games/pocket-depths-2/README.md)
-
-#### Pocket Depths
-
-FPS d’exploration par cases : trois armes, monstres, portes, deux balises et 255 dispositions modulaires. Édition complète pour G805 ; Lite à carte fixe pour G801/G805.
-
-![Pocket Depths — g800](games/pocket-depths/docs/depths_hall_g800.png)
-
-[FR — HEX](games/pocket-depths/build/depths_FR.hex) · [EN — HEX](games/pocket-depths/build/depths_EN.hex) · [Guide](games/pocket-depths/README.md)
-
-#### Pocket Invaders
-
-Arcade : seize envahisseurs animés, tirs au pixel, abris destructibles et vagues successives. Arène 90 × 28 points et panneau à droite.
-
-![Pocket Invaders — g800](games/pocket-invaders/docs/invaders_fr_g800.png)
-
-[FR — HEX](games/pocket-invaders/build/invaders_FR.hex) · [EN — HEX](games/pocket-invaders/build/invaders_EN.hex) · [Guide](games/pocket-invaders/README.md)
-
-#### Star Lane
-
-Éviter les astéroïdes et ramasser les étoiles en changeant de couloir. Trois vies, score et pause.
-
-![Star Lane — g800](games/star-lane/docs/star_lane_g800.png)
-
-[FR — HEX](build/star_lane_FR.hex) · [EN — HEX](build/star_lane_EN.hex) · [Guide](games/star-lane/README.md)
-
-Captures LCD : **g800**.
-
-### Charger un jeu
-
-Utiliser une interface série compatible Sharp PC-G et **[Sharp PC-G Link](https://github.com/pR-0000/Sharp-PC-G-Link)**, disponible séparément en [version Windows autonome](https://github.com/pR-0000/Sharp-PC-G-Link/releases/latest). Aucun assembleur n’est nécessaire pour jouer.
-
-1. Sauvegarder les programmes à conserver.
-2. Régler **TEXT → Sio → Format** et Sharp PC-G Link sur **4800 bauds, 8N1, RS/CS, CR LF, EOF 1A**. Les deux côtés doivent correspondre ; **1200 / 7N1** reste utilisable.
-3. Depuis BASIC RUN, saisir **MON**, puis la commande **USER** ci-dessous et **R**, avec ENTER après chaque commande.
-4. Choisir le HEX français ou anglais et cliquer sur **Envoyer ASM**. Attendre la fin de réception sur le Sharp.
-5. Saisir **G100**, puis ENTER sur le titre.
-
-| Jeu | Octets FR / EN, état et tampons inclus | Réservation |
-|---|---:|---|
-| Sharp PC-G80X Quest | 5 848 / 5 783 | `USER17E2` |
-| Pocket Rally | 5 783 / 5 762 | `USER17E2` |
-| Pocket Jumper | 5 003 / 4 990 | `USER14FF` |
-| Pocket Runner | 3 704 / 3 684 | `USER0FFF` |
-| Pocket Depths 2 | 4 800 / 4 782 | `USER13FF` |
-| Pocket Depths (G805) | 6 295 / 6 286 | `USER19FF` |
-| Pocket Invaders | 2 666 / 2 653 | `USER0BFF` |
-| Star Lane | 1 195 / 1 192 | `USER05FF` |
-| Pocket Depths Lite | 5 818 / 5 805 | `USER17E2` |
-
-Tous les jeux se chargent en **0100h**. Charger un autre jeu remplace le précédent et sa sauvegarde en RAM. **Q / BREAK** revient à l’appelant. Après réservation et chargement, **CALL &H100** lance aussi le jeu depuis BASIC.
-
-[Chargement et dépannage](docs/LOADING.md) · [Utilitaire de transfert](docs/TRANSFER_TOOL.md) · [Lancement BASIC](docs/BASIC_CALL.md)
-
-### Construire et modifier
-
-Installer Python 3.10+ et [SjASMPlus](https://github.com/z00m128/sjasmplus), puis depuis la racine du dépôt :
+Chaque jeu suit la même organisation :
 
 ```text
-python tools/build_all.py --lang fr --assembler "chemin/vers/sjasmplus.exe"
+games/<game>/build/
+  g80x/       G801/G805, écran à cellules
+  g80x-32k/   G801/G805 avec 32 Kio (Vector et Clash)
+  g850/       G850, écran graphique 144 × 48
 ```
 
-Les deux langues sont construites. Chaque dossier de jeu contient ses sources, graphismes, guide et binaires. Les définitions communes sont dans `include/` et les wrappers IOCS dans `lib/`.
+Seuls les profils disponibles sont présents. **Les binaires G850 et G80X sont différents.** La compatibilité G815 et G850S/V/VS n’est pas présumée : voir les [modèles ciblés](docs/COMPATIBILITY.md).
 
-[Développement](docs/DEVELOPMENT.md) · [Routines du firmware](docs/ROM_G801.md)
+<a id="g80x-francais"></a>
 
-### Crédits et licence
+### G80X — G801/G805
 
-© 2026 P.RAIMBAULT. Jeux originaux, graphismes et outils Sharp : [MIT](LICENSE.txt) ([traduction française](LICENSE_FR.txt)). Quest conserve les conditions de ses sources héritées ; voir [sa notice](games/quest/NOTICE.md). Aucune ROM Sharp, aucun émulateur, assembleur ou pilote FTDI n’est inclus. Projet indépendant, sans affiliation à Sharp.
+Les versions ci-dessous tiennent sur G801 de 8 Kio **sauf Pocket Depths complète**, destinée au G805 ; choisir Lite sur G801.
+
+| Jeu | Français | English | USER |
+|---|---|---|---|
+| Sharp PC-G Quest | [FR](games/quest/build/g80x/quest_FR.ihx) | [EN](games/quest/build/g80x/quest_EN.ihx) | `USER17E2` |
+| Pocket Jumper | [FR](games/pocket-jumper/build/g80x/jumper_FR.ihx) | [EN](games/pocket-jumper/build/g80x/jumper_EN.ihx) | `USER14FF` |
+| Pocket Depths 2 | [FR](games/pocket-depths-2/build/g80x/depths2_FR.ihx) | [EN](games/pocket-depths-2/build/g80x/depths2_EN.ihx) | `USER13FF` |
+| Pocket Rally | [FR](games/pocket-rally/build/g80x/rally_FR.ihx) | [EN](games/pocket-rally/build/g80x/rally_EN.ihx) | `USER17E2` |
+| Pocket Runner | [FR](games/pocket-runner/build/g80x/runner_FR.ihx) | [EN](games/pocket-runner/build/g80x/runner_EN.ihx) | `USER0FFF` |
+| Pocket Invaders | [FR](games/pocket-invaders/build/g80x/invaders_FR.ihx) | [EN](games/pocket-invaders/build/g80x/invaders_EN.ihx) | `USER0BFF` |
+| Pocket Depths (G805) | [FR](games/pocket-depths/build/g80x/depths_FR.ihx) | [EN](games/pocket-depths/build/g80x/depths_EN.ihx) | `USER19FF` |
+| Pocket Depths Lite | [FR](games/pocket-depths/build/g80x/depths_lite_FR.ihx) | [EN](games/pocket-depths/build/g80x/depths_lite_EN.ihx) | `USER17E2` |
+| Star Lane | [FR](games/star-lane/build/g80x/star_lane_FR.ihx) | [EN](games/star-lane/build/g80x/star_lane_EN.ihx) | `USER09FF` |
+
+<a id="g80x-32k-francais"></a>
+
+### G80X — 32 Kio de RAM
+
+**32 Kio doivent être reconnus par le firmware.** Sur G801 étendu, cocher l’extension RAM dans Sharp PC-G Link 1.8.1 ou ultérieure. [Guide mémoire](docs/G80X_32K.md#francais).
+
+| Jeu | Français | English | USER |
+|---|---|---|---|
+| Pocket Vector | [FR](games/pocket-vector/build/g80x-32k/vector_g80x_32k_FR.ihx) | [EN](games/pocket-vector/build/g80x-32k/vector_g80x_32k_EN.ihx) | `USER6BFF` |
+| Pocket Clash | [FR](games/pocket-clash/build/g80x-32k/clash_g80x_32k_FR.ihx) | [EN](games/pocket-clash/build/g80x-32k/clash_g80x_32k_EN.ihx) | `USER59FF` |
+
+<a id="g850-francais"></a>
+
+### PC-G850
+
+| Jeu | Français | English | USER |
+|---|---|---|---|
+| Pocket Vector | [FR](games/pocket-vector/build/g850/vector_FR.ihx) | [EN](games/pocket-vector/build/g850/vector_EN.ihx) | `USER6DFF` |
+| Pocket Clash | [FR](games/pocket-clash/build/g850/clash_g850_FR.ihx) | [EN](games/pocket-clash/build/g850/clash_g850_EN.ihx) | `USER55FF` |
+| Sharp PC-G Quest | [FR](games/quest/build/g850/quest_g850_FR.ihx) | [EN](games/quest/build/g850/quest_g850_EN.ihx) | `USER1FFF` |
+| Pocket Jumper | [FR](games/pocket-jumper/build/g850/jumper_g850_FR.ihx) | [EN](games/pocket-jumper/build/g850/jumper_g850_EN.ihx) | `USER19FF` |
+| Pocket Depths 2 | [FR](games/pocket-depths-2/build/g850/depths2_g850_FR.ihx) | [EN](games/pocket-depths-2/build/g850/depths2_g850_EN.ihx) | `USER16FF` |
+| Pocket Rally | [FR](games/pocket-rally/build/g850/rally_g850_FR.ihx) | [EN](games/pocket-rally/build/g850/rally_g850_EN.ihx) | `USER19FF` |
+| Pocket Runner | [FR](games/pocket-runner/build/g850/runner_g850_FR.ihx) | [EN](games/pocket-runner/build/g850/runner_g850_EN.ihx) | `USER11FF` |
+| Pocket Invaders | [FR](games/pocket-invaders/build/g850/invaders_g850_FR.ihx) | [EN](games/pocket-invaders/build/g850/invaders_g850_EN.ihx) | `USER0DFF` |
+| Pocket Depths | [FR](games/pocket-depths/build/g850/depths_g850_FR.ihx) | [EN](games/pocket-depths/build/g850/depths_g850_EN.ihx) | `USER1EFF` |
+| Star Lane | [FR](games/star-lane/build/g850/star_lane_g850_FR.ihx) | [EN](games/star-lane/build/g850/star_lane_g850_EN.ihx) | `USER0BFF` |
+
+### Charger et jouer
+
+Utiliser une interface série Sharp compatible et [Sharp PC-G Link](https://github.com/pR-0000/Sharp-PC-G-Link), disponible en [version Windows autonome](https://github.com/pR-0000/Sharp-PC-G-Link/releases/latest).
+
+1. Sauvegarder les programmes à conserver. Sélectionner le modèle réel dans Link.
+2. Régler Link et **TEXT → Sio → Format** de façon identique : **4800 bauds / 8N1 / RS/CS / CR LF / EOF 1A**, puis valider avec ENTER.
+3. Depuis BASIC/RUN, saisir **MON**, la commande **USER** du tableau correspondant, puis **R** ; valider chaque commande.
+4. Choisir le `.ihx` et cliquer sur **Envoyer ASM**. Attendre la fin de réception sur le Sharp.
+5. Saisir **G100**. Après chargement, **CALL &H100** lance aussi le jeu depuis BASIC. **Q / BREAK** quitte.
+
+Charger un autre jeu remplace le code et son état à 0100h. En cas d’erreur ou de retour immédiat de `R`, revérifier **TEXT → Sio → Format**. [Chargement et dépannage](docs/LOADING.md) · [Lancement BASIC](docs/BASIC_CALL.md).
+
+### Modifier et construire
+
+Installer Python 3.10+ et [SjASMPlus](https://github.com/z00m128/sjasmplus). Depuis la racine du dépôt :
+
+```text
+python tools/build_all.py --lang fr --assembler "sjasmplus.exe"
+```
+
+La construction produit les deux langues pour toutes les cibles disponibles. Chaque `manifest.json` indique les tailles, commandes USER et empreintes SHA-256 des fichiers de sa cible. [Guide développeur](docs/DEVELOPMENT.md).
+
+© 2026 P.RAIMBAULT. Jeux et outils originaux : [MIT](LICENSE.txt), [traduction française](LICENSE_FR.txt). Voir la [notice de Quest](games/quest/NOTICE.md) pour les éléments hérités. Aucune ROM Sharp ni exécutable tiers inclus. Projet indépendant, sans affiliation à Sharp.
 
 ---
 
@@ -124,114 +128,118 @@ Les deux langues sont construites. Chaque dossier de jeu contient ses sources, g
 
 ## English
 
-Z80 assembly games for **Sharp PC-G801 / PC-G805**, with French and English versions, original graphics, editable sources and ready-to-load files. See the [target models and memory limits](docs/COMPATIBILITY_EN.md).
+Ten Z80 games for **Sharp PC-G801 / PC-G805 and PC-G850**, in French and English. Ready-to-load files, editable graphics and assembly sources are included. No assembler or ROM dump is needed to play.
 
 ### Games
 
-#### Sharp PC-G80X Quest
+| Game and guide | Gameplay |
+|---|---|
+| [Pocket Vector](games/pocket-vector/README.md#english) | Perspective racing: three tracks, boost, spin attack and cup. |
+| [Pocket Clash](games/pocket-clash/README.md#english) | Platform fighting: four characters, three arenas and standings. |
+| [Sharp PC-G Quest](games/quest/README.md#english) | RPG with exploration, equipment, five bosses and typing challenges. |
+| [Pocket Jumper](games/pocket-jumper/README.md#english) | Pixel platforming, momentum-based jumps and parallax clouds. |
+| [Pocket Depths 2](games/pocket-depths-2/README.md#english) | DDA-raycast FPS: textured walls, doors, a key and sentinels. |
+| [Pocket Rally](games/pocket-rally/README.md#english) | Overhead racing, two tracks and pixel scrolling. |
+| [Pocket Runner](games/pocket-runner/README.md#english) | Three levels with ladders, ropes, gold and traps for guards. |
+| [Pocket Invaders](games/pocket-invaders/README.md#english) | Arcade: animated invaders, waves and destructible shelters. |
+| [Pocket Depths](games/pocket-depths/README.md#english) | Three-floor FPS, three weapons and modular maps; Lite edition. |
+| [Star Lane](games/star-lane/README.md#english) | Shoot ’em up: pirates, rechargeable shield and combos. |
 
-RPG with exploration, shops, equipment and five bosses. Battles include a typing challenge. Ported from [Canon X-07 Quest](https://github.com/pR-0000/Canon_X-07_RPG).
+Quest is based on [Canon X-07 Quest](https://github.com/pR-0000/Canon_X-07_RPG).
 
-![Sharp PC-G80X Quest — g800](games/quest/docs/quest_map_g800.png)
+![Pocket Vector — PC-G850, g800 LCD](games/pocket-vector/docs/vector_g850_race_g800.gif)
 
-[FR — HEX](games/quest/build/quest_FR.hex) · [EN — HEX](games/quest/build/quest_EN.hex) · [Guide](games/quest/README.md#english)
+![Pocket Clash — PC-G850, g800 LCD](games/pocket-clash/docs/clash_g850_battle_g800.gif)
 
-#### Pocket Rally — 0.1.0
+![Pocket Jumper — PC-G850, g800 LCD](games/pocket-jumper/docs/jumper_g850_scroll_g800.gif)
 
-Overhead racing with two circuits, two opponents, sixteen headings, acceleration/braking and pixel scrolling on both axes. A 4 × 4 tilemapper, look-ahead camera and simultaneous controls. An original Sharp game inspired by [Tiny CarZ](https://www.ticalc.org/archives/files/fileinfo/391/39185.html).
+![Pocket Rally — PC-G850, g800 LCD](games/pocket-rally/docs/rally_g850_scroll_g800.gif)
 
-![Pocket Rally — g800](games/pocket-rally/docs/rally_scroll_g800.gif)
+![Pocket Depths 2 — PC-G850, g800 LCD](games/pocket-depths-2/docs/depths2_g850_turn_g800.gif)
 
-[FR — HEX](games/pocket-rally/build/rally_FR.hex) · [EN — HEX](games/pocket-rally/build/rally_EN.hex) · [Guide](games/pocket-rally/README.md#english)
+[Screenshot gallery](docs/DEMONSTRATION_EN.md). Animations and screenshots show only the emulated LCD, without window borders. GIF timing is illustrative.
 
-#### Pocket Jumper — prototype 0.1.1
+### Choose the correct file
 
-Pixel-scrolling platformer: 12 × 12 hero, momentum-based jumps with simultaneous arrow/SPACE input, coins, bonus blocks, enemies to stomp and a checkpoint. One original 768 × 48 level.
+**Use `.ihx` files**: Intel HEX with load addresses and checksums. `.hex` is another extension for the same format; `.bin` files remain available for other tools. FR/EN select the language.
 
-![Pocket Jumper — g800](games/pocket-jumper/docs/jumper_fr_g800.png)
-
-[FR — HEX](games/pocket-jumper/build/jumper_FR.hex) · [EN — HEX](games/pocket-jumper/build/jumper_EN.hex) · [Guide](games/pocket-jumper/README.md#english)
-
-#### Pocket Runner
-
-Inspired by Lode Runner: three levels, ladders, ropes, gold to collect and traps to dig for pursuing guards.
-
-![Pocket Runner — g800](games/pocket-runner/docs/runner_fr_g800.png)
-
-[FR — HEX](games/pocket-runner/build/runner_FR.hex) · [EN — HEX](games/pocket-runner/build/runner_EN.hex) · [Guide](games/pocket-runner/README.md#english)
-
-#### Pocket Depths 2
-
-Z80 runtime Q8.8 DDA raycaster: fractional positions, 32 headings, textured walls, pillars, doors, sentries, a key and an exit.
-
-![Pocket Depths 2 — g800](games/pocket-depths-2/docs/depths2_hall_g800.png)
-
-[FR — HEX](games/pocket-depths-2/build/depths2_FR.hex) · [EN — HEX](games/pocket-depths-2/build/depths2_EN.hex) · [Guide](games/pocket-depths-2/README.md#english)
-
-#### Pocket Depths
-
-Grid-based exploration FPS: three weapons, monsters, doors, two beacons and 255 modular layouts. Full edition for G805; fixed-map Lite for G801/G805.
-
-![Pocket Depths — g800](games/pocket-depths/docs/depths_hall_g800.png)
-
-[FR — HEX](games/pocket-depths/build/depths_FR.hex) · [EN — HEX](games/pocket-depths/build/depths_EN.hex) · [Guide](games/pocket-depths/README.md#english)
-
-#### Pocket Invaders
-
-Arcade with sixteen animated invaders, pixel projectiles, destructible shields and successive waves. A 90 × 28 arena with a right-hand HUD.
-
-![Pocket Invaders — g800](games/pocket-invaders/docs/invaders_fr_g800.png)
-
-[FR — HEX](games/pocket-invaders/build/invaders_FR.hex) · [EN — HEX](games/pocket-invaders/build/invaders_EN.hex) · [Guide](games/pocket-invaders/README.md#english)
-
-#### Star Lane
-
-Switch lanes to avoid asteroids and collect stars. Three lives, score and pause.
-
-![Star Lane — g800](games/star-lane/docs/star_lane_g800.png)
-
-[FR — HEX](build/star_lane_FR.hex) · [EN — HEX](build/star_lane_EN.hex) · [Guide](games/star-lane/README.md#english)
-
-LCD screenshots: **g800**.
-
-### Load a game
-
-Use a Sharp PC-G serial interface and **[Sharp PC-G Link](https://github.com/pR-0000/Sharp-PC-G-Link)**, available separately as a [standalone Windows release](https://github.com/pR-0000/Sharp-PC-G-Link/releases/latest). No assembler is required to play.
-
-1. Back up programs you want to keep.
-2. Set **TEXT → Sio → Format** and Sharp PC-G Link to **4800 baud, 8N1, RS/CS, CR LF, EOF 1A**. Both sides must match; **1200 / 7N1** can also be used.
-3. From BASIC RUN, enter **MON**, then the **USER** command below, then **R**, pressing ENTER after each.
-4. Select the FR or EN HEX and click **Send ASM**. Wait for reception to finish on the Sharp.
-5. Enter **G100**, then ENTER on the title screen.
-
-| Game | Bytes FR / EN, including state and buffers | Reservation |
-|---|---:|---|
-| Sharp PC-G80X Quest | 5 848 / 5 783 | `USER17E2` |
-| Pocket Rally | 5 783 / 5 762 | `USER17E2` |
-| Pocket Jumper | 5 003 / 4 990 | `USER14FF` |
-| Pocket Runner | 3 704 / 3 684 | `USER0FFF` |
-| Pocket Depths 2 | 4 800 / 4 782 | `USER13FF` |
-| Pocket Depths (G805) | 6 295 / 6 286 | `USER19FF` |
-| Pocket Invaders | 2 666 / 2 653 | `USER0BFF` |
-| Star Lane | 1 195 / 1 192 | `USER05FF` |
-| Pocket Depths Lite | 5 818 / 5 805 | `USER17E2` |
-
-All games load at **0100h**. Loading another game replaces the previous one and its RAM save. **Q / BREAK** returns to the caller. Once reserved and loaded, **CALL &H100** also starts the game from BASIC.
-
-[Loading and troubleshooting](docs/LOADING_EN.md) · [Transfer utility](docs/TRANSFER_TOOL_EN.md) · [BASIC launcher](docs/BASIC_CALL_EN.md)
-
-### Build and modify
-
-Install Python 3.10+ and [SjASMPlus](https://github.com/z00m128/sjasmplus), then run from the repository root:
+Each game uses the same layout:
 
 ```text
-python tools/build_all.py --lang en --assembler "path/to/sjasmplus.exe"
+games/<game>/build/
+  g80x/       G801/G805, cell-based LCD
+  g80x-32k/   G801/G805 with 32 KiB (Vector and Clash)
+  g850/       G850, 144 × 48 graphical LCD
 ```
 
-Both languages are built. Each game folder contains its source, assets, guide and binaries. Shared definitions are in `include/`; reusable IOCS wrappers are in `lib/`.
+Only supported profiles are present. **G850 and G80X binaries are different.** G815 and G850S/V/VS compatibility is not assumed: see [target models](docs/COMPATIBILITY_EN.md).
 
-[Development](docs/DEVELOPMENT_EN.md) · [Firmware routines](docs/ROM_G801_EN.md)
+<a id="g80x-english"></a>
 
-### Credits and license
+### G80X — G801/G805
 
-© 2026 P.RAIMBAULT. Original games, graphics and Sharp tools: [MIT](LICENSE.txt). Quest retains the conditions of its inherited sources; see [its notice](games/quest/NOTICE_EN.md). No Sharp ROM, emulator, assembler or FTDI driver is included. Independent project, unaffiliated with Sharp.
+All builds below fit a stock 8 KiB G801 **except full Pocket Depths**, which targets G805; choose Lite on G801.
+
+| Game | French | English | USER |
+|---|---|---|---|
+| Sharp PC-G Quest | [FR](games/quest/build/g80x/quest_FR.ihx) | [EN](games/quest/build/g80x/quest_EN.ihx) | `USER17E2` |
+| Pocket Jumper | [FR](games/pocket-jumper/build/g80x/jumper_FR.ihx) | [EN](games/pocket-jumper/build/g80x/jumper_EN.ihx) | `USER14FF` |
+| Pocket Depths 2 | [FR](games/pocket-depths-2/build/g80x/depths2_FR.ihx) | [EN](games/pocket-depths-2/build/g80x/depths2_EN.ihx) | `USER13FF` |
+| Pocket Rally | [FR](games/pocket-rally/build/g80x/rally_FR.ihx) | [EN](games/pocket-rally/build/g80x/rally_EN.ihx) | `USER17E2` |
+| Pocket Runner | [FR](games/pocket-runner/build/g80x/runner_FR.ihx) | [EN](games/pocket-runner/build/g80x/runner_EN.ihx) | `USER0FFF` |
+| Pocket Invaders | [FR](games/pocket-invaders/build/g80x/invaders_FR.ihx) | [EN](games/pocket-invaders/build/g80x/invaders_EN.ihx) | `USER0BFF` |
+| Pocket Depths (G805) | [FR](games/pocket-depths/build/g80x/depths_FR.ihx) | [EN](games/pocket-depths/build/g80x/depths_EN.ihx) | `USER19FF` |
+| Pocket Depths Lite | [FR](games/pocket-depths/build/g80x/depths_lite_FR.ihx) | [EN](games/pocket-depths/build/g80x/depths_lite_EN.ihx) | `USER17E2` |
+| Star Lane | [FR](games/star-lane/build/g80x/star_lane_FR.ihx) | [EN](games/star-lane/build/g80x/star_lane_EN.ihx) | `USER09FF` |
+
+<a id="g80x-32k-english"></a>
+
+### G80X — 32 KiB RAM
+
+**32 KiB must be recognized by the firmware.** For an expanded G801, enable the RAM expansion option in Sharp PC-G Link 1.8.1 or later. [Memory guide](docs/G80X_32K.md#english).
+
+| Game | French | English | USER |
+|---|---|---|---|
+| Pocket Vector | [FR](games/pocket-vector/build/g80x-32k/vector_g80x_32k_FR.ihx) | [EN](games/pocket-vector/build/g80x-32k/vector_g80x_32k_EN.ihx) | `USER6BFF` |
+| Pocket Clash | [FR](games/pocket-clash/build/g80x-32k/clash_g80x_32k_FR.ihx) | [EN](games/pocket-clash/build/g80x-32k/clash_g80x_32k_EN.ihx) | `USER59FF` |
+
+<a id="g850-english"></a>
+
+### PC-G850
+
+| Game | French | English | USER |
+|---|---|---|---|
+| Pocket Vector | [FR](games/pocket-vector/build/g850/vector_FR.ihx) | [EN](games/pocket-vector/build/g850/vector_EN.ihx) | `USER6DFF` |
+| Pocket Clash | [FR](games/pocket-clash/build/g850/clash_g850_FR.ihx) | [EN](games/pocket-clash/build/g850/clash_g850_EN.ihx) | `USER55FF` |
+| Sharp PC-G Quest | [FR](games/quest/build/g850/quest_g850_FR.ihx) | [EN](games/quest/build/g850/quest_g850_EN.ihx) | `USER1FFF` |
+| Pocket Jumper | [FR](games/pocket-jumper/build/g850/jumper_g850_FR.ihx) | [EN](games/pocket-jumper/build/g850/jumper_g850_EN.ihx) | `USER19FF` |
+| Pocket Depths 2 | [FR](games/pocket-depths-2/build/g850/depths2_g850_FR.ihx) | [EN](games/pocket-depths-2/build/g850/depths2_g850_EN.ihx) | `USER16FF` |
+| Pocket Rally | [FR](games/pocket-rally/build/g850/rally_g850_FR.ihx) | [EN](games/pocket-rally/build/g850/rally_g850_EN.ihx) | `USER19FF` |
+| Pocket Runner | [FR](games/pocket-runner/build/g850/runner_g850_FR.ihx) | [EN](games/pocket-runner/build/g850/runner_g850_EN.ihx) | `USER11FF` |
+| Pocket Invaders | [FR](games/pocket-invaders/build/g850/invaders_g850_FR.ihx) | [EN](games/pocket-invaders/build/g850/invaders_g850_EN.ihx) | `USER0DFF` |
+| Pocket Depths | [FR](games/pocket-depths/build/g850/depths_g850_FR.ihx) | [EN](games/pocket-depths/build/g850/depths_g850_EN.ihx) | `USER1EFF` |
+| Star Lane | [FR](games/star-lane/build/g850/star_lane_g850_FR.ihx) | [EN](games/star-lane/build/g850/star_lane_g850_EN.ihx) | `USER0BFF` |
+
+### Load and play
+
+Use a compatible Sharp serial adapter and [Sharp PC-G Link](https://github.com/pR-0000/Sharp-PC-G-Link), available as a [standalone Windows release](https://github.com/pR-0000/Sharp-PC-G-Link/releases/latest).
+
+1. Back up programs to keep. Select the actual Sharp model in Link.
+2. Match Link and **TEXT → Sio → Format**: **4800 baud / 8N1 / RS/CS / CR LF / EOF 1A**, then confirm with ENTER.
+3. From BASIC/RUN, enter **MON**, the **USER** command from the matching table, then **R**; confirm each command.
+4. Select the `.ihx` file and click **Send ASM**. Wait for reception to finish on the Sharp.
+5. Enter **G100**. After loading, **CALL &H100** also starts the game from BASIC. **Q / BREAK** quits.
+
+Loading another game replaces the code and its state at 0100h. If reception fails or `R` returns immediately, recheck **TEXT → Sio → Format**. [Loading and troubleshooting](docs/LOADING_EN.md) · [BASIC launch](docs/BASIC_CALL_EN.md).
+
+### Modify and build
+
+Install Python 3.10+ and [SjASMPlus](https://github.com/z00m128/sjasmplus). From the repository root:
+
+```text
+python tools/build_all.py --lang en --assembler "sjasmplus.exe"
+```
+
+Builds both languages for all available targets. `manifest.json` records sizes, USER commands and SHA-256 hashes beside each target’s files. [Developer guide](docs/DEVELOPMENT_EN.md).
+
+© 2026 P.RAIMBAULT. Original games and tools: [MIT](LICENSE.txt). See [Quest’s notice](games/quest/NOTICE_EN.md) for inherited material. No Sharp ROM or third-party executable is included. Independent project, unaffiliated with Sharp.

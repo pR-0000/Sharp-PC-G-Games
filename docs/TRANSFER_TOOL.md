@@ -11,4 +11,4 @@ python -m pip install -r requirements.txt
 python -m sharp_link
 ```
 
-Utiliser **Envoyer ASM** pour les fichiers HEX/BIN des jeux. Le [guide de chargement](LOADING.md) donne la réservation USER de chaque jeu. Les exemples BASIC sont dans `examples/basic/` du dépôt de l’utilitaire. Langue et paramètres série sont conservés dans son fichier INI local.
+Utiliser **Envoyer ASM** pour les fichiers IHX/BIN des jeux. Le [guide de chargement](LOADING.md) donne la réservation USER de chaque jeu. Les exemples BASIC sont dans `examples/basic/` du dépôt de l’utilitaire. Langue et paramètres série sont conservés dans son fichier INI local.

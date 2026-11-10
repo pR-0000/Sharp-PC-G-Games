@@ -12,7 +12,7 @@ from assets import levels
 class RunnerMachine(Machine):
     def __init__(self,language='FR'):
         self.tstates=0
-        super().__init__('runner_'+language,HERE/'build')
+        super().__init__('runner_'+language,HERE/'build/g80x')
         self.cpu.set_input_callback(lambda p: (_ for _ in ()).throw(AssertionError(f'Unexpected IN {p}')))
         self.cpu.set_output_callback(lambda p,v: (_ for _ in ()).throw(AssertionError(f'Unexpected OUT {p}')))
     def seek_key(self):
@@ -95,15 +95,17 @@ def reference_distances(m):
     return bytes(distances)
 
 class RunnerChecks(unittest.TestCase):
+    machine=RunnerMachine
+
     def test_language_title_and_return(self):
         for language in ('FR','EN'):
-            m=RunnerMachine(language);self.assertIn(b'POCKET RUNNER',m.text[0]);m.start()
+            m=self.machine(language);self.assertIn(b'POCKET RUNNER',m.text[0]);m.start()
             self.assertEqual(bytes(m.text[0][20:24]),b'0000')
             self.assertEqual(bytes(m.text[3][20:24]),b'N 01' if language=='FR' else b'L 01')
             m.tap(0x51);self.assertEqual(m.cpu.pc,RETURN)
             self.assertEqual((m.cpu.sp,m.cpu.ix,m.cpu.iy),(0x1ff2,0x1234,0x5678));m.check_memory()
     def test_all_levels_decompress_exactly(self):
-        m=RunnerMachine();m.start()
+        m=self.machine();m.start()
         for i,level in enumerate(levels()):
             m.set_byte('level_index',i);m.routine('load_level')
             self.assertEqual(m.terrain(),level['terrain'])
@@ -112,7 +114,7 @@ class RunnerChecks(unittest.TestCase):
             self.assertEqual(m.byte('gold_flags'),255)
         m.check_memory()
     def test_movement_reference_all_cells_levels_exit_states(self):
-        m=RunnerMachine();m.start()
+        m=self.machine();m.start()
         for level in range(3):
             m.set_byte('level_index',level);m.routine('load_level')
             for active in (0,1):
@@ -125,7 +127,7 @@ class RunnerChecks(unittest.TestCase):
                         self.assertEqual(actual,expected,(level,active,pos,direction))
         m.check_memory()
     def test_bfs_independent_reference(self):
-        m=RunnerMachine();m.start()
+        m=self.machine();m.start()
         for level in range(3):
             m.set_byte('level_index',level);m.routine('load_level')
             for pos in (m.byte('player_pos'),24,94,157):
@@ -136,7 +138,7 @@ class RunnerChecks(unittest.TestCase):
                 self.assertLessEqual(m.byte('bfs_tail'),240)
         m.check_memory()
     def test_all_gold_and_exit_reachable(self):
-        m=RunnerMachine();m.start()
+        m=self.machine();m.start()
         for i,level in enumerate(levels()):
             m.set_byte('level_index',i);m.routine('load_level')
             # Forward directed graph: inspect topology without enemy collision.
@@ -156,7 +158,7 @@ class RunnerChecks(unittest.TestCase):
             self.assertIn(level['exit'],seen)
         m.check_memory()
     def test_gravity_ladder_rope_and_drop(self):
-        m=RunnerMachine();m.start();m.arena();m.set_byte('player_pos',68)
+        m=self.machine();m.start();m.arena();m.set_byte('player_pos',68)
         m.set_byte('held_key',0);m.routine('player_step');self.assertEqual(m.byte('player_pos'),88)
         m.routine('player_step');self.assertEqual(m.byte('player_pos'),88)
         m.tile(8,4,3);m.set_byte('held_key',0x20);m.routine('player_step');self.assertEqual(m.byte('player_pos'),68)
@@ -164,7 +166,7 @@ class RunnerChecks(unittest.TestCase):
         m.set_byte('held_key',0x1f);m.routine('player_step');self.assertEqual(m.byte('player_pos'),88)
         m.check_memory()
     def test_dig_left_right_stone_and_four_hole_limit(self):
-        m=RunnerMachine();m.start();m.arena()
+        m=self.machine();m.start();m.arena()
         m.routine('dig',c=0);self.assertEqual(m.tile(7,5),0)
         m.routine('dig',c=1);self.assertEqual(m.tile(9,5),0)
         for x in (11,14):m.set_byte('player_pos',x+80);m.routine('dig',c=0)
@@ -172,14 +174,14 @@ class RunnerChecks(unittest.TestCase):
         m.tile(16,5,2);m.hole(0,107,0);m.routine('dig',c=0);self.assertEqual(m.tile(16,5),2)
         m.check_memory()
     def test_hole_closes_and_kills_player(self):
-        m=RunnerMachine();m.start();m.arena();m.tile(7,5,0);m.hole(0,107,2)
+        m=self.machine();m.start();m.arena();m.tile(7,5,0);m.hole(0,107,2)
         m.routine('holes_tick');self.assertEqual(m.tile(7,5),0)
         m.routine('holes_tick');self.assertEqual(m.tile(7,5),1)
         m.tile(7,5,0);m.hole(0,107,1);m.set_byte('player_pos',107)
         m.routine('holes_tick');self.assertEqual(m.byte('lives'),2);self.assertEqual(m.byte('died'),1)
         m.check_memory()
     def test_guard_trap_escape_and_respawn(self):
-        m=RunnerMachine();m.start();m.arena();m.tile(7,5,0);m.hole(0,107,96);m.guard(0,87,spawn=37)
+        m=self.machine();m.start();m.arena();m.tile(7,5,0);m.hole(0,107,96);m.guard(0,87,spawn=37)
         m.routine('build_distances');m.routine('guards_step')
         self.assertEqual(m.guard(0)[:2],(107,4))
         for _ in range(4):m.routine('guards_step')
@@ -188,35 +190,37 @@ class RunnerChecks(unittest.TestCase):
         self.assertEqual(m.guard(0),(37,0,37));self.assertEqual(m.word('score'),25)
         m.check_memory()
     def test_trapped_guard_supports_player(self):
-        m=RunnerMachine();m.start();m.arena();m.tile(7,5,0);m.guard(0,107,3)
+        m=self.machine();m.start();m.arena();m.tile(7,5,0);m.guard(0,107,3)
         r=m.routine('supported',a=87);self.assertTrue(r['af']&1)
         m.guard(0,107,0);self.assertFalse(m.routine('supported',a=87)['af']&1)
         m.check_memory()
     def test_respawn_avoids_an_occupied_start(self):
-        m=RunnerMachine();m.start();m.arena()
+        m=self.machine();m.start();m.arena()
         m.guard(0,107,3,37);m.guard(1,37);m.guard(2,38)
         m.routine('respawn_guard',ix=m.sym['guards'])
         positions=[m.guard(i)[0] for i in range(3)]
         self.assertEqual(len(set(positions)),3)
         self.assertEqual(m.guard(0)[0]//20,1);m.check_memory()
     def test_guards_take_ladder_route(self):
-        m=RunnerMachine();m.start();m.arena()
+        m=self.machine();m.start();m.arena()
         for y in range(4,11):m.tile(3,y,3)
         m.set_byte('player_pos',95);m.guard(0,215)
         m.routine('build_distances');m.routine('guards_step')
         self.assertEqual(m.guard(0)[0],214)
         m.check_memory()
     def test_gold_unlocks_exit_and_cannot_score_twice(self):
-        m=RunnerMachine();m.start();level=levels()[0]
+        m=self.machine();m.start();level=levels()[0]
         for i,pos in enumerate(level['gold']):
             m.set_byte('player_pos',pos);m.routine('collect_gold');m.routine('collect_gold')
             self.assertEqual(m.byte('gold_left'),7-i)
             self.assertEqual(m.word('score'),10*(i+1))
         self.assertEqual(m.byte('exit_active'),1)
-        m.routine('draw_game');self.assertEqual(bytes(m.text[1][20:24]),b'SORT')
+        m.routine('draw_game')
+        row,col=(0,11) if m.rows==6 else (1,20)
+        self.assertEqual(bytes(m.text[row][col:col+4]),b'SORT')
         m.check_memory()
     def test_guards_remain_in_distinct_cells(self):
-        m=RunnerMachine();m.start();m.arena();m.set_byte('player_pos',85)
+        m=self.machine();m.start();m.arena();m.set_byte('player_pos',85)
         for i in range(3):m.guard(i,87+i)
         for _ in range(2):
             m.routine('build_distances');m.routine('guards_step')
@@ -224,13 +228,13 @@ class RunnerChecks(unittest.TestCase):
             self.assertEqual(len(set(positions)),3)
         m.check_memory()
     def test_lives_game_over_and_restart(self):
-        m=RunnerMachine();m.start()
+        m=self.machine();m.start()
         for lives in (2,1,0):m.routine('lose_life');self.assertEqual(m.byte('lives'),lives)
         self.assertEqual(m.byte('phase'),2);self.assertIn(b'PARTIE TERMINEE',m.text[1])
         m.tap(0x28);self.assertEqual((m.byte('phase'),m.byte('lives')),(1,3));m.check_memory()
     def test_level_progression_and_victory(self):
         for lang in ('FR','EN'):
-            m=RunnerMachine(lang);m.start()
+            m=self.machine(lang);m.start()
             for stage in range(3):
                 m.set_byte('player_pos',m.byte('exit_pos'));m.set_byte('exit_active',1)
                 m.set_byte('held_key',0);m.set_byte('player_clock',2)
@@ -238,7 +242,7 @@ class RunnerChecks(unittest.TestCase):
                 self.assertEqual(m.byte('level_index'),stage+1)
             self.assertEqual(m.byte('phase'),3);self.assertEqual(m.word('score'),300);m.check_memory()
     def test_pause_help_and_continuous_movement(self):
-        m=RunnerMachine();m.start();m.tap(0x39)
+        m=self.machine();m.start();m.tap(0x39)
         before=bytes(m.cpu.memory[m.sym['data_start']:m.sym['program_end']])
         for _ in range(20):m.poll(0)
         after=bytes(m.cpu.memory[m.sym['data_start']:m.sym['program_end']])
@@ -251,7 +255,7 @@ class RunnerChecks(unittest.TestCase):
         for _ in range(6):m.poll(0x22)
         self.assertGreater(m.byte('player_pos'),pos);m.check_memory()
     def test_camera_clipping_and_native_score(self):
-        m=RunnerMachine();m.start()
+        m=self.machine();m.start()
         for row in range(12):
             m.set_byte('player_pos',row*20+2);m.routine('draw_game')
             self.assertEqual(m.byte('camera_y'),max(0,min(8,row-1)))
@@ -262,7 +266,7 @@ class RunnerChecks(unittest.TestCase):
         m.check_memory()
     def test_all_ui_strings_fit(self):
         for lang in ('FR','EN'):
-            m=RunnerMachine(lang)
+            m=self.machine(lang)
             for name in ('title_text','subtitle','start_text','title_help','help_1','help_2','help_3','help_4',
                          'pause_text','over_text','win_text','restart_text'):
                 p=m.sym[name];self.assertLessEqual(bytes(m.cpu.memory[p:p+64]).index(0),24,(lang,name))

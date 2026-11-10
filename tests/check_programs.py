@@ -17,13 +17,22 @@ sys.path.insert(0, str(ROOT / "tools"))
 from build import read_symbols
 from cli_i18n import Parser, pick
 
-BUILD = ROOT / "build"
+BUILD = ROOT / "games/star-lane/build/g80x"
 IOCS = (0xBE53, 0xBE62, 0xBFD0, 0xBFEE)
 RETURN = 0x7000
 
 
 class Machine:
-    def __init__(self, name="star_lane", build_dir=BUILD):
+    width=120
+    rows=4
+    cell_width=5
+    pixel_mask=127
+    stack=0x1FF0
+    stack_bottom=0x1E00
+
+    def __init__(self, name="star_lane_EN", build_dir=None):
+        if build_dir is None:
+            build_dir = ROOT / "examples/build/g80x" if name.startswith("glyph_demo") else BUILD
         self.sym = read_symbols(build_dir / f"{name}.sym")
         self.cpu = z80.Z80Machine()
         self.cpu.memory[:] = bytes([0xA5]) * 65536
@@ -32,7 +41,7 @@ class Machine:
         # Independently decode every HEX record, checksum and address.
         decoded = bytearray()
         address = 0x100
-        for text in (build_dir / f"{name}.hex").read_text().splitlines():
+        for text in (build_dir / f"{name}.ihx").read_text().splitlines():
             assert text.startswith(":")
             record = bytes.fromhex(text[1:])
             assert len(record) == record[0] + 5 and sum(record) % 256 == 0
@@ -43,12 +52,12 @@ class Machine:
             decoded.extend(record[4:-1])
             address += record[0]
         assert bytes(decoded) == binary
-        self.cpu.pc, self.cpu.sp = 0x100, 0x1FF0
+        self.cpu.pc, self.cpu.sp = 0x100, self.stack
         self.cpu.ix, self.cpu.iy = 0x1234, 0x5678
-        self.cpu.memory[0x1FF0:0x1FF2] = RETURN.to_bytes(2, "little")
+        self.cpu.memory[self.stack:self.stack+2] = RETURN.to_bytes(2, "little")
         self.baseline = bytes(self.cpu.memory)
-        self.screen = [bytearray(120) for _ in range(4)]
-        self.text = [bytearray(b" " * 24) for _ in range(4)]
+        self.screen = [bytearray(self.width) for _ in range(self.rows)]
+        self.text = [bytearray(b" " * 24) for _ in range(self.rows)]
         self.pattern_calls = []
         self.minimum_sp = self.cpu.sp
         for address in (*IOCS, RETURN):
@@ -74,19 +83,19 @@ class Machine:
         if cpu.pc == 0xBE53:
             assert key is not None
         else:
-            assert 0 <= cpu.d < 4 and 0 <= cpu.e < 24
+            assert 0 <= cpu.d < self.rows and 0 <= cpu.e < 24
             row, col = cpu.d, cpu.e
             if cpu.pc == 0xBE62:
                 self.text[row][col] = max(cpu.a, 32)
             elif cpu.pc == 0xBFEE:
                 assert 0 < cpu.b <= 24 - col  # this program must never scroll
                 self.text[row][col:col + cpu.b] = bytes([cpu.a]) * cpu.b
-                self.screen[row][col * 5:(col + cpu.b) * 5] = bytes(cpu.b * 5)
+                self.screen[row][col * self.cell_width:(col + cpu.b) * self.cell_width] = bytes(cpu.b * self.cell_width)
             elif cpu.pc == 0xBFD0:
-                assert 0 < cpu.b <= 120 - col * 5
+                assert 0 < cpu.b <= self.width - col * self.cell_width
                 data = bytes(cpu.memory[cpu.hl:cpu.hl + cpu.b])
-                assert all(value < 128 for value in data)
-                self.screen[row][col * 5:col * 5 + cpu.b] = data
+                assert all(value <= self.pixel_mask for value in data)
+                self.screen[row][col * self.cell_width:col * self.cell_width + cpu.b] = data
                 self.pattern_calls.append((row, col, data))
             else:
                 raise AssertionError(f"Unexpected ROM call {cpu.pc:04X}")
@@ -138,9 +147,9 @@ class Machine:
         mutable = self.sym.get("data_start", self.sym["program_end"])
         end = self.sym["program_end"]
         actual = bytes(self.cpu.memory)
-        for lo, hi in ((0, mutable), (end, 0x1E00), (0x1FF2, 65536)):
+        for lo, hi in ((0, mutable), (end, self.stack_bottom), (self.stack+2, 65536)):
             assert actual[lo:hi] == self.baseline[lo:hi], f"Write outside RAM {lo:04X}:{hi:04X}"
-        assert self.minimum_sp >= 0x1E00
+        assert self.minimum_sp >= self.stack_bottom
 
 
 class ProgramChecks(unittest.TestCase):
@@ -168,7 +177,7 @@ class ProgramChecks(unittest.TestCase):
         self.assertIn(b"STAR LANE", bytes(m.text[0]))
         m.start()
         self.assertTrue(any(len(p[2]) == 120 for p in m.pattern_calls))
-        self.assertTrue(any(p[2] == bytes.fromhex("143E7F1C08") for p in m.pattern_calls))
+        self.assertTrue(any(bytes.fromhex("143E7F1C08") in p[2] for p in m.pattern_calls))
         self.assertTrue(any(p[2] == bytes.fromhex("0E1F3E1F0E") for p in m.pattern_calls))
         m.check_memory()
 
@@ -219,11 +228,11 @@ class ProgramChecks(unittest.TestCase):
         m.set_tile(1, 3, 2)
         m.next_world()
         self.assertEqual(m.word("score"), 26)
-        self.assertEqual(bytes(m.text[0][10:14]), b"0026")
+        self.assertEqual(bytes(m.text[0][2:6]), b"0026")
         for value, expected in ((98, b"0099"), (998, b"0999"), (9998, b"9999"), (9999, b"9999")):
             m.set_word("score", value)
             m.next_world()
-            self.assertEqual(bytes(m.text[0][10:14]), expected)
+            self.assertEqual(bytes(m.text[0][2:6]), expected)
         m.check_memory()
 
     def test_pause_restart_and_return(self):
@@ -253,13 +262,13 @@ class ProgramChecks(unittest.TestCase):
             m.set_byte("invulnerable", 200)
             m.next_world()
             tiles = bytes(m.cpu.memory[m.sym["tiles"]:m.sym["tiles"] + 72])
-            self.assertTrue(all(t in (0, 1, 2) for t in tiles))
+            self.assertTrue(all(0 <= t <= 6 for t in tiles))
             self.assertEqual(m.byte("phase"), 1)
         self.assertTrue(any(p[2] == bytes.fromhex("3E7763773E") or bytes.fromhex("3E7763773E") in p[2] for p in m.pattern_calls))
         m.check_memory()
 
     def test_glyph_demo(self):
-        m = Machine("glyph_demo")
+        m = Machine("glyph_demo_EN")
         self.assertEqual(len(m.pattern_calls), 3)
         self.assertEqual([(r, c) for r, c, _ in m.pattern_calls], [(1, 3), (1, 6), (1, 9)])
         m.tap(0x51)

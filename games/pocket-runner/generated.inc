@@ -25,6 +25,9 @@ level_2:
     db 2,0,7,4,1,0,1,3,3,0,2,2,3,1,1,3,4,1,2,0
     db 8,1,2,2,3,0,1,3,5,0,2,2,7,0,2,2,3,0,1,3
     db 14,0,21,2,0
+    IF TARGET_G850
+    INCLUDE "targets/g850/patterns.inc"
+    ELSE
 patterns:
     db 0,0,0,0,0
     db 73,73,127,73,73
@@ -38,5 +41,10 @@ patterns:
     db 112,92,120,92,112
     db 14,31,62,31,14
     db 10,36,31,36,10
+    ENDIF
 bit_masks: db 1,2,4,8,16,32,64,128
+    IF TARGET_G850
+screen_rows: dw frame_buffer+146,frame_buffer+290,frame_buffer+434,frame_buffer+578,frame_buffer+722
+    ELSE
 screen_rows: dw frame_buffer,frame_buffer+120,frame_buffer+240,frame_buffer+360
+    ENDIF

@@ -24,7 +24,7 @@ def main():
             raw=bytearray(m.cpu.memory[0x100:m.sym['program_end']])
             draw,key=m.sym['draw_game'],m.sym['pcg_key_scan']
             raw[:9]=bytes((0xcd,draw&255,draw>>8,0xcd,key&255,key>>8,0xc3,3,1))
-            fixture=Path(folder)/(scene+'.hex');fixture.write_text(intel_hex(raw,256),encoding='ascii')
+            fixture=Path(folder)/(scene+'.ihx');fixture.write_text(intel_hex(raw,256),encoding='ascii')
             image=out/(scene+'_g800.png')
             report=capture(emulator,fixture,image,model='PC-G805' if lang=='EN' else 'PC-G801')
             report.update({'image':image.relative_to(ROOT).as_posix(),'language':lang,

@@ -1,9 +1,9 @@
-; FR/EN: clipped column blitter into 120 x 28 pixels, four 7-bit bands.
+; FR/EN: clipped shared column blitter; band geometry comes from the target.
 draw_game:
     call update_camera
     ld hl,frame_buffer
     ld de,frame_buffer+1
-    ld bc,479
+    ld bc,PCG_FRAME_BYTES-1
     ld (hl),0
     ldir
     ld hl,(camera_x)
@@ -20,6 +20,9 @@ draw_game:
     ld hl,cloud
     ld b,12
     call draw_sprite
+    IF TARGET_G850
+    call draw_background
+    ENDIF
     ld hl,(camera_x)
     ld a,l
     and 7
@@ -94,12 +97,12 @@ render_map_next:
     ld hl,render_column
     inc (hl)
     ld a,(hl)
-    cp 14
+    cp RENDER_COLS
     jr c,render_map_column
     ld hl,render_row
     inc (hl)
     ld a,(hl)
-    cp 5
+    cp RENDER_ROWS
     jr c,render_map_row
     ld ix,enemies
     ld b,4
@@ -162,16 +165,16 @@ render_hero:
 render_upload:
     ld hl,frame_buffer
     ld de,0
-    ld b,120
+    ld b,PCG_ROW_COLUMNS
 render_upload_row:
     call pcg_pattern
     push de
-    ld de,120
+    ld de,PCG_ROW_COLUMNS
     add hl,de
     pop de
     inc d
     ld a,d
-    cp 4
+    cp PCG_LCD_ROWS
     jr c,render_upload_row
     jp hud
 ; Signed A plus unsigned B -> HL.
@@ -184,13 +187,13 @@ signed_plus_b:
 update_camera:
     ld hl,(player_x)
     call fixed_to_int
-    ld de,36
+    ld de,CAMERA_LEAD
     or a
     sbc hl,de
     jr nc,camera_right
     ld hl,0
 camera_right:
-    ld de,668
+    ld de,WORLD_W-VIEW_W
     or a
     sbc hl,de
     jr c,camera_restore
@@ -211,21 +214,21 @@ camera_restore:
     jr camera_store_y
 camera_down:
     ld a,(camera_y)
-    add a,12
+    add a,VIEW_H-HERO_H-4
     cp l
     ret nc
     ld a,l
-    sub 12
+    sub VIEW_H-HERO_H-4
 camera_limit_y:
-    cp 21
+    cp CAMERA_MAX_Y+1
     jr c,camera_store_y
-    ld a,20
+    ld a,CAMERA_MAX_Y
 camera_store_y:
     ld (camera_y),a
     ret
 
 ; HL = words of vertical pixel bits, B = width, draw_x/y signed pixels.
-; Every output byte is masked to seven bits. IX/IY are preserved.
+; Output uses the target pixel mask. IX/IY are preserved.
 draw_sprite:
     ld (sprite_source),hl
     ld a,b
@@ -249,13 +252,13 @@ sprite_positive_y:
     or a
     ret nz
     ld a,l
-    cp 28
+    cp VIEW_H
     ret nc
     ld b,0
 sprite_y_divide:
-    cp 7
+    cp PCG_GLYPH_HEIGHT
     jr c,sprite_y_ready
-    sub 7
+    sub PCG_GLYPH_HEIGHT
     inc b
     jr sprite_y_divide
 sprite_y_ready:
@@ -272,7 +275,7 @@ sprite_next_column:
     or a
     jp nz,sprite_column_done
     ld a,l
-    cp 100
+    cp VIEW_W
     jp nc,sprite_column_done
     push hl
     ld a,(sprite_band)
@@ -313,29 +316,36 @@ sprite_shift_loop:
 sprite_bits_ready:
     pop hl
     ld a,e
-    and 127
+    and PCG_GLYPH_MASK
     or (hl)
     ld (hl),a
     ld a,(sprite_band)
-    cp 3
+    cp VIEW_PAGES-1
     jr nc,sprite_column_done
     push de
-    ld de,120
+    ld de,PCG_ROW_COLUMNS
     add hl,de
     pop de
+    IF TARGET_G850
+    ld a,d
+    ELSE
     rlc e
     ld a,d
     rla
-    and 127
+    and PCG_GLYPH_MASK
+    ENDIF
     or (hl)
     ld (hl),a
     ld a,(sprite_band)
-    cp 2
+    cp VIEW_PAGES-2
     jr nc,sprite_column_done
     push de
-    ld de,120
+    ld de,PCG_ROW_COLUMNS
     add hl,de
     pop de
+    IF TARGET_G850
+    ld a,c
+    ELSE
     ld a,d
     rlca
     rlca
@@ -345,7 +355,8 @@ sprite_bits_ready:
     add a,a
     add a,a
     or b
-    and 127
+    and PCG_GLYPH_MASK
+    ENDIF
     or (hl)
     ld (hl),a
 sprite_column_done:
@@ -359,3 +370,53 @@ sprite_column_done:
     cp (hl)
     jp nz,sprite_next_column
     ret
+
+    IF TARGET_G850
+draw_background:
+    ld hl,(camera_x)
+    srl h
+    rr l
+    srl h
+    rr l
+    ld a,110
+    sub l
+    and 127
+    ld l,a
+    ld h,0
+    ld (draw_x),hl
+    ld hl,3
+    ld (draw_y),hl
+    ld hl,sun
+    ld b,8
+    call draw_sprite
+    ld hl,(camera_x)
+    srl h
+    rr l
+    ld a,92
+    sub l
+    and 127
+    ld l,a
+    ld h,0
+    ld (draw_x),hl
+    ld hl,7
+    ld (draw_y),hl
+    ld hl,cloud
+    ld b,12
+    call draw_sprite
+    ld hl,(camera_x)
+    srl h
+    rr l
+    srl h
+    rr l
+    ld a,60
+    sub l
+    and 127
+    ld l,a
+    ld h,0
+    ld (draw_x),hl
+    ld hl,24
+    ld (draw_y),hl
+    ld hl,hills
+    ld b,16
+    jp draw_sprite
+    ENDIF

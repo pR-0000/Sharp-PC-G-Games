@@ -81,3 +81,9 @@ transient_end:
 draw_row: db 0
 draw_col: db 0
 row_buffer: ds 120,0
+    IF TARGET_G850
+battle_scene: db 0
+camera_x: db 0
+camera_y: db 0
+frame_buffer: ds 864,0
+    ENDIF

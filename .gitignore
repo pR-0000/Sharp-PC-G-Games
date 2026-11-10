@@ -19,3 +19,5 @@ games/*/docs/capture_*.json
 games/*/docs/depths_door_*.json
 games/quest/TIMING_PATCH*.md
 games/quest/build/quest_0_1_4_or_0_1_5_typing_patch.hex
+
+games/quest/build/quest_0_1_4_or_0_1_5_typing_patch.ihx

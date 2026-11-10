@@ -1,4 +1,4 @@
-# Pocket Runner — 0.1.0
+# Pocket Runner — 0.2.0
 
 [Français](#francais) · [English](#english)
 
@@ -8,7 +8,7 @@
 
 [Collection](../../README.md#francais)
 
-Un jeu de plateformes et de poursuite en **assembleur Z80**, inspiré des mécaniques de **Lode Runner**, avec code, niveaux et graphismes originaux. Ramasser tout l'or, creuser des pièges pour les gardes et rejoindre l'échelle de sortie. Versions française et anglaise, pour les budgets mémoire des **PC-G801/G805**.
+Un jeu de plateformes et de poursuite en **assembleur Z80**, inspiré des mécaniques de **Lode Runner**, avec code, niveaux et graphismes originaux. Ramasser tout l'or, creuser des pièges pour les gardes et rejoindre l'échelle de sortie. Versions française et anglaise, pour les budgets mémoire des **PC-G801/G805 et PC-G850**.
 
 | Galerie et corde | Garde pris au piège |
 |---|---|
@@ -16,15 +16,25 @@ Un jeu de plateformes et de poursuite en **assembleur Z80**, inspiré des mécan
 
 Captures LCD : **g800**.
 
-Le terrain de **20 × 12 cases** défile verticalement dans une fenêtre de **20 × 4 cases**, avec des motifs de **5 × 7 points**. Les quatre colonnes de droite affichent le score, l'or restant, les vies et le niveau, en caractères Sharp normaux.
+Sur G80X, le terrain de **20 × 12 cases** défile verticalement dans une fenêtre de **20 × 4 cases**, avec des motifs de **5 × 7 points**. Les quatre colonnes de droite affichent le score, l'or restant, les vies et le niveau, en caractères Sharp normaux.
 
-### Charger et lancer
+### Version PC-G850
 
-[HEX français](build/runner_FR.hex) · [English HEX](build/runner_EN.hex) · [Tailles et SHA-256](build/manifest.json)
+Fenêtre de **140 × 40 pixels**, **20 × 5 cases de 7 × 8**, compteurs en haut et motifs natifs modifiables. Les trois niveaux, règles, gardes, pièges et scores restent communs au G80X. **F** fige l’image proprement pour une photo ; F reprend.
+
+![Pocket Runner G850 — LCD g800](docs/runner_g850_fr_g800.png)
+
+[G850 FR — IHX](build/g850/runner_g850_FR.ihx) · [G850 EN — IHX](build/g850/runner_g850_EN.ihx) · **4 214 / 4 190 octets** FR/EN, **`USER11FF`**, puis **`G100`**. Choisir PC-G850 dans [Sharp PC-G Link](https://github.com/pR-0000/Sharp-PC-G-Link) et le fichier G850. Voir la procédure ci-dessous en remplaçant `USER0FFF` par `USER11FF`.
+
+L’atlas [`targets/g850/tiles.bmp`](targets/g850/tiles.bmp), **7 × 96 pixels**, contient douze motifs de 7 × 8 empilés, noir/blanc sans lissage. Le reconstruire importe les modifications ; les cartes restent définies dans `assets.py`. [Aperçu des motifs](docs/tiles_g850.png).
+
+### Charger et lancer sur G801/G805
+
+[HEX français](build/g80x/runner_FR.ihx) · [English HEX](build/g80x/runner_EN.ihx) · [Tailles et SHA-256](build/g80x/manifest.json)
 
 1. Sauvegarder les programmes utiles. Régler **TEXT → Sio → Format** et Sharp PC-G Link sur **4800 / 8N1, RS/CS, CR LF, EOF 1A**. Les réglages initiaux sont 1200 / 7N1 ; modifier les deux côtés pour accélérer le transfert.
 2. Depuis BASIC RUN, saisir **`MON`**, **`USER0FFF`**, puis **`R`**, en validant chaque commande.
-3. Dans Sharp PC-G Link, choisir `runner_FR.hex`, puis **Envoyer ASM**. Attendre la réception sur le Sharp.
+3. Dans Sharp PC-G Link, choisir `runner_FR.ihx`, puis **Envoyer ASM**. Attendre la réception sur le Sharp.
 4. Saisir **`G100`**, puis ENTER sur le titre. Après chargement, **`CALL &H100`** lance également le jeu depuis BASIC.
 
 | Version | Taille, état et tampons inclus | Réservation |
@@ -40,7 +50,7 @@ Pour g800 installé séparément :
 python tools/play_runner.py --lang fr --emulator "chemin/vers/g800.exe"
 ```
 
-Le profil par défaut est PC-G805 ; `--model PC-G801` sélectionne l'autre cible. Aucun dump ROM n'est nécessaire pour cet aperçu.
+Le lanceur accepte `--model PC-G850` ; la construction accepte `--target g850` ou `--target g80x` (défaut : les deux). Le profil par défaut est PC-G805 ; `--model PC-G801` sélectionne l'autre cible. Aucun dump ROM n'est nécessaire pour cet aperçu.
 
 ### Commandes
 
@@ -49,6 +59,7 @@ Le profil par défaut est PC-G805 ; `--model PC-G801` sélectionne l'autre cible
 | ← / → | Marcher ou se déplacer le long d'une corde |
 | ↑ / ↓ | Monter / descendre une échelle ; ↓ lâche une corde |
 | Z / X | Creuser en diagonale sous la case de gauche / droite |
+| F, G850 | Figer / reprendre une image propre pour une photo |
 | P | Pause / reprise |
 | M | Aide ; une touche reprend |
 | R | Recommencer le niveau **en consommant une vie** |
@@ -101,7 +112,7 @@ Le tampon graphique de 480 octets sert aussi de deux tableaux de 240 octets pour
 
 [Collection](../../README.md#english)
 
-A **Z80 assembly** platform-and-chase game inspired by **Lode Runner**, with original code, levels and graphics. Collect all the gold, dig traps for the guards and reach the exit ladder. French and English builds fit the **PC-G801/G805** memory budgets.
+A **Z80 assembly** platform-and-chase game inspired by **Lode Runner**, with original code, levels and graphics. Collect all the gold, dig traps for the guards and reach the exit ladder. French and English builds fit the **PC-G801/G805 and PC-G850** memory budgets.
 
 | Platforms and rope | Trapped guard |
 |---|---|
@@ -111,13 +122,23 @@ LCD screenshots: **g800**.
 
 The **20 × 12 cell** world scrolls vertically within a **20 × 4 cell** window, using **5 × 7 pixel** patterns. Four right-hand columns show score, remaining gold, lives and level, in standard Sharp characters.
 
+### PC-G850 version
+
+A **140 × 40 pixel viewport**, **20 × 5 tiles of 7 × 8**, top counters and editable native artwork. All three levels, rules, guards, holes and scores remain shared with G80X. **F** freezes a clean frame for photos; F resumes.
+
+![Pocket Runner G850 — g800 LCD](docs/runner_g850_en_g800.png)
+
+[G850 FR IHX](build/g850/runner_g850_FR.ihx) · [G850 EN IHX](build/g850/runner_g850_EN.ihx) · **4,214 / 4,190 bytes** FR/EN, **`USER11FF`**, then **`G100`**. Select PC-G850 and its matching file in [Sharp PC-G Link](https://github.com/pR-0000/Sharp-PC-G-Link). Follow the procedure below, replacing `USER0FFF` with `USER11FF`.
+
+The **7 × 96 pixel** [`targets/g850/tiles.bmp`](targets/g850/tiles.bmp) contains twelve vertically stacked 7 × 8 patterns, pure black and white with no antialiasing. Rebuilding imports edits; maps remain defined in `assets.py`. [Pattern preview](docs/tiles_g850.png).
+
 ### Loading and starting
 
-[French HEX](build/runner_FR.hex) · [English HEX](build/runner_EN.hex) · [Sizes and SHA-256](build/manifest.json)
+[French HEX](build/g80x/runner_FR.ihx) · [English HEX](build/g80x/runner_EN.ihx) · [Sizes and SHA-256](build/g80x/manifest.json)
 
 1. Back up useful programs. Set **TEXT → Sio → Format** and Sharp PC-G Link to **4800 / 8N1, RS/CS, CR LF, EOF 1A**. The observed reset defaults are 1200 / 7N1; change both ends for faster transfer.
 2. From BASIC RUN, enter **`MON`**, **`USER0FFF`**, then **`R`**, confirming each command.
-3. In Sharp PC-G Link, choose `runner_EN.hex` and click **Send ASM**. Wait for Sharp reception to finish.
+3. In Sharp PC-G Link, choose `runner_EN.ihx` and click **Send ASM**. Wait for Sharp reception to finish.
 4. Enter **`G100`**, then press ENTER on the title. After loading, BASIC can also start it with **`CALL &H100`**.
 
 | Version | Size including state and buffers | Reservation |
@@ -133,7 +154,7 @@ For a separately installed g800:
 python tools/play_runner.py --lang en --emulator "path/to/g800.exe"
 ```
 
-PC-G805 is the default profile; `--model PC-G801` selects the other target. No ROM dump is needed for this preview.
+Use `--model PC-G850` for G850. Building supports `--target g850` or `--target g80x` (default: both). PC-G805 is the default profile; `--model PC-G801` selects the other target. No ROM dump is needed for this preview.
 
 ### Controls
 
@@ -142,6 +163,7 @@ PC-G805 is the default profile; `--model PC-G801` selects the other target. No R
 | ← / → | Walk or travel along a rope |
 | ↑ / ↓ | Climb up/down ladders; ↓ releases a rope |
 | Z / X | Dig diagonally below the left/right neighbouring cell |
+| F, G850 | Freeze / resume a clean frame for photos |
 | P | Pause / resume |
 | M | Help; any key resumes |
 | R | Retry the level **at the cost of one life** |

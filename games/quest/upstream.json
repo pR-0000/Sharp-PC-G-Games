@@ -16,5 +16,16 @@
   },
   "originals_modified": false,
   "repository": "https://github.com/pR-0000/Canon_X-07_RPG",
-  "url": "https://github.com/pR-0000/Canon_X-07_RPG"
+  "url": "https://github.com/pR-0000/Canon_X-07_RPG",
+  "g850_artwork": {
+    "source": "Canon X-07 Quest tiles.bmp",
+    "destination": "targets/g850/tiles.bmp",
+    "date": "2026-11-10",
+    "pixels": [
+      8,
+      184
+    ],
+    "tiles": 23,
+    "sha256": "8283cdc33397a99e8ad57f7628466daec0f937c44541e20c0e754c39bdb22b78"
+  }
 }

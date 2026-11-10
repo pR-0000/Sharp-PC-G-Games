@@ -18,11 +18,12 @@ LITE=False
 CAMPAIGN_REPORTS=[]
 
 
-def play_campaign(m):
+def play_campaign(m,start=True):
     """Play using normal key events only; no RAM fixtures or health cheats."""
     vectors=((0,-1),(1,0),(0,1),(-1,0))
     goal_index=0
-    m.start();m.tap(0x2e)
+    if start:m.start()
+    m.tap(0x2e)
     goals=[]
     for tile in (6,7,8,9):
         goals.append(next((x,y) for y in range(16) for x in range(16) if m.tile(x,y)==tile))
@@ -80,7 +81,7 @@ class DepthsMachine(Machine):
         self.heart_states=[]
         self.lite=LITE if lite is None else lite
         self.language=language
-        super().__init__('depths_'+('lite_' if self.lite else '')+language,HERE/'build')
+        super().__init__('depths_'+('lite_' if self.lite else '')+language,HERE/'build/g80x')
         self.cpu.set_input_callback(lambda p: (_ for _ in ()).throw(AssertionError(f'Unexpected IN {p}')))
         self.cpu.set_output_callback(lambda p,v: (_ for _ in ()).throw(AssertionError(f'Unexpected OUT {p}')))
 
@@ -147,6 +148,52 @@ class DepthsMachine(Machine):
 
 
 class DepthsChecks(unittest.TestCase):
+    def test_guard_spends_a_turn_halves_damage_and_expires_on_next_action(self):
+        m=DepthsMachine();m.start();m.arena();m.actor(0,[8,11,0,3,1])
+        turn=m.byte('turn_counter');m.tap(0x12)
+        self.assertEqual((m.byte('health'),m.byte('turn_counter')),(96,turn+1))
+        self.assertEqual(m.byte('guarding'),1)
+        m.actor(0,[8,11,0,3,1]);m.tap(0x21)
+        self.assertEqual((m.byte('health'),m.byte('guarding')),(88,0));m.check_memory()
+    def test_beacons_resupply_once_with_health_and_ammunition_caps(self):
+        m=DepthsMachine();m.start();m.arena();m.tile(8,11,7)
+        m.set_byte('health',95);m.set_byte('ammo',98);m.tap(0x20)
+        self.assertEqual((m.byte('health'),m.byte('ammo'),m.byte('switches')),(100,99,1))
+        m.tap(0x1f);m.tap(0x20);self.assertEqual(m.byte('ammo'),99)
+        m.check_memory()
+    def test_shotgun_staggers_and_pushes_a_survivor_but_respects_walls(self):
+        m=DepthsMachine();m.start();m.arena();m.actor(0,[8,11,0,8,1]);m.tap(0x2e)
+        m.tap(0x1e);self.assertEqual(m.actor(0)[:4],[8,10,0,5])
+        self.assertEqual(m.byte('health'),100)
+        m.actor(0,[8,11,0,8,1]);m.tile(8,10,2);m.tap(0x1e)
+        self.assertEqual(m.actor(0)[:4],[8,11,0,5]);m.check_memory()
+    def test_three_floor_campaign_and_held_enter_does_not_skip_results(self):
+        for language in ('FR','EN'):
+            m=DepthsMachine(language)
+            for deck in (1,2,3):
+                actions=play_campaign(m,start=deck==1)
+                self.assertEqual((m.byte('deck'),m.byte('phase')),(deck,4))
+                self.assertGreater(m.byte('health'),0)
+                # Holding Enter must not advance another floor.
+                m.tap(0x28)
+                if deck<3:
+                    self.assertEqual((m.byte('deck'),m.byte('phase')),(deck+1,1))
+                    m.poll(0x28);self.assertEqual(m.byte('deck'),deck+1)
+            self.assertEqual((m.byte('deck'),m.byte('phase')),(1,1))
+            m.check_memory()
+
+    def test_campaign_restart_restores_first_layout_and_enemy_health(self):
+        m=DepthsMachine();m.start()
+        original=bytes(m.cpu.memory[m.sym['world']:m.sym['world']+256])
+        m.set_byte('phase',4);m.tap(0x28)
+        self.assertEqual(m.byte('deck'),2)
+        self.assertEqual([m.actor(i)[3] for i in range(4)],[3,4,3,4])
+        m.tap(0x05)
+        self.assertEqual(m.byte('deck'),1)
+        self.assertEqual([m.actor(i)[3] for i in range(4)],[2,3,2,3])
+        self.assertEqual(bytes(m.cpu.memory[m.sym['world']:m.sym['world']+256]),original)
+        m.check_memory()
+
     def test_complete_level_in_both_languages_without_ram_fixtures(self):
         for language in ('FR','EN'):
             m=DepthsMachine(language)

@@ -1,4 +1,4 @@
-# Pocket Jumper — 0.1.1
+# Pocket Jumper — 0.2.0
 
 [Français](#francais) · [English](#english)
 
@@ -6,29 +6,36 @@
 
 ## Français
 
+Les animations G850 sont capturées dans g800, limitées au LCD ; leur cadence est indicative.
+
 [Collection](../../README.md#francais)
 
-Un premier jeu de plateformes original en Z80 pour Sharp PC-G801 / PC-G805. Atteindre le drapeau, ramasser les pièces, frapper les blocs bonus et sauter sur les ennemis. Un niveau de 768 × 48 points, trois vies et un point de reprise à mi-parcours.
+Un premier jeu de plateformes original en Z80 pour **Sharp PC-G801 / PC-G805 et PC-G850**. Atteindre le drapeau, ramasser les pièces, frapper les blocs bonus et sauter sur les ennemis. Un niveau de 768 × 48 points sur G80X, étendu à **768 × 64** sur G850, trois vies et un point de reprise à mi-parcours.
 
-![Pocket Jumper — g800](docs/jumper_fr_g800.png)
+![Pocket Jumper — g800](docs/jumper_g850_scroll_g800.gif)
 
-![Saut — g800](docs/jumper_jump_g800.png)
+![Saut — g800](docs/jumper_g850_jump_g800.png)
 
-Captures LCD : **g800**.
+Captures de la version **PC-G850 dans g800**, limitées au LCD.
 
 ### Charger et jouer
 
-[FR — HEX](build/jumper_FR.hex) · [EN — HEX](build/jumper_EN.hex) · [Manifest](build/manifest.json)
+| Machine | Fenêtre de jeu | Réservation | Fichier français | English file |
+|---|---|---|---|---|
+| PC-G850 | **144 × 40**, continu | `USER19FF` | [G850 FR](build/g850/jumper_g850_FR.ihx) | [G850 EN](build/g850/jumper_g850_EN.ihx) |
+| PC-G801 / PC-G805 | 100 × 28, cellules | `USER14FF` | [G80X FR](build/g80x/jumper_FR.ihx) | [G80X EN](build/g80x/jumper_EN.ihx) |
 
-Régler TEXT → Sio → Format et Sharp PC-G Link à l’identique : **4800 / 8N1, RS/CS, CR LF, EOF 1A**. Sauvegarder les programmes utiles. Depuis BASIC RUN :
+Choisir la ligne correspondant au modèle. [Tailles G850](build/g850/manifest.json) · [Tailles G80X](build/g80x/manifest.json).
+
+Régler TEXT → Sio → Format et Sharp PC-G Link à l’identique : **4800 / 8N1, RS/CS, CR LF, EOF 1A**. Sauvegarder les programmes utiles. Depuis BASIC RUN, utiliser la réservation du tableau ; exemple pour **G850** :
 
 ```text
 MON
-USER14FF
+USER19FF
 R
 ```
 
-Envoyer le HEX avec **Envoyer ASM**, attendre la réception sur le Sharp, puis saisir **G100**. Après chargement, **CALL &H100** fonctionne aussi depuis BASIC. Français : **5 003 octets** ; anglais : **4 990 octets**, état, carte et tampon graphique de 480 octets inclus. Aucune extension RAM nécessaire.
+Envoyer le fichier IHX avec **Envoyer ASM**, attendre la réception sur le Sharp, puis saisir **G100**. Après chargement, **CALL &H100** fonctionne aussi depuis BASIC. Français : **5 003 octets** ; anglais : **4 990 octets**, état, carte et tampon graphique de 480 octets inclus. Sur G850 : **6 257 / 6 239 octets FR/EN**, tampon de 864 octets inclus. Aucune extension RAM nécessaire.
 
 ### Commandes
 
@@ -38,6 +45,8 @@ Envoyer le HEX avec **Envoyer ASM**, attendre la réception sur le Sharp, puis s
 | ← / → | Marcher, accélérer et prendre de l’élan |
 | SPACE / ↑ | Sauter en conservant l’élan |
 | Z / X | Sauter directement à gauche / à droite |
+| D (G850) | Démonstration automatique / reprise du contrôle manuel |
+| F (G850) | Figer une photo sans message / reprendre |
 | P | Pause |
 | M | Aide ; une touche revient |
 | R | Recommencer toute la partie |
@@ -47,18 +56,24 @@ Maintenir **GAUCHE ou DROITE** et appuyer sur **ESPACE** pour sauter en continua
 
 ### Règles
 
-Une pièce ou une brique cassée rapporte 10 points, un bloc bonus 50 points et une pièce, un ennemi écrasé 100 points et le drapeau final 500 points. Les blocs bonus utilisés restent solides. Pointes, trous et contact ennemi coûtent une vie. Après une perte, le héros revient au départ ou au point de reprise, avec une courte protection clignotante ; objets ramassés et score sont conservés. R réinitialise toute la partie avec trois vies. Le panneau de droite indique score, pièces, cœur/vies et niveau avec les chiffres classiques Sharp.
+Une pièce ou une brique cassée rapporte 10 points, un bloc bonus 50 points et une pièce, un ennemi écrasé 100 points et le drapeau final 500 points. Les blocs bonus utilisés restent solides. Pointes, trous et contact ennemi coûtent une vie. Après une perte, le héros revient au départ ou au point de reprise, avec une courte protection clignotante ; objets ramassés et score sont conservés. R réinitialise toute la partie avec trois vies. Sur G80X, le panneau de droite indique score, pièces, cœur/vies et niveau avec les chiffres classiques Sharp.
+
+Sur **G850**, le panneau tient sur les huit pixels du haut et la fenêtre de **144 × 40** occupe toute la largeur : environ deux fois la surface G80X. Le rendu utilise les huit bits des bandes LCD, sans interstices. Nuages, soleil et reliefs défilent en parallaxe. Le niveau plus haut ajoute des pièces et dégage le passage des pointes. **D** peut parcourir le niveau automatiquement ; **F** conserve une image propre, sans changer la partie. Les chiffres du panneau utilisent la police Sharp.
 
 ### Graphismes et sources
 
-Le héros de 12 × 12 points et les ennemis de 10 × 8 se placent au pixel dans une fenêtre de **100 × 28 points**. La caméra défile horizontalement et suit les sauts verticalement. Le moteur compose les colonnes des sprites dans quatre bandes de sept bits avant envoi au LCD. Les interstices physiques du LCD restent visibles. Les positions utilisent la virgule fixe Q12.4 ; les collisions balayées au pixel empêchent de traverser les blocs fins. Ce prototype comprend un niveau fixe, sans son ni sauvegarde.
+Sur G801/G805, le héros de 12 × 12 points et les ennemis de 10 × 8 se placent au pixel dans une fenêtre de **100 × 28 points**. La caméra défile horizontalement et suit les sauts verticalement. Le moteur compose les colonnes des sprites dans quatre bandes de sept bits avant envoi au LCD. Les interstices physiques du LCD restent visibles. Les positions utilisent la virgule fixe Q12.4 ; les collisions balayées au pixel empêchent de traverser les blocs fins. Ce prototype comprend un niveau fixe, sans son ni sauvegarde.
 
 `input.asm`: lecture de la matrice clavier · `jumper.asm`: entrées et boucle du jeu · `physics.asm`: déplacements et collisions · `enemies.asm`: patrouilles et écrasement · `render.asm`: tampon de pixels et caméra · `assets.py`: niveau et graphismes originaux · `interface.asm`: FR/EN.
 
 ```text
 python games/pocket-jumper/build_jumper.py --lang fr --assembler "chemin/vers/sjasmplus.exe"
-python tools/play_jumper.py --lang fr --emulator "chemin/vers/g800.exe"
+python tools/play_jumper.py --lang fr --model PC-G850 --emulator "chemin/vers/g800.exe"
 ```
+
+### Niveau G850 et sources communes
+
+Le niveau G850 se modifie dans [targets/g850/level_01_layout.bmp](targets/g850/level_01_layout.bmp), **96 × 8 cases**, avec la même palette que le plan G80X. [level_01.json](targets/g850/level_01.json) décrit les positions ; [carte complète G850](docs/level_g850.bmp) est un export de consultation. Le **sprites.bmp** ci-dessous est commun aux deux machines. Les générateurs conservent les sources éditables. Les règles et collisions sont communes ; géométrie et interface spécifiques restent dans `targets/`.
 
 ### Graphismes et niveau en BMP éditables
 
@@ -78,6 +93,8 @@ python tools/play_jumper.py --lang fr --emulator "chemin/vers/g800.exe"
 Modifier **sprites.bmp** à sa résolution d’origine, en noir et blanc purs, sans lissage. Chaque cellule commence en `(0,12×ID)` ; dessiner le motif en haut à gauche et conserver les marges inutilisées blanches. Respecter les dimensions de [sprites.json](sprites.json). Les images du héros tourné à gauche sont générées automatiquement. La reconstruction importe les modifications de ce BMP.
 
 Pour modifier le niveau, utiliser **level_01_layout.bmp** et les neuf couleurs RVB exactes de `level_palette` dans `sprites.json`. Conserver ses dimensions de 96 × 6. Les motifs sont partagés entre toutes les cases du même type ; modifier l’atlas pour changer leur apparence.
+
+La commande `--import-map` ci-dessous concerne la carte **G80X** ; modifier directement le plan coloré pour le G850.
 
 Autre méthode : déplacer des blocs entiers de 8 × 8 dans une **copie** de `level_01.bmp`, puis importer explicitement cette copie. Ne pas dessiner le héros ou les ennemis dans cette carte de terrain :
 
@@ -102,29 +119,36 @@ La construction utilise Python standard et SjASMPlus. Seuls les aperçus agrandi
 
 ## English
 
+G850 animations are captured in g800, cropped to the LCD; their timing is illustrative.
+
 [Collection](../../README.md#english)
 
-An original Z80 platformer prototype for Sharp PC-G801 / PC-G805. Reach the flag, collect coins, bump bonus blocks and stomp enemies. One 768 × 48 pixel level, three lives and a checkpoint halfway through.
+An original Z80 platformer prototype for **Sharp PC-G801 / PC-G805 and PC-G850**. Reach the flag, collect coins, bump bonus blocks and stomp enemies. One 768 × 48 pixel level on G80X, expanded to **768 × 64** on G850, three lives and a checkpoint halfway through.
 
-![Pocket Jumper — g800](docs/jumper_fr_g800.png)
+![Pocket Jumper — g800](docs/jumper_g850_scroll_g800.gif)
 
-![Jump — g800](docs/jumper_jump_g800.png)
+![Jump — g800](docs/jumper_g850_jump_g800.png)
 
-LCD screenshots: **g800**.
+Screenshots show the **PC-G850 build in g800**, cropped to the LCD.
 
 ### Load and play
 
-[FR — HEX](build/jumper_FR.hex) · [EN — HEX](build/jumper_EN.hex) · [Manifest](build/manifest.json)
+| Machine | Playfield | Reservation | French file | English file |
+|---|---|---|---|---|
+| PC-G850 | **144 × 40**, continuous | `USER19FF` | [G850 FR](build/g850/jumper_g850_FR.ihx) | [G850 EN](build/g850/jumper_g850_EN.ihx) |
+| PC-G801 / PC-G805 | 100 × 28, cells | `USER14FF` | [G80X FR](build/g80x/jumper_FR.ihx) | [G80X EN](build/g80x/jumper_EN.ihx) |
 
-Match TEXT → Sio → Format and Sharp PC-G Link: **4800 / 8N1, RS/CS, CR LF, EOF 1A**. Back up existing programs. From BASIC RUN:
+Choose the row matching your model. [G850 sizes](build/g850/manifest.json) · [G80X sizes](build/g80x/manifest.json).
+
+Match TEXT → Sio → Format and Sharp PC-G Link: **4800 / 8N1, RS/CS, CR LF, EOF 1A**. Back up existing programs. From BASIC RUN, use the reservation in the table; **G850** example:
 
 ```text
 MON
-USER14FF
+USER19FF
 R
 ```
 
-Send the HEX with **Send ASM**, wait for reception on the Sharp, then enter **G100**. After loading, **CALL &H100** also works from BASIC. French: **5,003 bytes**; English: **4,990 bytes**, including state, map and 480-byte framebuffer. No RAM expansion required.
+Send the IHX file with **Send ASM**, wait for reception on the Sharp, then enter **G100**. After loading, **CALL &H100** also works from BASIC. French: **5,003 bytes**; English: **4,990 bytes**, including state, map and 480-byte framebuffer. G850: **6,257 / 6,239 bytes FR/EN**, including its 864-byte buffer. No RAM expansion required.
 
 ### Controls
 
@@ -134,6 +158,8 @@ Send the HEX with **Send ASM**, wait for reception on the Sharp, then enter **G1
 | ← / → | Walk, accelerate and build momentum |
 | SPACE / ↑ | Jump while preserving momentum |
 | Z / X | Jump left / right directly |
+| D (G850) | Automatic demonstration / return to manual control |
+| F (G850) | Freeze a clean photo / resume |
 | P | Pause |
 | M | Help; any key returns |
 | R | Restart the whole game |
@@ -143,20 +169,24 @@ Hold **LEFT or RIGHT**, then press **SPACE** to jump while moving. **UP** also w
 
 ### Rules
 
-Coins and broken bricks earn 10 points, bonus blocks 50 points and a coin, stomped enemies 100 points, and the final flag 500 points. Used bonus blocks remain solid. Spikes, pits and enemy contact cost one life. After a loss, the hero returns to the start or the checkpoint, with brief blinking protection; collected items and score remain. R starts over with all three lives. The right-hand HUD shows score, coins, heart/lives and level using standard Sharp digits.
+Coins and broken bricks earn 10 points, bonus blocks 50 points and a coin, stomped enemies 100 points, and the final flag 500 points. Used bonus blocks remain solid. Spikes, pits and enemy contact cost one life. After a loss, the hero returns to the start or the checkpoint, with brief blinking protection; collected items and score remain. R starts over with all three lives. On G80X, the right-hand HUD shows score, coins, heart/lives and level using standard Sharp digits.
+
+On **G850**, the HUD occupies the top eight pixels and the **144 × 40** full-width playfield provides roughly twice the G80X area. Rendering uses all eight bits per LCD band without cell gaps. Clouds, sun and hills use parallax. The taller level adds coins and provides clearance near the spikes. **D** can run the level automatically; **F** freezes a clean image without altering the game. HUD digits use the Sharp font.
 
 ### Graphics and sources
 
-The 12 × 12 hero and 10 × 8 enemies are positioned at individual pixels in a **100 × 28** playfield. The camera scrolls horizontally and follows jumps vertically. A column blitter composes arbitrary sprite positions into four seven-bit bands before LCD upload. Physical LCD cell gaps remain visible. Positions use Q12.4 fixed point; per-pixel swept collision checks prevent crossing thin blocks. This prototype has one fixed level, no audio and no saved progress.
+On G801/G805, the 12 × 12 hero and 10 × 8 enemies are positioned at individual pixels in a **100 × 28** playfield. The camera scrolls horizontally and follows jumps vertically. A column blitter composes arbitrary sprite positions into four seven-bit bands before LCD upload. Physical LCD cell gaps remain visible. Positions use Q12.4 fixed point; per-pixel swept collision checks prevent crossing thin blocks. This prototype has one fixed level, no audio and no saved progress.
 
 `input.asm`: matrix keyboard input · `jumper.asm`: input and game loop · `physics.asm`: movement and collisions · `enemies.asm`: patrols and stomps · `render.asm`: pixel buffer and camera · `assets.py`: level and original pixel art · `interface.asm`: FR/EN.
 
 ```text
 python games/pocket-jumper/build_jumper.py --lang en --assembler "path/to/sjasmplus.exe"
-python tools/play_jumper.py --lang en --emulator "path/to/g800.exe"
+python tools/play_jumper.py --lang en --model PC-G850 --emulator "path/to/g800.exe"
 ```
 
 ### Editable BMP graphics and level
+
+The G850 level is edited in [targets/g850/level_01_layout.bmp](targets/g850/level_01_layout.bmp), **96 × 8 cells**, using the same palette as G80X. [level_01.json](targets/g850/level_01.json) holds positions; the [full G850 map](docs/level_g850.bmp) is a viewing export. **sprites.bmp** is shared by both machines. Generators preserve editable sources. Rules and collisions are shared; target geometry and interface live in `targets/`.
 
 | File | Use |
 |---|---|

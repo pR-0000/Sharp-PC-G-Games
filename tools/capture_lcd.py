@@ -12,8 +12,13 @@ import time
 from cli_i18n import Parser,pick
 
 
-def capture(emulator,program,output,model='PC-G801',zoom=6):
+def capture(emulator,program,output,model='PC-G801',zoom=6,clock=None):
     from PIL import Image
+    g850='850' in model
+    palette_counts=(2,) if g850 else (2,3) # G80X cell gaps can use a third LCD tone.
+    lcd_x,lcd_y,lcd_w,lcd_h=(18,2,144,48) if g850 else (1,6,144,32)
+    minimum_w,minimum_h=(lcd_x+lcd_w)*zoom,(lcd_y+lcd_h)*zoom
+    clock=clock or (8000 if g850 else 4000)
     user=C.WinDLL('user32',use_last_error=True)
     gdi=C.WinDLL('gdi32',use_last_error=True)
     user.GetDC.argtypes=[W.HWND];user.GetDC.restype=W.HDC
@@ -22,6 +27,7 @@ def capture(emulator,program,output,model='PC-G801',zoom=6):
     user.GetClientRect.argtypes=[W.HWND,C.POINTER(W.RECT)]
     user.GetWindowThreadProcessId.argtypes=[W.HWND,C.POINTER(W.DWORD)]
     user.ShowWindow.argtypes=[W.HWND,C.c_int]
+    user.SetWindowPos.argtypes=[W.HWND,W.HWND,C.c_int,C.c_int,C.c_int,C.c_int,W.UINT]
     user.PostMessageW.argtypes=[W.HWND,W.UINT,W.WPARAM,W.LPARAM]
     gdi.CreateCompatibleDC.argtypes=[W.HDC];gdi.CreateCompatibleDC.restype=W.HDC
     gdi.CreateDIBSection.argtypes=[W.HDC,C.c_void_p,W.UINT,C.POINTER(C.c_void_p),W.HANDLE,W.DWORD]
@@ -48,7 +54,7 @@ def capture(emulator,program,output,model='PC-G801',zoom=6):
     Path(output).parent.mkdir(parents=True,exist_ok=True)
     with tempfile.TemporaryFile() as log:
         process=subprocess.Popen([str(Path(emulator).resolve()),'-machine='+model,'-rom_dir=','-ram_path=','-basic_path=',
-            '-emulate_iocs=y','-clock=4000','-zoom='+str(zoom),'-use_joy=n','-refresh=120',str(Path(program).resolve()),'100'],
+            '-emulate_iocs=y','-clock='+str(clock),'-zoom='+str(zoom),'-use_joy=n','-refresh=120',str(Path(program).resolve()),'100'],
             cwd=Path(emulator).resolve().parent,stdout=log,stderr=log,startupinfo=startup,creationflags=subprocess.CREATE_NO_WINDOW)
         hwnd=None
         try:
@@ -57,7 +63,7 @@ def capture(emulator,program,output,model='PC-G801',zoom=6):
                 pid=W.DWORD()
                 user.GetWindowThreadProcessId(window,C.byref(pid))
                 bounds=W.RECT()
-                if pid.value==process.pid and user.GetClientRect(window,C.byref(bounds)) and bounds.right>=145*zoom and bounds.bottom>=38*zoom:
+                if pid.value==process.pid and user.GetClientRect(window,C.byref(bounds)) and bounds.right>=minimum_w and bounds.bottom>=minimum_h:
                     handles.append(window)
                 return True
             for _ in range(100):
@@ -67,33 +73,36 @@ def capture(emulator,program,output,model='PC-G801',zoom=6):
                 time.sleep(.05)
             if not hwnd: raise RuntimeError('g800 window unavailable')
             user.ShowWindow(hwnd,4) # SW_SHOWNOACTIVATE: no keyboard focus is taken.
+            # SDL/GDI may return occluding desktop pixels for GetDC/PrintWindow.
+            # Keep this temporary capture window visible, without taking focus.
+            user.SetWindowPos(hwnd,W.HWND(-1),0,0,0,0,0x0013)
             time.sleep(.65)
             rect=W.RECT();user.GetClientRect(hwnd,C.byref(rect))
-            width,height=144*zoom,32*zoom
-            assert rect.right>=145*zoom and rect.bottom>=38*zoom,(rect.right,rect.bottom)
+            width,height=lcd_w*zoom,lcd_h*zoom
+            assert rect.right>=minimum_w and rect.bottom>=minimum_h,(rect.right,rect.bottom)
             full=bitmap(rect.right,rect.bottom);lcd=bitmap(width,height)
             try:
                 for attempt in range(12):
                     user.PrintWindow(hwnd,full[0],3) # client + rendered content
-                    if not gdi.BitBlt(lcd[0],0,0,width,height,full[0],zoom,6*zoom,0x00CC0020): raise RuntimeError('BitBlt failed')
+                    if not gdi.BitBlt(lcd[0],0,0,width,height,full[0],lcd_x*zoom,lcd_y*zoom,0x00CC0020): raise RuntimeError('BitBlt failed')
                     raw=C.string_at(lcd[3],width*height*4)
                     picture=Image.frombytes('RGB',(width,height),raw,'raw','BGRX')
-                    if len(picture.getcolors(width*height) or [])>=2: break
+                    if len(picture.getcolors(width*height) or []) in palette_counts: break
                     source=user.GetDC(hwnd)
                     try:
-                        if not gdi.BitBlt(lcd[0],0,0,width,height,source,zoom,6*zoom,0x00CC0020): raise RuntimeError('LCD BitBlt failed')
+                        if not gdi.BitBlt(lcd[0],0,0,width,height,source,lcd_x*zoom,lcd_y*zoom,0x00CC0020): raise RuntimeError('LCD BitBlt failed')
                         raw=C.string_at(lcd[3],width*height*4)
                         picture=Image.frombytes('RGB',(width,height),raw,'raw','BGRX')
                     finally: user.ReleaseDC(hwnd,source)
-                    if len(picture.getcolors(width*height) or [])>=2: break
+                    if len(picture.getcolors(width*height) or []) in palette_counts: break
                     time.sleep(.1)
-                if len(picture.getcolors(width*height) or [])<2: raise RuntimeError('LCD capture is blank')
+                if len(picture.getcolors(width*height) or []) not in palette_counts: raise RuntimeError('LCD capture has an unexpected palette')
                 Path(output).parent.mkdir(parents=True,exist_ok=True)
                 picture.save(output)
             finally:
                 for dc,handle,previous,_ in (full,lcd):
                     gdi.SelectObject(dc,previous);gdi.DeleteObject(handle);gdi.DeleteDC(dc)
-            return {'model':model,'zoom':zoom,'lcd_pixels':[width,height],'client_region':[zoom,6*zoom,width,height],
+            return {'model':model,'zoom':zoom,'lcd_pixels':[width,height],'client_region':[lcd_x*zoom,lcd_y*zoom,width,height],
                     'source':'g800 newly rendered LCD; no Sharp ROM','windows_chrome':False}
         finally:
             if hwnd: user.PostMessageW(hwnd,0x0010,0,0)

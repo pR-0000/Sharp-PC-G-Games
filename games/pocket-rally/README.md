@@ -1,4 +1,4 @@
-# Pocket Rally — 0.1.0
+# Pocket Rally — 0.2.0
 
 [Français](#francais) · [English](#english)
 
@@ -6,9 +6,11 @@
 
 ## Français
 
+Les animations G850 sont capturées dans g800, limitées au LCD ; leur cadence est indicative.
+
 [Collection](../../README.md#francais)
 
-Un jeu de course en assembleur Z80 pour Sharp PC-G801 / PC-G805 : deux circuits originaux, deux adversaires, trois tours, seize orientations et défilement au pixel sur les deux axes. La voiture pleine est celle du joueur ; les adversaires sont dessinés en contour. Les sprites de 7 × 7 points et le décor épuré privilégient la lisibilité du LCD.
+Un jeu de course en assembleur Z80 pour Sharp PC-G801 / PC-G805 et PC-G850 : deux circuits originaux, deux adversaires, trois tours, seize orientations et défilement au pixel sur les deux axes. La voiture pleine est celle du joueur ; les adversaires sont dessinés en contour. Les sprites de 7 × 7 points et le décor épuré privilégient la lisibilité du LCD.
 
 Le jeu s’inspire de **[Tiny CarZ de Léo Ducas](https://www.ticalc.org/archives/files/fileinfo/391/39185.html)**. Son code, ses graphismes et ses circuits sont originaux et propres au Sharp ; aucun élément de l’archive TI n’est inclus. Voir [les crédits](NOTICE.md).
 
@@ -20,13 +22,26 @@ Le jeu s’inspire de **[Tiny CarZ de Léo Ducas](https://www.ticalc.org/archive
 
 Captures LCD : **g800**. L’animation présente des images successives du rendu.
 
-### Charger et lancer
+### Versions par machine
 
-[Français — HEX](build/rally_FR.hex) · [English — HEX](build/rally_EN.hex) · [Tailles et SHA-256](build/manifest.json)
+| Machine | Fenêtre de jeu | Français | English | Réservation |
+|---|---|---|---|---|
+| PC-G801 / PC-G805 | 100 × 28, panneau à droite | [G80X FR](build/g80x/rally_FR.ihx) | [G80X EN](build/g80x/rally_EN.ihx) | `USER17E2` |
+| PC-G850 | 144 × 40, panneau au-dessus | [G850 FR](build/g850/rally_g850_FR.ihx) | [G850 EN](build/g850/rally_g850_EN.ihx) | `USER19FF` |
+
+Le G850 conserve les **deux circuits**, les voitures 7 × 7, les règles et les commandes simultanées du G80X, avec une caméra et un tilemapper adaptés aux cinq bandes de huit pixels. Le défilement reste fluide **au pixel sur les deux axes**. Les compteurs utilisent la police native Sharp. **TAB** fige une image sans inscription pour les photos ; TAB reprend.
+
+![Pocket Rally G850, virage — LCD g800](docs/rally_g850_scroll_g800.gif)
+
+[Grille G850](docs/rally_g850_grid_g800.png) · [Circuit G850 en anglais](docs/rally_g850_en_g800.png). Tailles G850 FR/EN, tampons compris : **6 294 / 6 269 octets**. Dans Sharp PC-G Link, choisir PC-G850 et son fichier ; suivre le chargement ci-dessous avec **`USER19FF`**. Après réception : **`G100`**.
+
+### Charger et lancer sur G801/G805
+
+[Français — IHX](build/g80x/rally_FR.ihx) · [English — IHX](build/g80x/rally_EN.ihx) · [Tailles et SHA-256](build/g80x/manifest.json)
 
 1. Sauvegarder les programmes utiles. Régler **TEXT → Sio → Format** et Sharp PC-G Link sur **4800 / 8N1, RS/CS, CR LF, EOF 1A**.
 2. Depuis BASIC RUN, saisir **`MON`**, **`USER17E2`**, puis **`R`**, en validant chaque commande.
-3. Envoyer `rally_FR.hex` avec **Envoyer ASM**, puis attendre la réception sur le Sharp.
+3. Envoyer `rally_FR.ihx` avec **Envoyer ASM**, puis attendre la réception sur le Sharp.
 4. Saisir **`G100`**, puis ENTER au titre. Après chargement, **`CALL &H100`** fonctionne également depuis BASIC.
 
 | Langue | Taille, état et tampons inclus | Réservation |
@@ -46,6 +61,7 @@ Aucune extension RAM nécessaire. Origine et entrée : **0100h**. Charger un aut
 | ↑ ou ESPACE | Accélérer ; maintenir avec ←/→ pour tourner en accélérant |
 | ↓ ou Z | Freiner, y compris avec une direction maintenue |
 | F | Activer/désactiver l’accélérateur automatique |
+| TAB, G850 | Figer / reprendre une photo sans inscription |
 | P | Pause / reprise |
 | M | Aide ; une touche revient |
 | R | Recommencer la même course |
@@ -88,7 +104,9 @@ Depuis la racine de la collection :
 
 ```text
 python games/pocket-rally/build_rally.py --lang fr --assembler "chemin/vers/sjasmplus.exe"
+python games/pocket-rally/build_rally.py --lang fr --target g850 --assembler "chemin/vers/sjasmplus.exe"
 python tools/play_rally.py --lang fr --emulator "chemin/vers/g800.exe"
+python tools/play_rally.py --lang fr --model PC-G850 --emulator "chemin/vers/g800.exe"
 ```
 
 Python standard et SjASMPlus suffisent pour construire les deux langues. g800 s’installe séparément ; aucune ROM n’est nécessaire à son mode IOCS simulés.
@@ -117,9 +135,11 @@ Seuls les aperçus agrandis demandent Pillow.
 
 ## English
 
+G850 animations are captured in g800, cropped to the LCD; their timing is illustrative.
+
 [Collection](../../README.md#english)
 
-A Z80 racing game for Sharp PC-G801 / PC-G805: two original circuits, two opponents, three laps, sixteen headings and pixel scrolling on both axes. The solid car belongs to the player; opponents use outlines. Small 7 × 7 cars and uncluttered scenery suit the Sharp LCD.
+A Z80 racing game for Sharp PC-G801 / PC-G805 and PC-G850: two original circuits, two opponents, three laps, sixteen headings and pixel scrolling on both axes. The solid car belongs to the player; opponents use outlines. Small 7 × 7 cars and uncluttered scenery suit the Sharp LCD.
 
 Inspired by **[Tiny CarZ by Léo Ducas](https://www.ticalc.org/archives/files/fileinfo/391/39185.html)**. Its code, graphics and circuits are original and specific to the Sharp; no contents of the TI archive are included. See [credits](NOTICE_EN.md).
 
@@ -131,13 +151,26 @@ Inspired by **[Tiny CarZ by Léo Ducas](https://www.ticalc.org/archives/files/fi
 
 LCD screenshots: **g800**. The animation presents successive rendered frames.
 
-### Load and play
+### Builds by machine
 
-[French — HEX](build/rally_FR.hex) · [English — HEX](build/rally_EN.hex) · [Sizes and SHA-256](build/manifest.json)
+| Machine | Viewport | Français | English | Reservation |
+|---|---|---|---|---|
+| PC-G801 / PC-G805 | 100 × 28, right HUD | [G80X FR](build/g80x/rally_FR.ihx) | [G80X EN](build/g80x/rally_EN.ihx) | `USER17E2` |
+| PC-G850 | 144 × 40, top HUD | [G850 FR](build/g850/rally_g850_FR.ihx) | [G850 EN](build/g850/rally_g850_EN.ihx) | `USER19FF` |
+
+G850 retains the G80X build’s **two circuits**, 7 × 7 cars, rules and simultaneous controls, adapting its camera and tilemapper to five eight-pixel pages. Scrolling remains **pixel-smooth on both axes**. Counters use Sharp’s native font. **TAB** freezes a clean image for photos; TAB resumes.
+
+![Pocket Rally G850 — g800 LCD](docs/rally_g850_en_g800.png)
+
+[G850 grid](docs/rally_g850_grid_g800.png) · [G850 corner](docs/rally_g850_scroll_g800.gif). G850 FR/EN sizes including buffers: **6,294 / 6,269 bytes**. Select PC-G850 and its file in Sharp PC-G Link; follow the loading procedure below using **`USER19FF`**. After reception: **`G100`**.
+
+### Load and play on G801/G805
+
+[French — IHX](build/g80x/rally_FR.ihx) · [English — IHX](build/g80x/rally_EN.ihx) · [Sizes and SHA-256](build/g80x/manifest.json)
 
 1. Back up programs you want to keep. Match **TEXT → Sio → Format** and Sharp PC-G Link: **4800 / 8N1, RS/CS, CR LF, EOF 1A**.
 2. From BASIC RUN, enter **`MON`**, **`USER17E2`**, then **`R`**, confirming each command.
-3. Send `rally_EN.hex` with **Send ASM**, then wait for reception on the Sharp.
+3. Send `rally_EN.ihx` with **Send ASM**, then wait for reception on the Sharp.
 4. Enter **`G100`**, then ENTER on the title screen. Once loaded, **`CALL &H100`** also works from BASIC.
 
 | Language | Bytes, including state and buffers | Reservation |
@@ -157,6 +190,7 @@ No RAM expansion required. Origin and entry: **0100h**. Loading another game rep
 | ↑ or SPACE | Accelerate; combine with ←/→ to steer while accelerating |
 | ↓ or Z | Brake, including while holding a steering key |
 | F | Toggle automatic throttle |
+| TAB, G850 | Freeze / resume a clean photo frame |
 | P | Pause / resume |
 | M | Help; any key returns |
 | R | Restart the same race |
@@ -199,7 +233,9 @@ From the collection root:
 
 ```text
 python games/pocket-rally/build_rally.py --lang en --assembler "path/to/sjasmplus.exe"
+python games/pocket-rally/build_rally.py --lang en --target g850 --assembler "path/to/sjasmplus.exe"
 python tools/play_rally.py --lang en --emulator "path/to/g800.exe"
+python tools/play_rally.py --lang en --model PC-G850 --emulator "path/to/g800.exe"
 ```
 
 Standard Python and SjASMPlus build both languages. Install g800 separately; its simulated IOCS mode needs no ROM.

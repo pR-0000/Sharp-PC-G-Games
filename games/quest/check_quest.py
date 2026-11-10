@@ -25,10 +25,12 @@ TIMING_SAMPLES=[]
 
 
 class QuestMachine(Machine):
+    program_prefix="quest_"
+    build_dir=HERE/"build/g80x"
     def __init__(self, language="FR"):
         self.text_writes=[]
         self.tstates=0
-        super().__init__(f"quest_{language}", HERE / "build")
+        super().__init__(self.program_prefix+language,self.build_dir)
         self.cpu.set_input_callback(lambda port: (_ for _ in ()).throw(AssertionError(f"Unexpected IN {port}")))
         self.cpu.set_output_callback(lambda port, value: (_ for _ in ()).throw(AssertionError(f"Unexpected OUT {port}")))
 
@@ -40,7 +42,7 @@ class QuestMachine(Machine):
             self.text_writes.append((self.cpu.d,self.cpu.e,self.cpu.a))
         if self.cpu.pc == 0xBFD0:
             row, col, width = self.cpu.d, self.cpu.e, self.cpu.b
-            self.text[row][col:col + (width + 4)//5] = b" " * ((width + 4)//5)
+            self.text[row][col:col + (width + self.cell_width-1)//self.cell_width] = b" " * ((width + self.cell_width-1)//self.cell_width)
         super().rom_return(key)
 
     def seek_key(self):
@@ -87,8 +89,8 @@ class QuestMachine(Machine):
             self.set_byte(name, value)
 
     def call(self, name, **registers):
-        self.cpu.pc, self.cpu.sp = self.sym[name], 0x1FF0
-        self.cpu.memory[0x1FF0:0x1FF2] = RETURN.to_bytes(2, "little")
+        self.cpu.pc, self.cpu.sp = self.sym[name], self.stack
+        self.cpu.memory[self.stack:self.stack+2] = RETURN.to_bytes(2, "little")
         for name, value in registers.items():
             setattr(self.cpu, name, value)
         for _ in range(5000):
@@ -125,9 +127,11 @@ class QuestMachine(Machine):
 
 
 class QuestChecks(unittest.TestCase):
+    machine=QuestMachine
+
     def test_both_languages_start_render_and_return(self):
         for language in ("FR", "EN"):
-            m = QuestMachine(language)
+            m = self.machine(language)
             self.assertEqual(m.mode(), "menu_title")
             self.assertIn(b"QUEST", bytes(m.text[0]))
             m.start()
@@ -138,11 +142,11 @@ class QuestChecks(unittest.TestCase):
             self.assertTrue(bytes(m.text[1][15:]).startswith(b"Niveau 1" if language=="FR" else b"Level 1"))
             self.assertTrue(bytes(m.text[2][15:]).startswith(b"Or 10" if language=="FR" else b"Gold 10"))
             m.tap(0x02)
-            self.assertEqual((m.cpu.pc, m.cpu.sp, m.cpu.ix, m.cpu.iy), (RETURN, 0x1FF2, 0x1234, 0x5678))
+            self.assertEqual((m.cpu.pc, m.cpu.sp, m.cpu.ix, m.cpu.iy), (RETURN, m.stack+2, 0x1234, 0x5678))
             m.check_memory()
 
     def test_map_exact_and_all_tile_reads(self):
-        m = QuestMachine()
+        m = self.machine()
         packed = bytes(m.cpu.memory[m.sym["map_packed"]:m.sym["map_packed"] + 240])
         self.assertEqual(len(packed), 240)
         for y in range(16):
@@ -153,7 +157,7 @@ class QuestChecks(unittest.TestCase):
         m.check_memory()
 
     def test_movement_edges_walls_and_status(self):
-        m = QuestMachine()
+        m = self.machine()
         m.start()
         m.set_byte("encounter_cooldown", 250)
         m.tap(0x22)
@@ -176,20 +180,20 @@ class QuestChecks(unittest.TestCase):
         m.check_memory()
 
     def test_save_resume_and_new_game(self):
-        m = QuestMachine()
+        m = self.machine()
         m.start()
         m.set_byte("encounter_cooldown", 250)
         m.set_byte("inventory_potions", 7)
         m.tap(0x22)
         self.assertEqual(m.byte("save_inventory_potions"), 7)
         m.tap(2)
-        m.cpu.pc, m.cpu.sp = 0x100, 0x1FF0
+        m.cpu.pc, m.cpu.sp = 0x100, m.stack
         m.seek_key()
         m.tap(0x28)
         self.assertEqual(m.mode(), "world")
         self.assertEqual((m.coords(), m.byte("inventory_potions")), ((6,13),7))
         m.tap(2)
-        m.cpu.pc, m.cpu.sp = 0x100, 0x1FF0
+        m.cpu.pc, m.cpu.sp = 0x100, m.stack
         m.seek_key()
         m.tap(0x1F)  # New game
         m.tap(0x28)
@@ -199,7 +203,7 @@ class QuestChecks(unittest.TestCase):
         m.check_memory()
 
     def test_enemy_records_and_level_progression(self):
-        m = QuestMachine()
+        m = self.machine()
         for enemy in range(10):
             m.call("progress_load_enemy_from_id", a=enemy)
             p = m.sym["enemy_slime"] + enemy*8
@@ -216,7 +220,7 @@ class QuestChecks(unittest.TestCase):
 
     def test_statistics_and_level_four_sword_damage(self):
         for language in ("FR","EN"):
-            m=QuestMachine(language)
+            m=self.machine(language)
             for level in range(1,100):
                 for equipment in (0,1,2):
                     for name,value in (("player_level",level),("player_atk_bonus",equipment),("player_def_bonus",equipment)):
@@ -241,12 +245,12 @@ class QuestChecks(unittest.TestCase):
 
     def test_equipment_plus_two_purchase_save_and_no_downgrade(self):
         for language in ("FR","EN"):
-            m=QuestMachine(language);m.start()
+            m=self.machine(language);m.start()
             m.set_byte("player_level",4);m.set_byte("player_atk_bonus",1);m.set_byte("player_def_bonus",1)
             m.call("progress_sync_player_stats_from_level")
             # Revenir a la boucle par une nouvelle entree / re-enter using the RAM save.
             m.call("game_autosave")
-            m.cpu.pc,m.cpu.sp=0x100,0x1FF0;m.seek_key();m.tap(0x28)
+            m.cpu.pc,m.cpu.sp=0x100,m.stack;m.seek_key();m.tap(0x28)
             m.set_word("player_gold",1000)
             m.place(11,6);m.tap(0x22)
             self.assertEqual(m.mode(),"menu_village")
@@ -273,7 +277,7 @@ class QuestChecks(unittest.TestCase):
 
     def test_typing_success_error_timeout_and_repeated_letters(self):
         for behavior in ("perfect","wrong","timeout"):
-            m = QuestMachine()
+            m = self.machine()
             m.start()
             m.set_byte("encounter_cooldown",0)
             # Enter a real battle by stepping onto the cemetery boss at (18,13).
@@ -303,7 +307,7 @@ class QuestChecks(unittest.TestCase):
             m.check_memory()
 
     def test_boss_gates_all_stages_and_oasis_guard(self):
-        m=QuestMachine()
+        m=self.machine()
         for mask, prerequisite in ((2,1),(4,2),(8,4),(16,8)):
             m.set_byte("world_event_mask",mask)
             m.set_byte("event_flags",0)
@@ -319,7 +323,7 @@ class QuestChecks(unittest.TestCase):
         m.check_memory()
 
     def test_all_story_regions_reachable(self):
-        m=QuestMachine()
+        m=self.machine()
         p=m.sym["map_packed"]
         packed=m.cpu.memory[p:p+240]
         def tile(x,y):
@@ -337,7 +341,7 @@ class QuestChecks(unittest.TestCase):
             self.assertIn(location,reached)
 
     def test_shops_inn_purchases_and_cancel(self):
-        m=QuestMachine()
+        m=self.machine()
         m.start()
         m.set_word("player_gold",500)
         m.set_byte("player_hp_cur",10)
@@ -365,7 +369,7 @@ class QuestChecks(unittest.TestCase):
         m.check_memory()
 
     def test_potion_at_255_hp_and_smoke_escape(self):
-        m=QuestMachine()
+        m=self.machine()
         m.start()
         for name,value in (("player_level",99),("player_hp_max",255),("player_hp_cur",250),("player_def",24),("inventory_smokes",1)):
             m.set_byte(name,value)
@@ -383,7 +387,7 @@ class QuestChecks(unittest.TestCase):
         m.check_memory()
 
     def test_defeat_returns_home_without_stack_leak(self):
-        m=QuestMachine()
+        m=self.machine()
         m.start()
         m.set_byte("player_hp_cur",1)
         m.place(17,13);m.tap(0x22);m.tap(0x28)
@@ -395,11 +399,11 @@ class QuestChecks(unittest.TestCase):
         m.tap(0x28)
         self.assertEqual((m.mode(),m.coords(),m.byte("player_hp_cur")),("world",(5,13),28))
         m.tap(2)
-        self.assertEqual(m.cpu.sp,0x1FF2)
+        self.assertEqual(m.cpu.sp,m.stack+2)
         m.check_memory()
 
     def test_repeated_letters_need_release(self):
-        m=QuestMachine()
+        m=self.machine()
         m.start()
         m.place(17,13);m.tap(0x22);m.tap(0x28)
         m.set_word("typing_word_ptr",m.sym["typing_word_assaut"])
@@ -413,7 +417,7 @@ class QuestChecks(unittest.TestCase):
     def test_five_bosses_through_final_return(self):
         # A late-game character fixture exercises actual menus, typing, damage,
         # rewards, flags and the ending. It does not claim a natural grind.
-        m=QuestMachine()
+        m=self.machine()
         m.start()
         for name,value in (("player_level",99),("player_hp_max",255),("player_hp_cur",255),("player_atk",42),("player_def",24)):
             m.set_byte(name,value)
@@ -427,11 +431,11 @@ class QuestChecks(unittest.TestCase):
             self.assertEqual(m.byte("event_flags"),flags)
             self.assertEqual(m.byte("save_event_flags"),flags)
         self.assertEqual(m.mode(),"returned")
-        self.assertEqual((m.cpu.sp,m.cpu.ix,m.cpu.iy),(0x1FF2,0x1234,0x5678))
+        self.assertEqual((m.cpu.sp,m.cpu.ix,m.cpu.iy),(m.stack+2,0x1234,0x5678))
         m.check_memory()
 
     def test_natural_random_encounter_and_cooldown(self):
-        m=QuestMachine()
+        m=self.machine()
         m.start()
         m.set_byte("rng_seed",16)  # next LFSR value 8 triggers the 1/8 roll
         m.tap(0x22)
@@ -445,12 +449,12 @@ class QuestChecks(unittest.TestCase):
         m.check_memory()
 
     def test_break_inside_combat_and_unsigned_display(self):
-        m=QuestMachine()
+        m=self.machine()
         m.start()
         m.place(17,13);m.tap(0x22);m.tap(0x28)
         self.assertEqual(m.mode(),"typing")
         m.tap(0x51)
-        self.assertEqual((m.cpu.pc,m.cpu.sp,m.cpu.ix,m.cpu.iy),(RETURN,0x1FF2,0x1234,0x5678))
+        self.assertEqual((m.cpu.pc,m.cpu.sp,m.cpu.ix,m.cpu.iy),(RETURN,m.stack+2,0x1234,0x5678))
         for value in (0,1,9,10,99,100,255,1000,65535):
             m.set_word("cursor_xy",0x0101)
             m.text[0][:]=b" "*24
@@ -461,14 +465,14 @@ class QuestChecks(unittest.TestCase):
     def test_typing_deadline_and_late_success_in_both_languages(self):
         for language in ("FR","EN"):
             for level in (1,6,12,24,99):
-                m=QuestMachine(language)
+                m=self.machine(language)
                 m.start()
                 m.set_byte("player_level",level)
                 m.place(17,13);m.tap(0x22);m.tap(0x28)
                 self.assertEqual(m.mode(),"typing")
                 m.poll(0) # relacher ENTER et terminer l'affichage / release ENTER and finish drawing
                 units=m.byte("typing_timeout")
-                reload=json.loads((HERE/"build/manifest.json").read_text())["typing_reload"]
+                reload=json.loads((HERE/"build/g80x/manifest.json").read_text())["typing_reload"]
                 remaining=m.byte("typing_tick_div")
                 self.assertEqual(remaining,reload-1)
                 start=m.tstates
@@ -487,7 +491,7 @@ class QuestChecks(unittest.TestCase):
                 TIMING_SAMPLES.append({"language":language,"level":level,"polls":polls,"typing_reload":reload,
                                        "modeled_seconds_at_4MHz":round(seconds,4)})
                 m.check_memory()
-            m=QuestMachine(language)
+            m=self.machine(language)
             m.start();m.place(17,13);m.tap(0x22);m.tap(0x28)
             m.set_byte("typing_timeout",m.byte("typing_bonus_limit")-1)
             p=m.word("typing_word_ptr")
@@ -498,12 +502,12 @@ class QuestChecks(unittest.TestCase):
     def test_long_words_allow_a_slower_normal_success(self):
         # Regression: ten letters at this pace exceed the old 5-poll deadline.
         # FR: dix lettres auparavant trop lentes ; EN: ten-letter word regression.
-        reload=json.loads((HERE/"build/manifest.json").read_text())["typing_reload"]
+        reload=json.loads((HERE/"build/g80x/manifest.json").read_text())["typing_reload"]
         if reload != 6:
             self.skipTest("Reference pacing scenario requires the default reload=6")
         for language,label in (("FR","typing_word_bousculade"),("EN","typing_word_annihilate")):
             with self.subTest(language=language):
-                m=QuestMachine(language)
+                m=self.machine(language)
                 m.start();m.set_byte("player_level",24)
                 m.place(17,13);m.tap(0x22);m.tap(0x28)
                 self.assertEqual(m.mode(),"typing")
@@ -525,7 +529,7 @@ class QuestChecks(unittest.TestCase):
 
     def test_full_width_battle_status_and_maximum_values(self):
         for language in ("FR","EN"):
-            m=QuestMachine(language);m.start()
+            m=self.machine(language);m.start()
             for label,value in (("player_hp_cur",255),("player_hp_max",255),("inventory_potions",255),
                                 ("inventory_smokes",255),("player_level",99)):
                 m.set_byte(label,value)
@@ -548,7 +552,7 @@ class QuestChecks(unittest.TestCase):
 
     def test_menu_and_dialogue_strings_fit_the_lcd(self):
         for language in ("FR","EN"):
-            m=QuestMachine(language)
+            m=self.machine(language)
             for label in ("menu_battle","menu_objects","menu_village","menu_village_shop","menu_castle", "menu_castle_inn","menu_castle_shop","menu_title"):
                 p=m.sym[label];count=m.cpu.memory[p];p+=1+2*count
                 occupied=set()

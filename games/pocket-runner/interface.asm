@@ -26,7 +26,20 @@ help_screen:
     call pcg_puts
     ld de,0x300
     ld hl,help_4
+    IF TARGET_G850
+    call pcg_puts
+    ld de,0x500
+    ld hl,photo_help
+    ENDIF
     jp pcg_puts
+    IF TARGET_G850
+photo_help:
+    IF BUILD_LANG_EN
+    db "F: PHOTO FREEZE",0
+    ELSE
+    db "F: FIGER POUR PHOTO",0
+    ENDIF
+    ENDIF
 message:
     push hl
     call pcg_clear
@@ -41,6 +54,9 @@ result_screen:
     ld hl,(score)
     ld de,0x314
     jp decimal4
+    IF TARGET_G850
+    INCLUDE "targets/g850/hud.asm"
+    ELSE
 hud:
     ld hl,(score)
     ld de,0x14
@@ -85,6 +101,7 @@ hud_lives:
     ld a,(level_index)
     add a,49
     jp pcg_putc
+    ENDIF
 ; HL 0..9999 -> four ROM digits at DE.
 decimal4:
     ld bc,1000

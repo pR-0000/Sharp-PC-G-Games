@@ -56,18 +56,18 @@ render_car_next:
     add ix,de
     pop bc
     djnz render_car
-    ld hl,frame_buffer
-    ld de,0
-    ld b,120
+    ld hl,frame_buffer+RALLY_VIEW_PAGE*PCG_ROW_COLUMNS
+    ld de,RALLY_VIEW_PAGE*256
+    ld b,PCG_ROW_COLUMNS
 render_upload:
     call pcg_pattern
     push de
-    ld de,120
+    ld de,PCG_ROW_COLUMNS
     add hl,de
     pop de
     inc d
     ld a,d
-    cp 4
+    cp RALLY_VIEW_PAGE+RALLY_PAGES
     jr c,render_upload
     jp hud
 update_camera:
@@ -83,10 +83,10 @@ update_camera:
     ld l,a
     ld h,0
     add hl,de
-    ld de,50
+    ld de,RALLY_CAMERA_X
     or a
     sbc hl,de
-    ld a,92
+    ld a,RALLY_CAMERA_MAX_X
     call camera_clamp
     ld b,a
     ld hl,camera_x
@@ -101,10 +101,10 @@ update_camera:
     ld l,a
     ld h,0
     add hl,de
-    ld de,14
+    ld de,RALLY_CAMERA_Y
     or a
     sbc hl,de
-    ld a,100
+    ld a,RALLY_CAMERA_MAX_Y
     call camera_clamp
     ld b,a
     ld hl,camera_y
@@ -153,7 +153,7 @@ raster_band:
     call indexed_word
     ld (render_out),hl
     ld a,l
-    add a,100
+    add a,RALLY_WIDTH
     ld (render_end),a
     ld a,(camera_x)
     ld b,a
@@ -166,7 +166,9 @@ raster_band:
     add a,a
     add a,a
     add a,a
+    IF !TARGET_G850
     sub b
+    ENDIF
     ld b,a
     ld a,(camera_y)
     add a,b
@@ -278,7 +280,7 @@ raster_next_band:
     ld hl,render_band
     inc (hl)
     ld a,(hl)
-    cp 4
+    cp RALLY_PAGES
     jp c,raster_band
     ret
 ; HL = shifted pattern table; A = tile ID.

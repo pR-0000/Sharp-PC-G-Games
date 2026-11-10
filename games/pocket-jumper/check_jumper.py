@@ -16,7 +16,7 @@ class JumperMachine(Machine):
         self.strobe=self.last_strobe=0
         self.strobe_at=0
         self.inputs=[];self.outputs=[]
-        super().__init__('jumper_'+language,HERE/'build')
+        super().__init__('jumper_'+language,HERE/'build/g80x')
         self.cpu.set_input_callback(self.input)
         self.cpu.set_output_callback(self.output)
     def now(self):return self.tstates+60000-self.cpu.ticks_to_stop

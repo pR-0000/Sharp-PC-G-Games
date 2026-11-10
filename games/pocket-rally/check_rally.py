@@ -27,7 +27,7 @@ class RallyMachine(Machine):
         self.strobe=self.last_strobe=0
         self.strobe_at=0
         self.inputs=[];self.outputs=[]
-        super().__init__('rally_'+language,HERE/'build')
+        super().__init__('rally_'+language,HERE/'build/g80x')
         self.cpu.set_input_callback(self.input)
         self.cpu.set_output_callback(self.output)
     def now(self):return self.tstates+60000-self.cpu.ticks_to_stop
@@ -88,8 +88,9 @@ class RallyMachine(Machine):
         self.keys=tuple(keys);self.routine('world_step')
 
 class RallyChecks(unittest.TestCase):
+    machine_class=RallyMachine
     def machine(self,index=0,lang='FR'):
-        m=RallyMachine(lang);m.set_byte('track_index',index);m.start();return m
+        m=self.machine_class(lang);m.set_byte('track_index',index);m.start();return m
     def test_languages_title_and_return(self):
         for lang in ('FR','EN'):
             m=self.machine(lang=lang)
@@ -196,7 +197,7 @@ class RallyChecks(unittest.TestCase):
         m.tap(0x0c);self.assertEqual(m.byte('auto_throttle'),1)
         m.tap(0x05);self.assertEqual(m.car()['laps'],0);self.assertEqual(m.byte('auto_throttle'),0)
         m.check_memory()
-        m=RallyMachine();m.tap(0x16);self.assertEqual(m.byte('track_index'),1)
+        m=self.machine_class();m.tap(0x16);self.assertEqual(m.byte('track_index'),1)
         self.assertIn(b'CHICANE',m.text[1]);m.check_memory()
     def test_interrupt_state_and_ui_lengths(self):
         for lang in ('FR','EN'):

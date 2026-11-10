@@ -1,0 +1,38 @@
+{
+  "name": "Sharp PC-G850 Quest",
+  "version": "0.2.0",
+  "origin": "0100",
+  "entry": "0100",
+  "sound": false,
+  "target": "PC-G850",
+  "typing_reload": 12,
+  "timing_reference": "g800 0.11.4 PC-G850, 8000 kHz, emulated IOCS",
+  "tile_pixels": [
+    8,
+    8
+  ],
+  "visible_tiles": [
+    18,
+    5
+  ],
+  "programs": {
+    "quest_g850_FR": {
+      "bytes": 7739,
+      "last_address": "1F3A",
+      "user_command": "USER1FFF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "42ccaf0490bc04a8bc853bc259626275f9111a66c8ce1732e1a173a9b4e51259",
+      "sha256_ihx": "886bf46f5c0a865037630446792bafaf66a1bfc266b7b499555036a7d34323cc"
+    },
+    "quest_g850_EN": {
+      "bytes": 7674,
+      "last_address": "1EF9",
+      "user_command": "USER1FFF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "bf4f5bea8422ad2f98de4d43623364f6b9f924ca85f976e9c947d85c6a7829e5",
+      "sha256_ihx": "885fd814e7c6291733010a55da31140a8a867e99e6dca081830544670d262a76"
+    }
+  }
+}

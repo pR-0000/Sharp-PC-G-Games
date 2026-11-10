@@ -4,8 +4,8 @@ sample_controls:
     push af
     di
     xor a
-    out (PCG801_PORT_KEYS_HIGH),a
-    out (PCG801_PORT_KEYS_LOW),a
+    out (PCG_PORT_KEYS_HIGH),a
+    out (PCG_PORT_KEYS_LOW),a
     ld c,0
     ld a,4
     call matrix_row
@@ -29,16 +29,20 @@ input_turn:
     or c
     ld (buttons),a
     xor a
-    out (PCG801_PORT_KEYS_LOW),a
-    out (PCG801_PORT_KEYS_HIGH),a
+    out (PCG_PORT_KEYS_LOW),a
+    out (PCG_PORT_KEYS_HIGH),a
     pop af
     ret po
     ei
     ret
 matrix_row:
-    out (PCG801_PORT_KEYS_LOW),a
+    out (PCG_PORT_KEYS_LOW),a
+    IF TARGET_G850
+    ld b,12                   ; >130 T G850 matrix settling
+    ELSE
     ld b,10
+    ENDIF
 matrix_wait:
     djnz matrix_wait
-    in a,(PCG801_PORT_KEYS)
+    in a,(PCG_PORT_KEYS)
     ret

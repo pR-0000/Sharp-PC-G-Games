@@ -1,0 +1,38 @@
+{
+  "name": "Pocket Jumper",
+  "version": "0.2.0",
+  "target": "PC-G801 / PC-G805",
+  "origin": "0100",
+  "entry": "0100",
+  "world_pixels": [
+    768,
+    48
+  ],
+  "visible_pixels": [
+    100,
+    28
+  ],
+  "frame_bytes": 480,
+  "levels": 1,
+  "graphics": "pixel framebuffer, shared 12x12 hero, scrolling, native-digit HUD",
+  "programs": {
+    "jumper_FR": {
+      "bytes": 5003,
+      "last_address": "148A",
+      "user_command": "USER14FF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "b20a3312f23e69b0341de85d554cb89a0d9b40dc971e493ebfff084954cec4d5",
+      "sha256_ihx": "88c6e8d8e470ca186ab2d6543418d693baa903e63b99f6b0fd4fcd7f376a0de2"
+    },
+    "jumper_EN": {
+      "bytes": 4990,
+      "last_address": "147D",
+      "user_command": "USER14FF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "2c64fde47d7ecc7f16abb3b2f5596d5affdafc277036e5e1da7a67f87bc2d3f5",
+      "sha256_ihx": "c04a9b3c6213cccc1cfb950861e5a8eca035cfc777e72bca9a00f7c3ff56c9ca"
+    }
+  }
+}

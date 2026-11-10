@@ -1,6 +1,11 @@
 ; Pocket Depths 2 - runtime DDA / DDA execute sur le Z80.
 ; Copyright (c) 2026 P.RAIMBAULT. MIT.
-    INCLUDE "sharp-pc-g8xx.inc"
+    INCLUDE "game_platform.inc"
+    IF TARGET_G850
+    INCLUDE "targets/g850/config.inc"
+    ELSE
+    INCLUDE "targets/g80x/config.inc"
+    ENDIF
     ORG 0x100
 entry:
     push bc
@@ -521,9 +526,16 @@ enemy_skip:
 
     INCLUDE "raycaster.asm"
     INCLUDE "render.asm"
+    IF TARGET_G850
+    INCLUDE "targets/g850/weapon.asm"
+    ENDIF
     INCLUDE "interface.asm"
-    INCLUDE "../../lib/pcg801_runtime.asm"
+    INCLUDE "../../lib/game_runtime.asm"
+    IF TARGET_G850
+    INCLUDE "targets/g850/generated.inc"
+    ELSE
     INCLUDE "generated.inc"
+    ENDIF
 
 ; Mutable storage is emitted/reserved in USER, never in firmware RAM.
 data_start:
@@ -532,6 +544,12 @@ last_key:       db 0
 turn_used:      db 0
 turn_clock:     db 0
 hurt:           db 0
+    IF TARGET_G850
+gun_column: db 0
+gun_row: db 0
+gun_bits: dw 0
+gun_mask: dw 0
+    ENDIF
 health:         db 0
 ammo:           db 0
 key_owned:      db 0
@@ -586,10 +604,14 @@ actor_order:    ds 9,0
 actor_depths:   ds 18,0
 billboard_source: dw 0
 billboard_kind: db 0
-sprite_row_masks: ds 28,0
+sprite_row_masks: ds VIEW_H,0
 actors:         ds 27,0
 world:          ds 256,0
-depth_buffer:   ds 80,0
-frame_buffer:   ds 480,0
+depth_buffer:   ds RAY_COUNT*2,0
+frame_buffer:   ds PCG_FRAME_BYTES,0
 program_end:
+    IF TARGET_G850
+    ASSERT program_end <= 0x7000
+    ELSE
     ASSERT program_end <= 0x17e3
+    ENDIF

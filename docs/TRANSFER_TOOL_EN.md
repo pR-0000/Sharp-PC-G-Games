@@ -11,4 +11,4 @@ python -m pip install -r requirements.txt
 python -m sharp_link
 ```
 
-Use **Send ASM** for the games' HEX/BIN files. [Loading instructions](LOADING_EN.md) give each game's USER reservation. BASIC examples are in `examples/basic/` of the utility repository. Language and serial settings are saved in its local INI file.
+Use **Send ASM** for the games' IHX/BIN files. [Loading instructions](LOADING_EN.md) give each game's USER reservation. BASIC examples are in `examples/basic/` of the utility repository. Language and serial settings are saved in its local INI file.

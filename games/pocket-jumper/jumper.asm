@@ -1,9 +1,13 @@
 ; POCKET JUMPER - pixel platformer / jeu de plateformes au pixel.
 ; Original code and graphics. (c) 2026 P.RAIMBAULT, MIT.
-    INCLUDE "sharp-pc-g8xx.inc"
+    INCLUDE "game_platform.inc"
+    IF TARGET_G850
+    INCLUDE "targets/g850/config.inc"
+    ELSE
+    INCLUDE "targets/g80x/config.inc"
+    ENDIF
     ORG 0x100
 WORLD_W     EQU 768
-VIEW_W      EQU 100
 HERO_W      EQU 12
 HERO_H      EQU 12
 ENEMY_W     EQU 10
@@ -19,6 +23,10 @@ entry:
     ld (last_key),a
     ld (last_buttons),a
     ld (input_buttons),a
+    IF TARGET_G850
+    ld (demo_mode),a
+    ld (photo_mode),a
+    ENDIF
     call title_screen
 main_loop:
     call pcg_key_scan
@@ -39,7 +47,7 @@ main_loop:
     ld a,(phase)
     cp 1
     call z,draw_game
-    ld bc,1000
+    ld bc,FRAME_WAIT
 frame_delay:
     dec bc
     ld a,b
@@ -76,6 +84,12 @@ exit_key:
     jp quit
 key_normal:
     ld a,b
+    IF TARGET_G850
+    cp PCG_KEY_D
+    jr z,toggle_demo
+    cp PCG_KEY_F
+    jr z,toggle_photo
+    ENDIF
     cp PCG_KEY_M
     jr z,show_help
     cp PCG_KEY_R
@@ -105,6 +119,31 @@ toggle_pause:
     jp z,draw_game
     ld hl,pause_text
     jp message
+    IF TARGET_G850
+toggle_photo:
+    ld a,(phase)
+    cp 1
+    ret nz
+    ld a,(paused)
+    xor 1
+    ld (paused),a
+    ld (photo_mode),a
+    ret nz
+    jp draw_game
+toggle_demo:
+    ld a,(phase)
+    cp 1
+    jr z,.playing
+    call new_game
+    ld a,1
+    ld (demo_mode),a
+    jp draw_game
+.playing:
+    ld a,(demo_mode)
+    xor 1
+    ld (demo_mode),a
+    jp draw_game
+    ENDIF
 show_help:
     ld a,(paused)
     or a
@@ -117,7 +156,7 @@ show_help:
 new_game:
     ld hl,level_initial
     ld de,world
-    ld bc,576
+    ld bc,WORLD_BYTES
     ldir
     ld hl,enemies_initial
     ld de,enemies
@@ -134,6 +173,10 @@ new_game:
     ld (frame_count),a
     ld (last_buttons),a
     ld (input_buttons),a
+    IF TARGET_G850
+    ld (demo_mode),a
+    ld (photo_mode),a
+    ENDIF
     ld a,3
     ld (lives),a
     ld a,1
@@ -159,7 +202,7 @@ reset_player:
     ld (grounded),a
     ld a,40
     ld (grace),a
-    ld a,20
+    ld a,CAMERA_MAX_Y
     ld (camera_y),a
     ret
 world_step:
@@ -173,7 +216,18 @@ world_step:
     dec a
     ld (grace),a
 world_input:
+    IF TARGET_G850
+    ld a,(demo_mode)
+    or a
+    jr z,.manual
+    call demo_controls
+    jr .sampled
+.manual:
+    ENDIF
     call sample_controls
+    IF TARGET_G850
+.sampled:
+    ENDIF
     ld hl,(player_y)
     call fixed_to_int
     ld a,l
@@ -223,7 +277,7 @@ world_move:
     ld hl,(player_y)
     call fixed_to_int
     ld a,l
-    cp 48
+    cp WORLD_H
     jp nc,lose_life
     call collect_items
     ld a,(phase)
@@ -300,12 +354,19 @@ velocity_word:
     ret
 
     INCLUDE "input.asm"
+    IF TARGET_G850
+    INCLUDE "targets/g850/demo.asm"
+    ENDIF
     INCLUDE "physics.asm"
     INCLUDE "enemies.asm"
     INCLUDE "render.asm"
     INCLUDE "interface.asm"
-    INCLUDE "../../lib/pcg801_runtime.asm"
+    INCLUDE "../../lib/game_runtime.asm"
+    IF TARGET_G850
+    INCLUDE "targets/g850/generated.inc"
+    ELSE
     INCLUDE "generated.inc"
+    ENDIF
 data_start:
 phase: db 0
 paused: db 0
@@ -315,6 +376,10 @@ input_buttons: db 0
 last_buttons: db 0
 keys_zx: db 0
 help_previous: db 0
+    IF TARGET_G850
+demo_mode: db 0
+photo_mode: db 0
+    ENDIF
 frame_count: db 0
 player_x: dw 0
 player_y: dw 0
@@ -364,7 +429,11 @@ sprite_band: db 0
 sprite_shift: db 0
 sprite_clip: db 0
 enemies: ds 36,0
-world: ds 576,0
-frame_buffer: ds 480,0
+world: ds WORLD_BYTES,0
+frame_buffer: ds PCG_FRAME_BYTES,0
 program_end:
+    IF TARGET_G850
+    ASSERT program_end <= 0x7000
+    ELSE
     ASSERT program_end <= 0x17e3
+    ENDIF

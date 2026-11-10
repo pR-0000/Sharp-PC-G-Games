@@ -1,0 +1,54 @@
+{
+  "name": "Pocket Clash",
+  "version": "0.1.1",
+  "target": "PC-G801 / PC-G805 (32 KiB)",
+  "origin": "0100",
+  "entry": "0100",
+  "visible_pixels": [
+    120,
+    21
+  ],
+  "characters": 4,
+  "arenas": 3,
+  "cup_battles": 3,
+  "sprite_scales": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+  ],
+  "programs": {
+    "clash_g80x_32k_FR": {
+      "bytes": 22623,
+      "last_address": "595E",
+      "user_command": "USER59FF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "c65d8588367d3cc3c8b8bd46e9002e284eb5123048412291ad0c5a5892cbac84",
+      "sha256_ihx": "07d4980d3eb01035541e6a61569fd99dc584925b5a0656c28583d22f51fcc3af"
+    },
+    "clash_g80x_32k_EN": {
+      "bytes": 22615,
+      "last_address": "5956",
+      "user_command": "USER59FF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "e615dc1832fb4dd3b120448e2e6cb2b048c888b9a0bfc17a6fd82ed636dd44fc",
+      "sha256_ihx": "3ae935b3d509c5e1d942b2aa82d0dd76b9488cf3f1809ea4138acfe1709c5f21"
+    }
+  },
+  "required_ram_kib": 32,
+  "lcd_pixels": [
+    120,
+    28
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "characters": [
+    "NOVA",
+    "VOLT",
+    "ROK",
+    "LYNX"
+  ],
+  "poses": [
+    "idle",
+    "run",
+    "jump",
+    "attack",
+    "hurt",
+    "guard"
+  ],
+  "sprite_size": [
+    16,
+    16
+  ],
+  "atlas": [
+    16,
+    432
+  ],
+  "order": [
+    "NOVA_idle",
+    "NOVA_run",
+    "NOVA_jump",
+    "NOVA_attack",
+    "NOVA_hurt",
+    "NOVA_guard",
+    "VOLT_idle",
+    "VOLT_run",
+    "VOLT_jump",
+    "VOLT_attack",
+    "VOLT_hurt",
+    "VOLT_guard",
+    "ROK_idle",
+    "ROK_run",
+    "ROK_jump",
+    "ROK_attack",
+    "ROK_hurt",
+    "ROK_guard",
+    "LYNX_idle",
+    "LYNX_run",
+    "LYNX_jump",
+    "LYNX_attack",
+    "LYNX_hurt",
+    "LYNX_guard",
+    "slash",
+    "orb",
+    "spark"
+  ],
+  "scales": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+  ],
+  "black": "lit pixel / point allume"
+}

@@ -1,53 +1,129 @@
 # Galerie des jeux
 
-**Français** · [English](DEMONSTRATION_EN.md) · [Collection](../README.md)
+**Français** · [English](DEMONSTRATION_EN.md) · [Collection](../README.md#francais)
 
-### Sharp PC-G80X Quest
+Captures du LCD dans **g800**, sans bordure de fenêtre. Cinq animations G850 montrent Vector, Clash, Jumper, Depths 2 et Rally. La cadence des GIF est indicative. Chaque guide donne les commandes et les fichiers à télécharger.
 
-![Sharp PC-G80X Quest — g800](../games/quest/docs/quest_map_g800.png)
+## PC-G850
 
-[Guide](../games/quest/README.md)
+### Pocket Vector
+
+![Pocket Vector — g850, g800](../games/pocket-vector/docs/vector_g850_race_g800.gif)
+
+[Guide](../games/pocket-vector/README.md#francais)
+
+### Pocket Clash
+
+![Pocket Clash — g850, g800](../games/pocket-clash/docs/clash_g850_battle_g800.gif)
+
+[Guide](../games/pocket-clash/README.md#francais)
+
+### Sharp PC-G Quest
+
+![Sharp PC-G Quest — g850, g800](../games/quest/docs/quest_g850_map_g800.png)
+
+[Guide](../games/quest/README.md#francais)
 
 ### Pocket Jumper
 
-![Pocket Jumper — g800](../games/pocket-jumper/docs/jumper_fr_g800.png)
+![Pocket Jumper — g850, g800](../games/pocket-jumper/docs/jumper_g850_scroll_g800.gif)
 
-[Guide](../games/pocket-jumper/README.md)
-
-### Pocket Runner
-
-![Pocket Runner — g800](../games/pocket-runner/docs/runner_fr_g800.png)
-
-[Guide](../games/pocket-runner/README.md)
+[Guide](../games/pocket-jumper/README.md#francais)
 
 ### Pocket Depths 2
 
-![Pocket Depths 2 — g800](../games/pocket-depths-2/docs/depths2_hall_g800.png)
+![Pocket Depths 2 — g850, g800](../games/pocket-depths-2/docs/depths2_g850_turn_g800.gif)
 
-[Guide](../games/pocket-depths-2/README.md)
-
-### Pocket Depths
-
-![Pocket Depths — g800](../games/pocket-depths/docs/depths_hall_g800.png)
-
-[Guide](../games/pocket-depths/README.md)
-
-### Pocket Invaders
-
-![Pocket Invaders — g800](../games/pocket-invaders/docs/invaders_fr_g800.png)
-
-[Guide](../games/pocket-invaders/README.md)
-
-### Star Lane
-
-![Star Lane — g800](../games/star-lane/docs/star_lane_g800.png)
-
-[Guide](../games/star-lane/README.md)
-
-Captures LCD : **g800**.
+[Guide](../games/pocket-depths-2/README.md#francais)
 
 ### Pocket Rally
 
-![Pocket Rally — g800](../games/pocket-rally/docs/rally_scroll_g800.gif)
+![Pocket Rally — g850, g800](../games/pocket-rally/docs/rally_g850_scroll_g800.gif)
 
-[Guide](../games/pocket-rally/README.md)
+[Guide](../games/pocket-rally/README.md#francais)
+
+### Pocket Runner
+
+![Pocket Runner — g850, g800](../games/pocket-runner/docs/runner_g850_fr_g800.png)
+
+[Guide](../games/pocket-runner/README.md#francais)
+
+### Pocket Invaders
+
+![Pocket Invaders — g850, g800](../games/pocket-invaders/docs/invaders_g850_fr_g800.png)
+
+[Guide](../games/pocket-invaders/README.md#francais)
+
+### Pocket Depths
+
+![Pocket Depths — g850, g800](../games/pocket-depths/docs/depths_g850_combat_g800.png)
+
+[Guide](../games/pocket-depths/README.md#francais)
+
+### Star Lane
+
+![Star Lane — g850, g800](../games/star-lane/docs/star_lane_g850_fr_g800.png)
+
+[Guide](../games/star-lane/README.md#francais)
+
+## PC-G801 / PC-G805
+
+### Pocket Vector — 32 Kio
+
+![Pocket Vector — 32 Kio — g80x, g800](../games/pocket-vector/docs/vector_g80x_fr_g800.png)
+
+[Guide](../games/pocket-vector/README.md#francais)
+
+### Pocket Clash — 32 Kio
+
+![Pocket Clash — 32 Kio — g80x, g800](../games/pocket-clash/docs/clash_g80x_arena1_g800.png)
+
+[Guide](../games/pocket-clash/README.md#francais)
+
+### Sharp PC-G Quest
+
+![Sharp PC-G Quest — g80x, g800](../games/quest/docs/quest_map_g800.png)
+
+[Guide](../games/quest/README.md#francais)
+
+### Pocket Jumper
+
+![Pocket Jumper — g80x, g800](../games/pocket-jumper/docs/jumper_fr_g800.png)
+
+[Guide](../games/pocket-jumper/README.md#francais)
+
+### Pocket Depths 2
+
+![Pocket Depths 2 — g80x, g800](../games/pocket-depths-2/docs/depths2_hall_g800.png)
+
+[Guide](../games/pocket-depths-2/README.md#francais)
+
+### Pocket Rally
+
+![Pocket Rally — g80x, g800](../games/pocket-rally/docs/rally_turn_g800.png)
+
+[Guide](../games/pocket-rally/README.md#francais)
+
+### Pocket Runner
+
+![Pocket Runner — g80x, g800](../games/pocket-runner/docs/runner_fr_g800.png)
+
+[Guide](../games/pocket-runner/README.md#francais)
+
+### Pocket Invaders
+
+![Pocket Invaders — g80x, g800](../games/pocket-invaders/docs/invaders_fr_g800.png)
+
+[Guide](../games/pocket-invaders/README.md#francais)
+
+### Pocket Depths
+
+![Pocket Depths — g80x, g800](../games/pocket-depths/docs/depths_hall_g800.png)
+
+[Guide](../games/pocket-depths/README.md#francais)
+
+### Star Lane
+
+![Star Lane — g80x, g800](../games/star-lane/docs/star_lane_g800.png)
+
+[Guide](../games/star-lane/README.md#francais)

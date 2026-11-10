@@ -1,0 +1,41 @@
+{
+  "name": "Pocket Depths",
+  "version": "0.3.0",
+  "origin": "0100",
+  "entry": "0100",
+  "target": "PC-G850",
+  "ray_count": 48,
+  "visible_cells": 7,
+  "hud": "Sharp ROM digits plus heart and bullet glyphs",
+  "campaign_floors": 3,
+  "visible_pixels": [
+    144,
+    40
+  ],
+  "programs": {
+    "depths_g850_FR": {
+      "bytes": 7624,
+      "target": "PC-G850",
+      "lite": false,
+      "random_chunks": true,
+      "last_address": "1EC7",
+      "user_command": "USER1EFF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "1c130eaac3cf9296091f0f4b19163e3b2c1831c07da5dd36f84c1d92e94e8160",
+      "sha256_ihx": "265036c4a13d32a89f3ea4f723cbd388356b66c32d5c0e86ca86e1524ec85dbc"
+    },
+    "depths_g850_EN": {
+      "bytes": 7613,
+      "target": "PC-G850",
+      "lite": false,
+      "random_chunks": true,
+      "last_address": "1EBC",
+      "user_command": "USER1EFF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "8ea4c7df40a772f9d1271b2151282d3c6fcc87ef856ed8b2c2a6a8072548cafb",
+      "sha256_ihx": "ccfe252fa77edbc361690f0f8b6e642f65e66b81f9a48e453278da45d61cd936"
+    }
+  }
+}

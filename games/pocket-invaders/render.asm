@@ -1,16 +1,16 @@
-; Software column blitter, logical 120x28 display; bit 7 is never emitted.
+; Software column blitter; seven useful bits on G80X, eight on G850.
 draw_game:
     xor a
     ld hl,screen_buffer
     ld (hl),a
     ld de,screen_buffer+1
-    ld bc,479
+    ld bc,PCG_FRAME_BYTES-1
     ldir
     ld hl,screen_buffer+DIVIDER_X
-    ld bc,120
-    ld d,4
+    ld bc,PCG_ROW_COLUMNS
+    ld d,PCG_LCD_ROWS
 .divider:
-    ld (hl),$7F
+    ld (hl),PCG_GLYPH_MASK
     add hl,bc
     dec d
     jr nz,.divider
@@ -29,7 +29,7 @@ draw_game:
     ld a,(scan_index)
     cp 8
     ld hl,glyph_alien_a
-    ld bc,7
+    ld bc,ALIEN_WIDTH
     jr c,.animated
     ld hl,glyph_crab_a
 .animated:
@@ -38,7 +38,7 @@ draw_game:
     jr z,.paint
     add hl,bc
 .paint:
-    ld b,7
+    ld b,ALIEN_WIDTH
     call draw_sprite
 .next:
     ld hl,scan_index
@@ -69,9 +69,9 @@ draw_game:
     ld hl,shield_positions
     add hl,de
     ld e,(hl)
-    ld d,20
+    ld d,SHIELD_Y
     pop hl
-    ld b,7
+    ld b,ALIEN_WIDTH
     call draw_sprite
 .next_shield:
     ld hl,scan_index
@@ -113,7 +113,7 @@ draw_game:
     ld e,a
     ld d,SHIP_Y
     ld hl,glyph_ship
-    ld b,7
+    ld b,ALIEN_WIDTH
     call draw_sprite
 .explosion:
     ld a,(explosion_timer)
@@ -128,19 +128,19 @@ draw_game:
     ld a,(explosion_y)
     ld d,a
     ld hl,glyph_explosion
-    ld b,7
+    ld b,ALIEN_WIDTH
     call draw_sprite
 .display:
     ld hl,screen_buffer
     ld de,0
 .row:
-    ld b,120
+    ld b,PCG_ROW_COLUMNS
     call pcg_pattern
-    ld bc,120
+    ld bc,PCG_ROW_COLUMNS
     add hl,bc
     inc d
     ld a,d
-    cp 4
+    cp PCG_LCD_ROWS
     jr c,.row
     call draw_hud
     ld a,(phase)
@@ -167,7 +167,14 @@ alien_coordinates:
     add a,a
     add a,a
     add a,a
+    IF TARGET_G850
     add a,c
+    add a,c
+    add a,c
+    add a,c                    ; 8c + 4c = 12c
+    ELSE
+    add a,c
+    ENDIF
     ld c,a
     ld a,(formation_x)
     add a,c
@@ -178,7 +185,7 @@ alien_coordinates:
     cp 8
     ret c
     ld a,d
-    add a,6
+    add a,ALIEN_ROW_STEP
     ld d,a
     ret
 
@@ -186,7 +193,7 @@ alien_coordinates:
 draw_sprite:
     ld (draw_source),hl
     ld a,d
-    cp 28
+    cp PLAY_HEIGHT
     ret nc
     ld a,e
     cp PLAY_WIDTH
@@ -203,13 +210,13 @@ draw_sprite:
     ret z
     ld (draw_width),a
     ld hl,screen_buffer
-    ld bc,120
+    ld bc,PCG_ROW_COLUMNS
     ld a,d
     ld d,0
 .divide:
-    cp 7
+    cp PCG_GLYPH_HEIGHT
     jr c,.row
-    sub 7
+    sub PCG_GLYPH_HEIGHT
     add hl,bc
     inc d
     jr .divide
@@ -237,13 +244,15 @@ draw_sprite:
     djnz .shift
 .shifted:
     ld a,l
-    and $7F
+    and PCG_GLYPH_MASK
     ld c,a
     ld a,h
+    IF !TARGET_G850
     add a,a
     bit 7,l
     jr z,.overflow
     inc a
+    ENDIF
 .overflow:
     ld (draw_overflow),a
     ld hl,(draw_destination)
@@ -251,9 +260,9 @@ draw_sprite:
     or c
     ld (hl),a
     ld a,(draw_row)
-    cp 3
+    cp PCG_LCD_ROWS-1
     jr nc,.advance
-    ld de,120
+    ld de,PCG_ROW_COLUMNS
     add hl,de
     ld a,(draw_overflow)
     or (hl)
@@ -305,7 +314,7 @@ draw_hud:
     call pcg_putc
     ld hl,glyph_alien_a
     ld de,$0300+HUD_COLUMN
-    ld b,7
+    ld b,ALIEN_WIDTH
     call pcg_pattern
     ld a,(remaining)
     ld de,$0316
@@ -356,7 +365,7 @@ title_screen:
     call pcg_puts
     ld hl,glyph_alien_a
     ld de,$0108
-    ld b,7
+    ld b,ALIEN_WIDTH
     call pcg_pattern
     ld hl,glyph_crab_a
     ld de,$010D
@@ -383,4 +392,17 @@ help_screen:
     call pcg_puts
     ld hl,help_4
     ld de,$0300
+    IF TARGET_G850
+    call pcg_puts
+    ld hl,photo_help
+    ld de,0x0500
+    ENDIF
     jp pcg_puts
+    IF TARGET_G850
+photo_help:
+    IF BUILD_LANG_EN
+    db "TAB: PHOTO FREEZE",0
+    ELSE
+    db "TAB: FIGER POUR PHOTO",0
+    ENDIF
+    ENDIF

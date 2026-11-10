@@ -2,7 +2,7 @@
 ; FR : chargement et lancement confirmes sur PC-G801 et PC-G805.
 ; EN: loading and startup reported on physical PC-G801 and PC-G805.
 ; See NOTICE.md for provenance. No Canon ROM, IO ports or sound driver.
-    INCLUDE "sharp_pc_g801.inc"
+    INCLUDE "game_platform.inc"
     IFNDEF BUILD_LANG_EN
 BUILD_LANG_EN EQU 0
     ENDIF
@@ -33,7 +33,11 @@ HOME_CHUNK_Y EQU 3
 HOME_PLAYER_X EQU 5*STEP_X
 HOME_PLAYER_Y EQU 1*STEP_Y
     IFNDEF TYPING_TICK_RELOAD
+    IF TARGET_G850
+TYPING_TICK_RELOAD EQU 12        ; 8 MHz: same time budget as G80X at 4 MHz
+    ELSE
 TYPING_TICK_RELOAD EQU 6         ; FR: delai +20 % environ / EN: about 20% more time
+    ENDIF
     ENDIF
     ASSERT TYPING_TICK_RELOAD >= 1 && TYPING_TICK_RELOAD <= 64
 MAX_LEVEL EQU 99
@@ -77,7 +81,7 @@ start:
     ld (saved_return_sp),sp
     xor a
     ld (key_last),a
-    call pcg_clear
+    call quest_clear
     ld hl,title_text
     ld de,0x0401
     ld (cursor_xy),de
@@ -154,17 +158,30 @@ title_menu_quit:
     INCLUDE "typing.inc"
     INCLUDE "battle.inc"
     INCLUDE "menu.asm"
+    IF TARGET_G850
+    INCLUDE "targets/g850/display.asm"
+    ELSE
     INCLUDE "display.asm"
+    ENDIF
     INCLUDE "platform.asm"
     INCLUDE "save.inc"
     DEFINE PCG_RUNTIME_NO_PUTS
-    INCLUDE "../../lib/pcg801_runtime.asm"
+    INCLUDE "game_runtime.asm"
 
 data_start:
+    IF TARGET_G850
+    INCLUDE "targets/g850/tiles.inc"
+    ELSE
     INCLUDE "tiles.inc"
+    ENDIF
     INCLUDE "map_packed.inc"
     INCLUDE "data.inc"
-title_text: db "SHARP PC-G80X QUEST",0
+title_text:
+    IF TARGET_G850
+    db "SHARP PC-G850 QUEST",0
+    ELSE
+    db "SHARP PC-G80X QUEST",0
+    ENDIF
 menu_title:
     db 3
     dw title_menu_continue,title_menu_new,title_menu_quit
@@ -181,4 +198,8 @@ raw_ascii:
     db 0,'I','O',0,'4','5','6','*',0,'P',8,0,'7','8','9','/'
     INCLUDE "state.asm"
 program_end:
+    IF TARGET_G850
+    ASSERT program_end <= 0x7000
+    ELSE
     ASSERT program_end <= 0x17E3 ; conservative G801 loader limit, inclusive 17E2
+    ENDIF

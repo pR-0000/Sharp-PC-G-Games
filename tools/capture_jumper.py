@@ -22,7 +22,7 @@ def main():
             raw=bytearray(m.cpu.memory[256:m.sym['program_end']])
             draw,key=m.sym['draw_game'],m.sym['pcg_key_scan']
             raw[:9]=bytes((0xcd,draw&255,draw>>8,0xcd,key&255,key>>8,0xc3,3,1))
-            fixture=Path(folder)/(name+'.hex');fixture.write_text(intel_hex(raw,256),encoding='ascii')
+            fixture=Path(folder)/(name+'.ihx');fixture.write_text(intel_hex(raw,256),encoding='ascii')
             capture(emulator,fixture,output/(name+'_g800.png'),model='PC-G805')
     print(pick(args.lang,'Captures LCD enregistrees.','LCD screenshots saved.'))
 if __name__=='__main__':main()

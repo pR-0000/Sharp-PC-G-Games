@@ -79,7 +79,7 @@ class Depths2Machine(Machine):
         self.tstates=0
         self.iocs_tstates=0
         self.heart_states=[]
-        super().__init__('depths2_'+language,HERE/'build')
+        super().__init__('depths2_'+language,HERE/'build/g80x')
         self.cpu.set_input_callback(lambda p: (_ for _ in ()).throw(AssertionError(f'Unexpected IN {p}')))
         self.cpu.set_output_callback(lambda p,v: (_ for _ in ()).throw(AssertionError(f'Unexpected OUT {p}')))
     def seek_key(self):

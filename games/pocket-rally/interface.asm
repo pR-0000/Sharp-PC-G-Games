@@ -31,7 +31,20 @@ help_screen:
     call pcg_puts
     ld de,0x300
     ld hl,help_4
+    IF TARGET_G850
+    call pcg_puts
+    ld de,0x500
+    ld hl,photo_help
+    ENDIF
     jp pcg_puts
+    IF TARGET_G850
+photo_help:
+    IF BUILD_LANG_EN
+    db "TAB: PHOTO FREEZE",0
+    ELSE
+    db "TAB: FIGER POUR PHOTO",0
+    ENDIF
+    ENDIF
 message:
     push hl
     call pcg_clear
@@ -58,7 +71,13 @@ result_screen:
     ld hl,restart_text
     jp pcg_puts
 hud:
-    ld de,0x14
+    IF TARGET_G850
+    ld hl,frame_buffer
+    ld de,0
+    ld b,144
+    call pcg_pattern
+    ENDIF
+    ld de,RALLY_HUD_LAP
     IF BUILD_LANG_EN
     ld a,'L'
     ELSE
@@ -76,7 +95,7 @@ hud_lap:
     call pcg_putc
     inc e
     call slash_three
-    ld de,0x114
+    ld de,RALLY_HUD_SPEED
     IF BUILD_LANG_EN
     ld a,'S'
     ELSE
@@ -106,12 +125,12 @@ hud_speed_label:
     ld a,l
     add a,48
     call pcg_putc
-    ld de,0x214
+    ld de,RALLY_HUD_PLACE
     ld a,'P'
     call pcg_putc
     inc e
     call place_digits
-    ld de,0x314
+    ld de,RALLY_HUD_TIME
     ld hl,(race_ticks)
     jp decimal4
 place_digits:

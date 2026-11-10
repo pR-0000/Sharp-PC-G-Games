@@ -121,6 +121,60 @@ def export_views(patterns=None,cells=None):
         if i<9:spec['level_palette'].append({'id':i,'rgb':list(COLOURS[i]),'fr':names_fr[i],'en':names_en[i]})
     (HERE/'sprites.json').write_text(json.dumps(spec,indent=2)+'\n',encoding='utf-8')
 
+def generate_g850(patterns,cells,spec):
+    target=HERE/'targets/g850';target.mkdir(parents=True,exist_ok=True)
+    layout=target/'level_01_layout.bmp';metadata=target/'level_01.json'
+    if not layout.exists():
+        expanded=bytearray(96*2)+cells
+        # Raise the bonus beside the spike: the taller edition gives jumps
+        # enough headroom here instead of forcing a narrow ceiling passage.
+        if expanded[4*96+61]==3:
+            expanded[4*96+61]=0;expanded[3*96+61]=3
+        if expanded[6*96+62]==5:
+            expanded[6*96+62]=0;expanded[6*96+64]=5
+        for left,right,row in ((9,12,3),(28,31,3),(54,57,3),(77,80,3)):
+            for x in range(left,right):
+                if not expanded[(row-1)*96+x]:expanded[(row-1)*96+x]=4
+        write_bmp(layout,96,8,[COLOURS[t] for t in expanded])
+    if not metadata.exists():
+        import copy
+        extra=copy.deepcopy(spec);extra['player_start'][1]+=16
+        for enemy in extra['enemies']:enemy['y']+=16
+        metadata.write_text(json.dumps(extra,indent=2)+'\n',encoding='utf-8')
+    w,h,pixels=read_bmp(layout)
+    if (w,h)!=(96,8):raise ValueError('G850 layout: 96 x 8 required / requis')
+    lookup={colour:i for i,colour in enumerate(COLOURS)}
+    try:expanded=bytearray(lookup[p] for p in pixels)
+    except KeyError:raise ValueError('G850 layout: use palette / utiliser la palette') from None
+    extra=json.loads(metadata.read_text(encoding='utf-8'));x,y=extra['player_start']
+    if not(0<=x<=756 and 0<=y<=52) or len(extra['enemies'])!=4:raise ValueError('G850 level start/enemies / depart et ennemis')
+    for enemy in extra['enemies']:
+        if not(0<=enemy['min_x']<=enemy['x']<=enemy['max_x']<=758 and 0<=enemy['y']<=56 and enemy['direction'] in (-1,1)):
+            raise ValueError('G850 enemy patrol / patrouille ennemie')
+    out=['; G850 level, shared editable sprite atlas.',f'PLAYER_START_X EQU {x}',f'PLAYER_START_Y EQU {y}','level_initial:']
+    for p in range(0,len(expanded),24):out.append('    db '+','.join(map(str,expanded[p:p+24])))
+    for name,rows in patterns.items():
+        op='db' if name.endswith('_icon') else 'dw'
+        out.append(name+': '+op+' '+','.join(map(str,columns(rows))))
+        if name.startswith('hero_'):out.append(name+'_left: dw '+','.join(map(str,reversed(columns(rows)))))
+    scenery={'sun':['..####..','.#....#.','#..#...#','#..#...#','#...#..#','#....#.#','.#....#.','..####..'],
+             'hills':['.......##.......','......#..#......','.....#....#.....','....#......#....','...#........#...',
+                      '..#...#......#..','.#...#.#......#.','#...#...#......#','................','................','................','................']}
+    for name,rows in scenery.items():out.append(name+': dw '+','.join(map(str,columns(rows))))
+    out.append('tile_patterns: dw '+','.join(TILES))
+    out.append('buffer_rows: dw '+','.join(f'frame_buffer+{144*(page+1)}' for page in range(5)))
+    out.append('enemies_initial:')
+    for enemy in extra['enemies']:
+        out.extend((f'    dw {enemy["x"]}',f'    db {enemy["y"]}',f'    dw {enemy["min_x"]},{enemy["max_x"]}',f'    db {enemy["direction"]},1'))
+    (target/'generated.inc').write_text('\n'.join(out)+'\n',encoding='ascii')
+    image=[]
+    for y in range(64):
+        for x in range(768):
+            tile=patterns[TILES[expanded[y//8*96+x//8]]]
+            image.append(BLACK if tile[y%8][x%8]=='#' else WHITE)
+    (HERE/'docs').mkdir(parents=True,exist_ok=True)
+    write_bmp(HERE/'docs/level_g850.bmp',768,64,image)
+
 def generate():
     patterns,cells,spec=art(),level(),level_spec()
     x,y=spec['player_start']
@@ -136,4 +190,5 @@ def generate():
         out.extend((f'    dw {enemy["x"]}',f'    db {enemy["y"]}',f'    dw {enemy["min_x"]},{enemy["max_x"]}',f'    db {enemy["direction"]},1'))
     (HERE/'generated.inc').write_text('\n'.join(out)+'\n',encoding='ascii')
     export_views(patterns,cells)
+    generate_g850(patterns,cells,spec)
 if __name__=='__main__':generate()

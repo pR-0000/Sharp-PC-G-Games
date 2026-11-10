@@ -10,7 +10,7 @@ title:
     ld de,0x200
     ld hl,goal_text
     call pcg_puts
-    ld de,0x300
+    ld de,HUD_ROW*256
     ld hl,start_text
     jp pcg_puts
 help_screen:
@@ -24,7 +24,7 @@ help_screen:
     ld de,0x200
     ld hl,help_3
     call pcg_puts
-    ld de,0x300
+    ld de,HUD_ROW*256
     ld hl,help_4
     jp pcg_puts
 message:
@@ -41,18 +41,18 @@ result_screen:
     ld hl,win_text
 result_message:
     call message
-    ld de,0x300
+    ld de,HUD_ROW*256
     ld hl,restart_text
     jp pcg_puts
 hud:
     ; Black graphics replaced by opaque, readable native HUD characters.
-    ld de,0x300
+    ld de,HUD_ROW*256
     ld hl,heart_icon
     call pcg_glyph
     inc e
     ld a,(health)
     call decimal3
-    ld de,0x304
+    ld de,HUD_ROW*256+4
     ld a,32
     call pcg_putc
     ld a,(angle)
@@ -69,9 +69,9 @@ hud:
     ENDIF
     add hl,de
     ld a,(hl)
-    ld de,0x305
+    ld de,HUD_ROW*256+5
     call pcg_putc
-    ld de,0x312
+    ld de,HUD_ROW*256+18
     ld a,(key_owned)
     or a
     ld a,32
@@ -82,7 +82,7 @@ hud:
 hud_key_empty:
     call pcg_putc
 hud_ammo:
-    ld de,0x314
+    ld de,HUD_ROW*256+20
     ld hl,ammo_icon
     call pcg_glyph
     inc e
@@ -120,7 +120,7 @@ decimal_tens_done:
 hurt_flash:
     ld b,2
 hurt_loop:
-    ld de,0x300
+    ld de,HUD_ROW*256
     ld a,32
     call pcg_putc
     call flash_delay

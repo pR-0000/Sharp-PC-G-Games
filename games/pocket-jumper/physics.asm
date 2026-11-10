@@ -132,7 +132,7 @@ tile_at:
     cp 96
     jr nc,tile_wall
     ld a,c
-    cp 6
+    cp WORLD_ROWS
     jr nc,tile_air_return
     ld l,a
     ld h,0
@@ -173,7 +173,7 @@ solid_yes:
     ret
 box_bounds:
     ld a,(candidate_y)
-    cp 64
+    cp WORLD_H+16
     jr nc,not_solid
     ld hl,(candidate_x)
     ld a,h

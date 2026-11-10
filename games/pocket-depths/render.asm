@@ -12,26 +12,26 @@ render:
     ld hl,screen_buffer
     ld (hl),a
     ld de,screen_buffer+1
-    ld bc,479
+    ld bc,PCG_FRAME_BYTES-1
     ldir
     IF !BUILD_LITE
     ld hl,floor_background
-    ld de,screen_buffer+240
-    ld bc,240
+    ld de,screen_buffer+VIEW_WIDTH*2
+    ld bc,VIEW_WIDTH*(VIEW_ROWS-2)
     ldir
     ENDIF
     xor a
     ld (current_ray),a
 .ray:
     ld a,(current_ray)
-    cp 20
+    cp HALF_RAYS
     jr nc,.right
     ld b,a
-    ld a,19
+    ld a,HALF_RAYS-1
     sub b
     jr .directory
 .right:
-    sub 20
+    sub HALF_RAYS
 .directory:
     add a,a
     ld c,a
@@ -81,8 +81,15 @@ render:
     ld l,a
     ld h,0
     add hl,hl
+    IF TARGET_G850
+    push hl
+    ENDIF
     add hl,hl
     add hl,hl
+    IF TARGET_G850
+    pop de
+    add hl,de
+    ENDIF
     ld de,wall_profiles
     add hl,de
     ld (profile_pointer),hl
@@ -94,7 +101,7 @@ render:
     ld hl,current_ray
     inc (hl)
     ld a,(hl)
-    cp 40
+    cp RAY_COUNT
     jp c,.ray
 
     ld a,7
@@ -117,7 +124,7 @@ render:
     rlca
     or d
     call map_get
-    cp 4
+    cp VIEW_ROWS
     jr c,.skip_object
     cp 9
     jr nc,.skip_object
@@ -172,7 +179,7 @@ render:
     jp nz,.entity_layer
 
     ; Reticle at logical (60,12), weapon at the bottom centre.
-    ld hl,screen_buffer+120+60
+    ld hl,screen_buffer+VIEW_WIDTH*(1+TARGET_G850)+VIEW_WIDTH/2
     ld a,(hl)
     or $70
     ld (hl),a
@@ -204,19 +211,19 @@ render:
     call hide_heart
     call damage_wait
     ld hl,heart_glyph
-    ld de,$0300
+    ld de,HUD_ROW*256
     jp pcg_glyph
 
 ; FR: deux clignotements du coeur, chiffres des PV toujours lisibles.
 ; EN: two heart blinks; health digits remain visible. No LCD commands.
 hide_heart:
     ld a,' '
-    ld de,$0300
+    ld de,HUD_ROW*256
     jp pcg_putc
 
 damage_wait:
     push bc
-    ld bc,18000                 ; ~117 ms at 4 MHz; hardware timing pending
+    ld bc,18000*(1+TARGET_G850)                 ; ~117 ms at 4 MHz; hardware timing pending
 .flash_wait:
     dec bc
     ld a,b
@@ -227,10 +234,10 @@ damage_wait:
 
 invert_buffer:
     ld hl,screen_buffer
-    ld bc,480
+    ld bc,PCG_FRAME_BYTES
 .loop:
     ld a,(hl)
-    xor $7F
+    xor PCG_GLYPH_MASK
     ld (hl),a
     inc hl
     dec bc
@@ -243,13 +250,13 @@ blit_buffer:
     ld hl,screen_buffer
     ld de,0
 .display_row:
-    ld b,120
+    ld b,VIEW_WIDTH
     call pcg_pattern
-    ld bc,120
+    ld bc,VIEW_WIDTH
     add hl,bc
     inc d
     ld a,d
-    cp 4
+    cp VIEW_ROWS
     jr c,.display_row
     ret
 
@@ -260,7 +267,7 @@ ray_offset:
     and 7
     ld d,a
     ld a,(current_ray)
-    cp 20
+    cp HALF_RAYS
     jr nc,.positive
     xor a
     sub d
@@ -309,7 +316,7 @@ paint_wall:
     ld hl,screen_buffer
     add hl,de
     ld (write_pointer),hl
-    ld a,4
+    ld a,VIEW_ROWS
     ld (row_count),a
 .row:
     ld hl,(profile_pointer)
@@ -348,14 +355,14 @@ paint_wall:
     and b
     ld e,a
     ld a,(row_count)
-    cp 4
+    cp VIEW_ROWS
     jr z,.door_top
     ld hl,(profile_pointer)
     dec hl
     dec hl
     dec hl
     dec hl
-    bit 6,(hl)
+    bit PCG_GLYPH_HEIGHT-1,(hl)
     jr z,.door_top
     res 0,e
 .door_top:
@@ -371,7 +378,7 @@ paint_wall:
     ld hl,(profile_pointer)
     bit 0,(hl)
     jr z,.door_bottom
-    res 6,c
+    res PCG_GLYPH_HEIGHT-1,c
 .door_bottom:
     ld e,c
     ld a,(ray_visual)
@@ -401,7 +408,7 @@ paint_wall:
     and $40
     jr z,.middle
     ld a,(row_count)
-    cp 2
+    cp VIEW_ROWS-2
     jr nz,.middle
     ld a,b
     and 3                       ; handle next to the centre join, y=14..15
@@ -418,7 +425,7 @@ paint_wall:
     or c
     ld (hl),a
     ld hl,(write_pointer)
-    ld de,120
+    ld de,VIEW_WIDTH
     add hl,de
     ld (write_pointer),hl
     ld hl,row_count
@@ -440,7 +447,7 @@ render_entity:
     add a,a
     ld (sprite_depth),a
     call project_x
-    cp 120
+    cp VIEW_WIDTH
     ret nc
     ld (sprite_center),a
     ld a,e
@@ -482,11 +489,24 @@ render_entity:
     ld a,(sprite_center)
     sub b
     ld (sprite_left),a
-    ld (sprite_source),hl
-    ld hl,screen_buffer
-    ld (sprite_row),hl
-    ld a,4
+    ld a,(hl)
+    inc hl
+    ld de,screen_buffer
+    or a
+    jr z,.first_band
+.band_offset:
+    ex de,hl
+    ld bc,VIEW_WIDTH
+    add hl,bc
+    ex de,hl
+    dec a
+    jr nz,.band_offset
+.first_band:
+    ld (sprite_row),de
+    ld a,(hl)
+    inc hl
     ld (row_count),a
+    ld (sprite_source),hl
 .row:
     ld a,(sprite_width)
     ld (sprite_columns),a
@@ -500,7 +520,7 @@ render_entity:
     inc hl
     ld (sprite_source),hl
     ld a,(sprite_x)
-    cp 120
+    cp VIEW_WIDTH
     jr nc,.skip
     push de
     call depth_at_x
@@ -531,7 +551,7 @@ render_entity:
     dec (hl)
     jr nz,.column
     ld hl,(sprite_row)
-    ld de,120
+    ld de,VIEW_WIDTH
     add hl,de
     ld (sprite_row),hl
     ld hl,row_count

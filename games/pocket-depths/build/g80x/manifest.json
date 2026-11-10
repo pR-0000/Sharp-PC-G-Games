@@ -1,0 +1,65 @@
+{
+  "name": "Pocket Depths",
+  "version": "0.3.0",
+  "origin": "0100",
+  "entry": "0100",
+  "target": "Full: PC-G805; Lite: PC-G801/G805",
+  "ray_count": 40,
+  "visible_cells": 7,
+  "hud": "Sharp ROM digits plus heart and bullet glyphs",
+  "campaign_floors": 3,
+  "visible_pixels": [
+    120,
+    28
+  ],
+  "programs": {
+    "depths_FR": {
+      "bytes": 6363,
+      "target": "PC-G805",
+      "lite": false,
+      "random_chunks": true,
+      "last_address": "19DA",
+      "user_command": "USER19FF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "8522b0eed1f5778bb63cee8bf90fd557769bc9e954da6a76fcf54d07cb948e5e",
+      "sha256_ihx": "53d85127e16d5086c649acdfec6b530da9cdb59b62bc0286f19035cbb53142cd"
+    },
+    "depths_EN": {
+      "bytes": 6352,
+      "target": "PC-G805",
+      "lite": false,
+      "random_chunks": true,
+      "last_address": "19CF",
+      "user_command": "USER19FF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "c7d3f5ed0f25ddf92ee2360472406e8998f4cdbdd635229966ffb1c45ef29aba",
+      "sha256_ihx": "aaa41d2ba7ca0833188567a1c07f4bdbd36929756be0bcca5fb459b6b72368a1"
+    },
+    "depths_lite_FR": {
+      "bytes": 5830,
+      "target": "PC-G801/G805",
+      "lite": true,
+      "random_chunks": false,
+      "last_address": "17C5",
+      "user_command": "USER17E2",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "fa4883d9a8a36baed96cc8ba21cb106d89b8ada0758657937f5d1c517cc46d28",
+      "sha256_ihx": "bff1323e900a60b253e6685dcf120e549cf8e1034e2761c39f0a127c48cb5dae"
+    },
+    "depths_lite_EN": {
+      "bytes": 5815,
+      "target": "PC-G801/G805",
+      "lite": true,
+      "random_chunks": false,
+      "last_address": "17B6",
+      "user_command": "USER17E2",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "6d421b64953424245800c866c240a3e992c78fd351d23ee6ac20b10eb062e702",
+      "sha256_ihx": "17209bbab7248da0bf8823635cf3ed6786dd364fd0e5057f1030be55fc415239"
+    }
+  }
+}

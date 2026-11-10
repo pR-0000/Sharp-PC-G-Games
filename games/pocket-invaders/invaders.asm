@@ -1,19 +1,18 @@
-; POCKET INVADERS - 90 x 28 arena, five-cell status panel on the right.
-; FR/EN: PC-G801/G805, IOCS communs, aucun acces aux ports LCD.
+; POCKET INVADERS - G80X 90x28 / G850 108x48; right native-font panel.
+; FR/EN: PC-G801/G805/G850, IOCS communs, aucun acces aux ports LCD.
 ; Common IOCS only; no LCD ports. MIT, (c) 2026 P.RAIMBAULT.
-    INCLUDE "sharp-pc-g8xx.inc"
+    INCLUDE "game_platform.inc"
     IFNDEF BUILD_LANG_EN
 BUILD_LANG_EN EQU 0
     ENDIF
-PLAY_WIDTH          EQU 90
-HUD_COLUMN          EQU 19
-DIVIDER_X           EQU 92
-ALIEN_SPACING       EQU 9
-FORMATION_LIMIT     EQU PLAY_WIDTH-7-7*ALIEN_SPACING
-FORMATION_START_X   EQU FORMATION_LIMIT/2
-FORMATION_START_Y   EQU 1
-PLAYER_LIMIT        EQU PLAY_WIDTH-7
-SHIP_Y              EQU 24
+    IF TARGET_G850
+    INCLUDE "targets/g850/config.inc"
+    ELSE
+    INCLUDE "targets/g80x/config.inc"
+    ENDIF
+FORMATION_LIMIT EQU PLAY_WIDTH-ALIEN_WIDTH-7*ALIEN_SPACING
+FORMATION_START_X EQU FORMATION_LIMIT/2
+PLAYER_LIMIT EQU PLAY_WIDTH-SHIP_WIDTH
     ORG $0100
 
 entry:
@@ -32,6 +31,9 @@ entry:
 main_loop:
     call pcg_key_scan
     ld (held_key),a
+    IF TARGET_G850
+    call invaders_controls
+    ENDIF
     ld c,a
     ld a,(last_key)
     cp c
@@ -53,11 +55,16 @@ main_loop:
     ld a,(paused)
     or a
     jr nz,.idle
+    IF TARGET_G850
+    ld a,(photo_frozen)
+    or a
+    jr nz,.idle
+    ENDIF
     call world_step
     call draw_game
     ; Base pacing ~27 ms at 4 MHz, plus game/render/IOCS work.
     ; Real-device cadence remains to be measured; no interrupt takeover.
-    ld bc,4200
+    ld bc,FRAME_DELAY
 .wait:
     dec bc
     ld a,b
@@ -108,6 +115,15 @@ handle_key:
     jp z,new_game
     ret
 .playing:
+    IF TARGET_G850
+    cp PCG_KEY_TAB
+    jr nz,.pause_key
+    ld a,(photo_frozen)
+    xor 1
+    ld (photo_frozen),a
+    ret
+.pause_key:
+    ENDIF
     cp PCG_KEY_P
     jr nz,.auto
     ld a,(paused)
@@ -125,6 +141,9 @@ handle_key:
 new_game:
     call pcg_clear
     xor a
+    IF TARGET_G850
+    ld (photo_frozen),a
+    ENDIF
     ld (paused),a
     ld (auto_fire),a
     ld (grace),a
@@ -196,6 +215,14 @@ world_step:
     dec a
     ld (explosion_timer),a
 .move:
+    IF TARGET_G850
+    ld a,(input_buttons)
+    and 3
+    cp 1
+    jr z,.left
+    cp 2
+    jr nz,.fire
+    ELSE
     ld a,(held_key)
     cp PCG_KEY_LEFT
     jr z,.left
@@ -206,6 +233,7 @@ world_step:
     cp PCG_KEY_D
     jr nz,.fire
 .right:
+    ENDIF
     ld a,(player_x)
     cp PLAYER_LIMIT
     jr nc,.fire
@@ -260,16 +288,22 @@ fire_player:
     ld a,(auto_fire)
     or a
     jr nz,.shoot
+    IF TARGET_G850
+    ld a,(input_buttons)
+    and 4
+    ret z
+    ELSE
     ld a,(held_key)
     cp PCG_KEY_SPACE
     jr z,.shoot
     cp PCG_KEY_RETURN
     ret nz
+    ENDIF
 .shoot:
     ld a,(player_x)
-    add a,3
+    add a,SHIP_WIDTH/2
     ld (shot_x),a
-    ld a,23
+    ld a,SHIP_Y-1
     ld (shot_y),a
     ld a,5
     ld (fire_timer),a
@@ -316,7 +350,7 @@ step_shot:
     djnz .pixel
     ret
 
-; Probe inside a live 7x5 alien; HL points at its live flag, A=1.
+; Probe inside a live alien; HL points at its live flag, A=1.
 find_alien:
     ld a,(formation_x)
     ld b,a
@@ -331,7 +365,7 @@ find_alien:
     inc c
     jr .column
 .remainder:
-    cp 7
+    cp ALIEN_WIDTH
     jr nc,.miss
     ld a,c
     cp 8
@@ -341,16 +375,16 @@ find_alien:
     ld a,(probe_y)
     sub b
     jr c,.miss
-    cp 6
+    cp ALIEN_ROW_STEP
     jr c,.row
-    sub 6
+    sub ALIEN_ROW_STEP
     ld b,a
     ld a,c
     add a,8
     ld c,a
     ld a,b
 .row:
-    cp 5
+    cp ALIEN_HEIGHT
     jr nc,.miss
     ld b,0
     ld hl,aliens
@@ -385,7 +419,7 @@ move_formation:
     ld hl,formation_y
     inc (hl)
     ld a,(hl)
-    add a,5
+    add a,ALIEN_HEIGHT
     ld b,a
     ld hl,aliens+8
     ld c,8
@@ -400,7 +434,7 @@ move_formation:
     jr .check
 .lowest:
     ld a,b
-    add a,6
+    add a,ALIEN_ROW_STEP
 .check:
     cp SHIP_Y
     ret c
@@ -427,7 +461,7 @@ launch_bomb:
     add hl,de
     ld a,(hl)
     or a
-    ld b,6
+    ld b,ALIEN_ROW_STEP
     jr nz,.origin
     ld hl,aliens
     add hl,de
@@ -438,17 +472,23 @@ launch_bomb:
 .origin:
     ld a,(formation_y)
     add a,b
-    add a,5
+    add a,ALIEN_HEIGHT
     ld (ix+1),a
     ld a,c
     add a,a
     add a,a
+    IF TARGET_G850
+    add a,c
+    add a,c
+    add a,a                    ; column * 12
+    ELSE
     add a,a
-    add a,c                     ; column * 9
+    add a,c                    ; column * 9
+    ENDIF
     ld b,a
     ld a,(formation_x)
     add a,b
-    add a,3
+    add a,ALIEN_WIDTH/2
     ld (ix+0),a
     ret
 
@@ -465,7 +505,7 @@ step_bombs:
     jr z,.next
     inc a
     ld (ix+1),a
-    cp 28
+    cp PLAY_HEIGHT
     jr nc,.stop
     ld (probe_y),a
     ld a,(ix+0)
@@ -480,7 +520,7 @@ step_bombs:
     ld c,a
     ld a,(probe_x)
     sub c
-    cp 7
+    cp SHIP_WIDTH
     jr nc,.next
     ld a,(grace)
     or a
@@ -499,11 +539,11 @@ step_bombs:
     djnz .bomb
     ret
 
-; All projectiles erode shields. Test point in a 7x3 block at y=20.
+; All projectiles erode shields; dimensions come from the target profile.
 shield_collision:
     ld a,(probe_y)
-    sub 20
-    cp 3
+    sub SHIELD_Y
+    cp SHIELD_HEIGHT
     jr nc,.miss
     ld hl,shields
     ld de,shield_positions
@@ -513,7 +553,7 @@ shield_collision:
     ld c,a
     ld a,(probe_x)
     sub c
-    cp 7
+    cp SHIELD_WIDTH
     jr nc,.next
     ld a,(hl)
     or a
@@ -569,7 +609,10 @@ random_next:
     ret
 
     INCLUDE "render.asm"
-    INCLUDE "../../lib/pcg801_runtime.asm"
+    INCLUDE "game_runtime.asm"
+    IF TARGET_G850
+    INCLUDE "targets/g850/input.asm"
+    ENDIF
 
     IF BUILD_LANG_EN
 start_text: db "ENTER: PLAY  M: HELP",0
@@ -596,6 +639,9 @@ title_text: db "POCKET INVADERS",0
 score_text: db "SCORE",0
 pause_text: db "PAUSE",0
 auto_text: db "A",0
+    IF TARGET_G850
+    INCLUDE "targets/g850/graphics.asm"
+    ELSE
 glyph_alien_a: db $0C,$1E,$15,$1F,$15,$1E,$0C
 glyph_alien_b: db $14,$0E,$15,$1F,$15,$0E,$14
 glyph_crab_a: db $12,$0E,$1B,$0F,$1B,$0E,$12
@@ -609,6 +655,7 @@ glyph_bomb: db $05
 glyph_shot: db $03
 glyph_heart: db $06,$0F,$1E,$0F,$06
 shield_positions: db 10,36,66
+    ENDIF
 decimal_places: dw 1000,100,10,1
 
 data_start:
@@ -653,6 +700,15 @@ draw_overflow: db 0
 aliens: ds 16,1
 shields: db 3,3,3
 bombs: db 0,255,0,255,0,255
-screen_buffer: ds 480,0
+screen_buffer: ds PCG_FRAME_BYTES,0
+    IF TARGET_G850
+input_buttons: db 0
+photo_frozen: db 0
+frame_buffer EQU screen_buffer
+    ENDIF
 program_end:
+    IF TARGET_G850
+    ASSERT program_end <= 0x7000
+    ELSE
     ASSERT program_end <= $17E3
+    ENDIF

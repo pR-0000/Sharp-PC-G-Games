@@ -1,0 +1,45 @@
+{
+  "name": "Pocket Clash",
+  "version": "0.1.1",
+  "target": "PC-G850",
+  "origin": "0100",
+  "entry": "0100",
+  "visible_pixels": [
+    144,
+    40
+  ],
+  "characters": 4,
+  "arenas": 3,
+  "cup_battles": 3,
+  "sprite_scales": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+  ],
+  "programs": {
+    "clash_g850_FR": {
+      "bytes": 21545,
+      "last_address": "5528",
+      "user_command": "USER55FF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "b0cf3742887d9dfebdb90a7b9ea96322f3e3502a19ab138ce11cfab64a749a76",
+      "sha256_ihx": "dd5f3fd79c6713dea28f17194e7f726740357972e4b727f063a6a2c1c6481eb4"
+    },
+    "clash_g850_EN": {
+      "bytes": 21527,
+      "last_address": "5516",
+      "user_command": "USER55FF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "6af83837786faef1908e5ec8120e19c1c6467534de9033d71926c066e0352954",
+      "sha256_ihx": "074cd827b64e213db745c3f60d49bc7f991acabe5cd7dbcc83e19d57bb95a1c3"
+    }
+  }
+}

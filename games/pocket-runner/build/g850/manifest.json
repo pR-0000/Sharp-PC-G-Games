@@ -1,0 +1,42 @@
+{
+  "name": "Pocket Runner",
+  "version": "0.2.0",
+  "world_cells": [
+    20,
+    12
+  ],
+  "visible_cells": [
+    20,
+    5
+  ],
+  "tile_pixels": [
+    7,
+    8
+  ],
+  "frame_bytes": 864,
+  "levels": 3,
+  "graphics": "original tiles, vertical scrolling, native-digit HUD",
+  "target": "PC-G850",
+  "origin": "0100",
+  "entry": "0100",
+  "programs": {
+    "runner_g850_FR": {
+      "bytes": 4214,
+      "last_address": "1175",
+      "user_command": "USER11FF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "c31daac68770974a91c897670d58bb7107ca212dce622dcd9ada4fbfcf8b2a61",
+      "sha256_ihx": "505e3668d84b0bb23104fd77df64c3b118c59548f7ad2fb433160d46fc948460"
+    },
+    "runner_g850_EN": {
+      "bytes": 4190,
+      "last_address": "115D",
+      "user_command": "USER11FF",
+      "run_command": "G100",
+      "basic_command": "CALL &H100",
+      "sha256_bin": "ab77b4d18f7b05dda387e1d15ea72be02c964f4ce61674624c8c9b480701e67d",
+      "sha256_ihx": "2fb76a1729eeee0f2535a585876f3962676f60ab8f529f79c61ccd03ebbe9702"
+    }
+  }
+}

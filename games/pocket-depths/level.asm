@@ -128,5 +128,6 @@ another_level:
     ld (random_state),a
     call level_random
     ld (level_seed),a
+    ld (campaign_seed),a
     jp main_new
     ENDIF

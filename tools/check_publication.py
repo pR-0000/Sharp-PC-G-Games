@@ -50,13 +50,17 @@ def check_collection(root, include):
     represented=set()
     for manifest in sorted(p for p in files if p.name=='manifest.json'):
         spec=json.loads(manifest.read_text(encoding='utf-8'))
+        if manifest.parent.parent.name!='build' or manifest.parent.name not in {'g80x','g80x-32k','g850'}:
+            raise ValueError(f'Programs must be grouped by machine: {manifest.relative_to(root)}')
+        if spec.get('target')=='PC-G850' and manifest.parent.name!='g850':
+            raise ValueError(f'G850 programs in wrong target folder: {manifest.relative_to(root)}')
         programs=spec.get('programs')
         if not programs:raise ValueError(f'Empty program manifest: {manifest}')
         origin=int(spec['origin'],16)
         for name,info in programs.items():
             binary=manifest.parent/(name+'.bin')
-            hexfile=binary.with_suffix('.hex')
-            for path,key in [(binary,'sha256_bin'),(hexfile,'sha256_hex')]:
+            hexfile=binary.with_suffix('.ihx')
+            for path,key in [(binary,'sha256_bin'),(hexfile,'sha256_ihx')]:
                 if path not in files or hashlib.sha256(path.read_bytes()).hexdigest()!=info[key]:
                     raise ValueError(f'Missing or changed program: {path.relative_to(root)}')
             data=binary.read_bytes()
@@ -64,12 +68,17 @@ def check_collection(root, include):
                 raise ValueError(f'Wrong memory size: {name}')
             if decode_hex(hexfile.read_text(encoding='ascii'))!=(origin,data):
                 raise ValueError(f'HEX/BIN mismatch: {name}')
-            if int(info['user_command'][4:],16)<int(info['last_address'],16):
+            reservation=int(info['user_command'][4:],16)
+            if reservation<int(info['last_address'],16):
                 raise ValueError(f'Insufficient USER reservation: {name}')
+            if spec.get('target')=='PC-G850' and reservation>0x76E2:
+                raise ValueError(f'G850 USER reservation exceeds user RAM: {name}')
             represented.update((binary,hexfile));program_count+=1
         manifest_count+=1
     for path in files:
-        if path.suffix.lower() in {'.bin','.hex'} and path not in represented:
+        if path.suffix.lower()=='.hex':
+            raise ValueError(f'Use .ihx for published Intel HEX files: {path.relative_to(root)}')
+        if path.suffix.lower() in {'.bin','.ihx'} and path not in represented:
             raise ValueError(f'Program missing from manifests: {path.relative_to(root)}')
     link_count=readme_count=0
     for path in sorted(p for p in files if p.suffix=='.md'):

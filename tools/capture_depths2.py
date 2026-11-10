@@ -39,7 +39,7 @@ def main():
         # Snapshot entry only: CALL renderer, CALL key scan, JP scan.
         # All rendering routines and data come from the assembled game.
         data[:9]=bytes((0xcd,target&255,target>>8,0xcd,key&255,key>>8,0xc3,3,1))
-        fixture=temporary/(name+'.hex')
+        fixture=temporary/(name+'.ihx')
         fixture.write_text(intel_hex(data,0x100),encoding='ascii')
         report=capture(emulator,fixture,path,model=model)
         report.update({'image':path.relative_to(ROOT).as_posix() if path.is_relative_to(ROOT) else path.name,

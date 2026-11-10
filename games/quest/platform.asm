@@ -1,6 +1,34 @@
 ; Sharp IOCS platform layer. All state is inside the emitted image.
 ; Legacy Quest UI coordinates: cursor_xy high byte=X, low byte=Y, 1-based.
 
+    IF TARGET_G850
+; Normal menus use the four centre rows. Battles reserve 16 pixels for actors.
+quest_clear:
+    call pcg_clear
+    push af
+    xor a
+    ld (battle_scene),a
+    pop af
+    ret
+quest_row:                      ; A=legacy zero-based row -> physical G850 row
+    push bc
+    ld b,a
+    ld a,(battle_scene)
+    or a
+    ld a,b
+    jr z,.normal
+    or a
+    jr z,.done
+    inc a
+.normal:
+    inc a
+.done:
+    pop bc
+    ret
+    ELSE
+quest_clear EQU pcg_clear
+    ENDIF
+
 quest_putc:
     push af
     push bc
@@ -21,6 +49,9 @@ quest_putc:
     dec a
     cp 4
     jr nc,.done
+    IF TARGET_G850
+    call quest_row
+    ENDIF
     ld d,a
     ld a,c
     call pcg_putc
@@ -110,6 +141,11 @@ quest_clear_row:                ; D = Sharp row, preserves all main registers
     push hl
     push ix
     push iy
+    IF TARGET_G850
+    ld a,d
+    call quest_row
+    ld d,a
+    ENDIF
     ld e,0
     ld a,' '
     ld b,24
@@ -180,7 +216,7 @@ ui_show_console_message:
 ui_show_intro_text:
     ld hl,INTRO_TEXT_PTR
 ui_message_common:
-    call pcg_clear
+    call quest_clear
     ld de,0x0101
     ld (cursor_xy),de
     call quest_puts
@@ -208,7 +244,7 @@ battle_return_to_map:
     ret
 
 game_over_restart:
-    call pcg_clear
+    call quest_clear
     ld hl,msg_game_over
     ld de,0x0602
     ld (cursor_xy),de

@@ -11,7 +11,7 @@ from cli_i18n import Parser,pick
 
 class InvadersMachine(Machine):
     def __init__(self,language='FR'):
-        super().__init__('invaders_'+language,HERE/'build')
+        super().__init__('invaders_'+language,HERE/'build/g80x')
         self.cpu.set_input_callback(lambda p: (_ for _ in ()).throw(AssertionError(f'Unexpected IN {p}')))
         self.cpu.set_output_callback(lambda p,v: (_ for _ in ()).throw(AssertionError(f'Unexpected OUT {p}')))
     def rom_return(self,key=None):

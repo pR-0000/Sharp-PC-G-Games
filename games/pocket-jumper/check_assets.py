@@ -29,7 +29,8 @@ class AssetChecks(unittest.TestCase):
             self.assertEqual(len(spec['frames']),15);self.assertEqual(len(spec['level_palette']),9)
     def test_source_bitmaps_never_overwritten_by_generate(self):
         with sandbox() as folder:
-            assets.generate();paths=[folder/'sprites.bmp',folder/'level_01_layout.bmp',folder/'level_01.json']
+            assets.generate();paths=[folder/'sprites.bmp',folder/'level_01_layout.bmp',folder/'level_01.json',
+                folder/'targets/g850/level_01_layout.bmp',folder/'targets/g850/level_01.json']
             before=[p.read_bytes() for p in paths];assets.generate()
             self.assertEqual([p.read_bytes() for p in paths],before)
     def test_padding_colours_dimensions_and_air_are_rejected(self):
@@ -71,15 +72,17 @@ class AssetChecks(unittest.TestCase):
             game=folder/'games/pocket-jumper';game.mkdir(parents=True)
             (folder/'include').mkdir();(folder/'lib').mkdir()
             for path in (ROOT/'include').glob('*.inc'):shutil.copy2(path,folder/'include'/path.name)
-            shutil.copy2(ROOT/'lib/pcg801_runtime.asm',folder/'lib/pcg801_runtime.asm')
+            for path in (ROOT/'lib').glob('*.asm'):shutil.copy2(path,folder/'lib'/path.name)
             for path in (ROOT/'games/pocket-jumper').glob('*.asm'):shutil.copy2(path,game/path.name)
+            shutil.copytree(ROOT/'games/pocket-jumper/targets',game/'targets')
             assets.HERE=asset_tool.HERE=game;assets.generate()
-            def compile():
-                subprocess.run([ASSEMBLER,'--nologo','--color=off','-DBUILD_LANG_EN=0',
-                    f'--inc={(folder/"include").as_posix()}',f'--raw={(game/"test.bin").as_posix()}',
+            def compile(native=0):
+                subprocess.run([ASSEMBLER,'--nologo','--color=off','-DBUILD_LANG_EN=0',f'-DTARGET_G850={native}',
+                    f'--inc={(folder/"include").as_posix()}',f'--inc={(folder/"lib").as_posix()}',f'--raw={(game/"test.bin").as_posix()}',
                     f'--sym={(game/"test.sym").as_posix()}',(game/'jumper.asm').as_posix()],cwd=game,check=True,capture_output=True)
                 return (game/'test.bin').read_bytes(),read_symbols(game/'test.sym')
             before,sym=compile()
+            native_before,native_sym=compile(1)
             path=game/'sprites.bmp';w,h,pixels=read_bmp(path);pixels[9*12*12]=BLACK
             write_bmp(path,w,h,pixels)
             path=game/'level_01_layout.bmp';w,h,pixels=read_bmp(path);pixels[0]=COLOURS[3]
@@ -87,6 +90,10 @@ class AssetChecks(unittest.TestCase):
             self.assertEqual(sym,sym2)
             changed={i+256 for i,(a,b) in enumerate(zip(before,after)) if a!=b}
             self.assertEqual(changed,{sym['hero_a'],sym['hero_a_left']+22,sym['level_initial']})
+            native_after,native_sym2=compile(1)
+            self.assertEqual(native_sym,native_sym2)
+            native_changed={i+256 for i,(a,b) in enumerate(zip(native_before,native_after)) if a!=b}
+            self.assertEqual(native_changed,{native_sym['hero_a'],native_sym['hero_a_left']+22})
 
 def main():
     global ASSEMBLER

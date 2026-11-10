@@ -15,8 +15,8 @@ sample_controls:
     push af
     di
     xor a
-    out (PCG801_PORT_KEYS_HIGH),a
-    out (PCG801_PORT_KEYS_LOW),a
+    out (PCG_PORT_KEYS_HIGH),a
+    out (PCG_PORT_KEYS_LOW),a
     ld a,4
     call matrix_row
     and 3
@@ -44,8 +44,8 @@ controls_arrows:
     or c
     ld c,a
     xor a
-    out (PCG801_PORT_KEYS_LOW),a
-    out (PCG801_PORT_KEYS_HIGH),a
+    out (PCG_PORT_KEYS_LOW),a
+    out (PCG_PORT_KEYS_HIGH),a
     pop af
     jp po,controls_interrupt_restored
     ei
@@ -77,9 +77,13 @@ controls_done:
     pop bc
     ret
 matrix_row:
-    out (PCG801_PORT_KEYS_LOW),a
-    ld b,10                  ; allow old strobe to decay (>26 T on E200)
+    out (PCG_PORT_KEYS_LOW),a
+    IF TARGET_G850
+    ld b,12                  ; >150 T, including G850 strobe settling
+    ELSE
+    ld b,10                  ; original E200/G80X settling
+    ENDIF
 matrix_settle:
     djnz matrix_settle
-    in a,(PCG801_PORT_KEYS)
+    in a,(PCG_PORT_KEYS)
     ret

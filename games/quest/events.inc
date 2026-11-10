@@ -290,7 +290,7 @@ world_menu_leave_to_map:
 	jp world_redraw_map_with_player
 
 world_show_status_menu:
-    call pcg_clear
+    call quest_clear
     call world_draw_status_screen
     call quest_wait_confirm
     jp world_redraw_map_with_player

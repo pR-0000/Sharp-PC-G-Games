@@ -4,8 +4,9 @@
 *.py text eol=lf
 *.pyw text eol=lf
 *.md text eol=lf
-# Preserve release HEX bytes so manifest hashes stay valid after checkout.
-*.hex -text
+# Preserve Intel HEX bytes so manifest hashes stay valid after checkout.
+*.hex -text whitespace=cr-at-eol
+*.ihx -text whitespace=cr-at-eol
 *.cmd text eol=crlf
 *.bin binary
 *.bmp binary

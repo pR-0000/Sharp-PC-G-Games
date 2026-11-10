@@ -1,3 +1,6 @@
+    IF TARGET_G850
+    INCLUDE "targets/g850/interface.asm"
+    ELSE
 ; FR/EN: bilingual interface, native digits in the right-hand HUD.
 title_screen:
     call pcg_clear
@@ -67,27 +70,7 @@ hud:
     ld hl,stage_text
     ld de,0x314
     jp pcg_puts
-decimal4:
-    ld bc,1000
-    call decimal_place
-    ld bc,100
-    call decimal_place
-    ld bc,10
-    call decimal_place
-    ld a,l
-    add a,48
-    jp pcg_putc
-decimal_place:
-    ld a,47
-decimal_subtract:
-    inc a
-    or a
-    sbc hl,bc
-    jr nc,decimal_subtract
-    add hl,bc
-    call pcg_putc
-    inc e
-    ret
+    INCLUDE "interface_numbers.asm"
 title_text: db 'POCKET JUMPER',0
     IF BUILD_LANG_EN
 subtitle: db 'PIXEL PLATFORM ADVENTURE',0
@@ -115,4 +98,5 @@ over_text: db 'PARTIE TERMINEE',0
 win_text: db 'DRAPEAU ATTEINT !',0
 restart_text: db 'ENTER:REJOUER Q:FIN',0
 stage_text: db 'N 01',0
+    ENDIF
     ENDIF
